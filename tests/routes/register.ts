@@ -4,9 +4,19 @@ import 'mocha';
 import {User} from "../../src/models/User";
 import {getRepository} from "typeorm";
 import {UserEntity} from "../../src/entities/UserEntity";
+import {FastifyInstance, FastifyLoggerInstance} from "fastify";
+import {Http2SecureServer, Http2ServerRequest, Http2ServerResponse} from "http2";
 
 describe('Register', async () => {
-  const app = await createApp();
+  let app: FastifyInstance<any>;
+
+  before(async () => {
+    app = await createApp();
+  });
+
+  after(() => {
+    app.close();
+  });
 
   it('it should register', async () => {
     const response = await app.inject({
