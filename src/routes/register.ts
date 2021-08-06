@@ -1,3 +1,3 @@
 app.post('/register', async () => {
-    return '';
+  return '';
 })
