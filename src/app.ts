@@ -1,10 +1,13 @@
 import fastify from 'fastify';
+import fastifyCompress from 'fastify-compress';
 import 'reflect-metadata';
 import {createConnection} from "typeorm";
-import {User} from "./entities/User.js";
+import {User} from "./models/User.js";
 
 export const createApp = async (options: any = {}) => {
     const app = fastify(options);
+
+    app.register(fastifyCompress);
 
     const connection = await createConnection({
         type: "mysql",

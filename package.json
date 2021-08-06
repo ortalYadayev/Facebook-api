@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "fastify": "^3.20.1",
+    "fastify-compress": "^3.6.0",
     "mysql2": "^2.3.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.36"
@@ -23,6 +24,7 @@
   },
   "scripts": {
     "start": "tsc && node .",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register 'tests/**/*.ts'"
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register 'tests/**/*.ts'",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   }
 }

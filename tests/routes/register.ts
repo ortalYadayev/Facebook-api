@@ -1,8 +1,9 @@
 import { createApp } from "../../src/app";
 import { assert } from 'chai';
 import 'mocha';
-import {User} from "../../src/entities/User";
+import {User} from "../../src/models/User";
 import {getRepository} from "typeorm";
+import {UserEntity} from "../../src/entities/UserEntity";
 
 describe('Register', async () => {
     const app = await createApp();
@@ -20,7 +21,7 @@ describe('Register', async () => {
         });
 
         assert.equal(response.statusCode, 201);
-        const userRepository = getRepository(User);
+        const userRepository = getRepository<User>(UserEntity);
         assert.equal(await userRepository.count(), 1);
     });
 
