@@ -1,22 +1,30 @@
-import {createApp} from "../../src/app";
 import {assert} from 'chai';
 import 'mocha';
 import {User} from "../../src/models/User";
-import {getRepository} from "typeorm";
+import {Connection, createConnection, getRepository} from "typeorm";
 import {UserEntity} from "../../src/entities/UserEntity";
-import {FastifyInstance, FastifyLoggerInstance} from "fastify";
-import {Http2SecureServer, Http2ServerRequest, Http2ServerResponse} from "http2";
+import {FastifyInstance} from "fastify";
+import {connection} from "../helpers/connection";
+import {createFastifyInstance} from "../../src/app";
 
 describe('Register', async () => {
   let app: FastifyInstance<any>;
 
   before(async () => {
-    app = await createApp();
+    app = await createFastifyInstance();
   });
+
+  beforeEach(async () => {
+    await connection.create();
+  })
 
   after(() => {
     app.close();
   });
+
+  afterEach(async () => {
+    await connection.close();
+  })
 
   it('it should register', async () => {
     const response = await app.inject({
@@ -50,7 +58,9 @@ describe('Register', async () => {
     });
 
     assert.equal(response.statusCode, 422);
-    // @TODO assert that user isn't created
+
+    const userRepository = getRepository<User>(UserEntity);
+    assert.equal(await userRepository.count(), 1);
   });
 
   it("it shouldn't register - invalid email", async () => {
@@ -66,6 +76,8 @@ describe('Register', async () => {
     });
 
     assert.equal(response.statusCode, 201);
-    // @TODO assert that user isn't created
+
+    const userRepository = getRepository<User>(UserEntity);
+    assert.equal(await userRepository.count(), 0);
   });
 });

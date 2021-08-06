@@ -6,7 +6,7 @@ export default {
     "password": process.env.DB_PASSWORD,
     "database": process.env.DB_NAME,
     "synchronize": false,
-    "logging": process.env.APP_ENV === 'local',
+    "logging": false,
     "entities": [
         "./src/entities/*.ts"
     ],
