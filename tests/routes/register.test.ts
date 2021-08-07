@@ -1,16 +1,14 @@
-import {assert} from 'chai';
-import 'mocha';
 import {User} from "../../src/models/User";
-import {Connection, createConnection, getRepository} from "typeorm";
+import {getRepository} from "typeorm";
 import {UserEntity} from "../../src/entities/UserEntity";
 import {FastifyInstance} from "fastify";
 import {connection} from "../helpers/connection";
-import {createFastifyInstance} from "../../src/app";
+import {createFastifyInstance} from "../../src/createFastifyInstance";
 
-describe('Register', async () => {
+describe('Register', () => {
   let app: FastifyInstance<any>;
 
-  before(async () => {
+  beforeAll(async () => {
     app = await createFastifyInstance();
   });
 
@@ -18,7 +16,7 @@ describe('Register', async () => {
     await connection.create();
   })
 
-  after(() => {
+  afterAll(() => {
     app.close();
   });
 
@@ -38,9 +36,9 @@ describe('Register', async () => {
       }
     });
 
-    assert.equal(response.statusCode, 201);
+    expect(response.statusCode).toBe(201);
     const userRepository = getRepository<User>(UserEntity);
-    assert.equal(await userRepository.count(), 1);
+    expect(await userRepository.count()).toBe(1);
   });
 
   it("it shouldn't register - existing email", async () => {
@@ -57,10 +55,10 @@ describe('Register', async () => {
       }
     });
 
-    assert.equal(response.statusCode, 422);
+    expect(response.statusCode).toBe(422);
 
     const userRepository = getRepository<User>(UserEntity);
-    assert.equal(await userRepository.count(), 1);
+    expect(await userRepository.count()).toBe(1);
   });
 
   it("it shouldn't register - invalid email", async () => {
@@ -75,9 +73,9 @@ describe('Register', async () => {
       }
     });
 
-    assert.equal(response.statusCode, 201);
+    expect(response.statusCode).toBe(201);
 
     const userRepository = getRepository<User>(UserEntity);
-    assert.equal(await userRepository.count(), 0);
+    expect(await userRepository.count()).toBe(0);
   });
 });

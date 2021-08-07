@@ -1,5 +1,10 @@
 # Facebook clone API
 
+## Software
+1. MySQL for local environment
+2. SQLite for test environment
+3. Node v16
+
 ## Installation
 1. Install globally ts-node: `yarn global add ts-node`
 2. Configure your environment variables: `cp .env.example .env`

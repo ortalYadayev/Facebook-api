@@ -5,7 +5,7 @@ export const connection = {
   create: () => {
     return createConnection({
       ...ormconfig,
-      type: "sqlite",
+      type: "better-sqlite3",
       database: ":memory:",
       dropSchema: true,
       synchronize: true,
