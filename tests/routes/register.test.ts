@@ -1,6 +1,5 @@
-import {User} from "../../src/models/User";
 import {getRepository} from "typeorm";
-import {UserEntity} from "../../src/entities/UserEntity";
+import {User} from "../../src/entities/User";
 import {FastifyInstance} from "fastify";
 import {connection} from "../helpers/connection";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
@@ -37,7 +36,7 @@ describe('Register', () => {
     });
 
     expect(response.statusCode).toBe(201);
-    const userRepository = getRepository<User>(UserEntity);
+    const userRepository = getRepository(User);
     expect(await userRepository.count()).toBe(1);
   });
 
@@ -57,7 +56,7 @@ describe('Register', () => {
 
     expect(response.statusCode).toBe(422);
 
-    const userRepository = getRepository<User>(UserEntity);
+    const userRepository = getRepository(User);
     expect(await userRepository.count()).toBe(1);
   });
 
@@ -75,7 +74,7 @@ describe('Register', () => {
 
     expect(response.statusCode).toBe(201);
 
-    const userRepository = getRepository<User>(UserEntity);
+    const userRepository = getRepository(User);
     expect(await userRepository.count()).toBe(0);
   });
 });

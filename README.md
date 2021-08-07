@@ -1,14 +1,13 @@
 # Facebook clone API
 
-## Software
+## Required software
 1. MySQL for local environment
 2. SQLite for test environment
 3. Node v16
 
 ## Installation
-1. Install globally ts-node: `yarn global add ts-node`
-2. Configure your environment variables: `cp .env.example .env`
+1. Configure your environment variables: `cp .env.example .env`
 
 ## Syncing migrations
-1. When you create a new entity or change an existing entity, generate a migration file: `yarn typeorm migration:generate --name=<migration_name> --pretty`
+1. When you create a new entity or change an existing entity, you should generate a migration file: `yarn typeorm migration:generate --name=<migration_name> --pretty`
 2. Synchronize your changes to your local database: `yarn typeorm schema:sync`
