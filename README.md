@@ -9,5 +9,5 @@
 1. Configure your environment variables: `cp .env.example .env`
 
 ## Syncing migrations
-1. When you create a new entity or change an existing entity, you should generate a migration file: `yarn typeorm migration:generate --name=<migration_name> --pretty`
-2. Synchronize your changes to your local database: `yarn typeorm schema:sync`
+1. When you create a new entity or change an existing entity, you should generate a migration file: `yarn migration:generate --name=<migration_name>`
+2. Synchronize your changes to your local database: `yarn migration:run`

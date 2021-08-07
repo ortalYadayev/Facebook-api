@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class UsersMigration1628299262214 implements MigrationInterface {
-    name = 'UsersMigration1628299262214'
+export class UsersTable1628345585449 implements MigrationInterface {
+    name = 'UsersTable1628345585449'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -11,12 +11,16 @@ export class UsersMigration1628299262214 implements MigrationInterface {
                 \`lastName\` varchar(255) NOT NULL,
                 \`email\` varchar(255) NOT NULL,
                 \`password\` varchar(255) NOT NULL,
+                UNIQUE INDEX \`IDX_97672ac88f789774dd47f7c8be\` (\`email\`),
                 PRIMARY KEY (\`id\`)
             ) ENGINE = InnoDB
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\` ON \`facebook_clone\`.\`users\`
+        `);
         await queryRunner.query(`
             DROP TABLE \`facebook_clone\`.\`users\`
         `);

@@ -1,8 +1,8 @@
-import {getRepository} from "typeorm";
-import {User} from "../../src/entities/User";
+import {User} from "../../src/entities/user.entity";
 import {FastifyInstance} from "fastify";
-import {connection} from "../helpers/connection";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
+import {factory, useSeeding} from "typeorm-seeding";
+import {createConnection, getConnection} from "typeorm";
 
 describe('Register', () => {
   let app: FastifyInstance;
@@ -12,69 +12,70 @@ describe('Register', () => {
   });
 
   beforeEach(async () => {
-    await connection.create();
+    await createConnection();
+    await useSeeding();
   })
-
-  afterAll(() => {
-    app.close();
-  });
 
   afterEach(async () => {
-    await connection.close();
+    await getConnection().close();
   })
 
-  it('it should register', async () => {
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should register', async () => {
     const response = await app.inject({
       method: 'post',
       url: '/register',
       payload: {
-        first_name: 'ortal',
-        last_name: 'yadaev',
+        first_name: 'Ortal',
+        last_name: 'Yadaev',
         email: 'ortal@gmail.com',
-        password: '123123',
+        password: 'secret',
       }
     });
 
     expect(response.statusCode).toBe(201);
-    const userRepository = getRepository(User);
-    expect(await userRepository.count()).toBe(1);
+
+    expect(await User.count()).toBe(1);
   });
 
-  it("it shouldn't register - existing email", async () => {
-    // @TODO create a user with the email `ortal@gmail.com`
+  it("shouldn't register - existing email", async () => {
+    await factory(User)({
+      email: 'ortal@gmail.com'
+    }).create();
 
     const response = await app.inject({
       method: 'post',
       url: '/register',
       payload: {
-        first_name: 'ortal',
-        last_name: 'yadaev',
+        first_name: 'Ortal',
+        last_name: 'Yadaev',
         email: 'ortal@gmail.com',
-        password: '123123',
+        password: 'secret',
       }
     });
 
     expect(response.statusCode).toBe(422);
 
-    const userRepository = getRepository(User);
-    expect(await userRepository.count()).toBe(1);
+    expect(await User.count()).toBe(1);
   });
 
-  it("it shouldn't register - invalid email", async () => {
+  it("shouldn't register - invalid email", async () => {
     const response = await app.inject({
       method: 'post',
       url: '/register',
       payload: {
-        first_name: 'ortal',
-        last_name: 'yadaev',
-        email: 'invalid-email',
-        password: '123123',
+        first_name: 'Ortal',
+        last_name: 'Yadaev',
+        email: 'ortal@gmail.com',
+        password: 'secret',
       }
     });
 
     expect(response.statusCode).toBe(201);
 
-    const userRepository = getRepository(User);
-    expect(await userRepository.count()).toBe(0);
+    expect(await User.count()).toBe(0);
   });
 });
