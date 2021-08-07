@@ -5,7 +5,7 @@ import {connection} from "../helpers/connection";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
 
 describe('Register', () => {
-  let app: FastifyInstance<any>;
+  let app: FastifyInstance;
 
   beforeAll(async () => {
     app = await createFastifyInstance();
