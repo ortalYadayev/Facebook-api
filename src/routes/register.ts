@@ -34,6 +34,8 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     // @TODO encrypt the password
     await user.save();
 
+    // @TODO send an email to the user
+
     return reply.code(201).send();
   })
 

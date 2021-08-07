@@ -39,6 +39,8 @@ describe('Register', () => {
     expect(response.statusCode).toBe(201);
 
     expect(await User.count()).toBe(1);
+
+    // @TODO test that the stored password is encrypted
   });
 
   it("shouldn't register - existing email", async () => {

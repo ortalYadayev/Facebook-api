@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique} from "typeorm";
+import {BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique} from "typeorm";
 
 @Unique(['email'])
 @Entity('users')
@@ -15,6 +15,6 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
-  @Column()
+  @Column({select: false})
   password: string;
 }
