@@ -29,10 +29,10 @@ describe('Register', () => {
       method: 'post',
       url: '/register',
       payload: {
-        first_name: 'Ortal',
-        last_name: 'Yadaev',
+        firstName: 'Ortal',
+        lastName: 'Yadaev',
         email: 'ortal@gmail.com',
-        password: 'secret',
+        password: 'password',
       }
     });
 
@@ -50,10 +50,10 @@ describe('Register', () => {
       method: 'post',
       url: '/register',
       payload: {
-        first_name: 'Ortal',
-        last_name: 'Yadaev',
+        firstName: 'Ortal',
+        lastName: 'Yadaev',
         email: 'ortal@gmail.com',
-        password: 'secret',
+        password: 'password',
       }
     });
 
@@ -67,14 +67,14 @@ describe('Register', () => {
       method: 'post',
       url: '/register',
       payload: {
-        first_name: 'Ortal',
-        last_name: 'Yadaev',
-        email: 'ortal@gmail.com',
-        password: 'secret',
+        firstName: 'Ortal',
+        lastName: 'Yadaev',
+        email: 'invalid-email',
+        password: 'password',
       }
     });
 
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(400);
 
     expect(await User.count()).toBe(0);
   });
