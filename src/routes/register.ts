@@ -31,7 +31,7 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     user.lastName = payload.lastName;
     user.email = payload.email;
     user.password = payload.password;
-    // @TODO encrypt the password
+
     await user.save();
 
     // @TODO send an email to the user

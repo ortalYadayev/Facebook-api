@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@sinclair/typebox": "^0.20.4",
+    "bcrypt": "^5.0.1",
     "fastify": "^3.20.1",
     "fastify-compress": "^3.6.0",
     "mysql2": "^2.3.0",

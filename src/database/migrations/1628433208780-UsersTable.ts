@@ -1,14 +1,14 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class UsersTable1628345585449 implements MigrationInterface {
-    name = 'UsersTable1628345585449'
+export class UsersTable1628433208780 implements MigrationInterface {
+    name = 'UsersTable1628433208780'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             CREATE TABLE \`facebook_clone\`.\`users\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
-                \`firstName\` varchar(255) NOT NULL,
-                \`lastName\` varchar(255) NOT NULL,
+                \`first_name\` varchar(255) NOT NULL,
+                \`last_name\` varchar(255) NOT NULL,
                 \`email\` varchar(255) NOT NULL,
                 \`password\` varchar(255) NOT NULL,
                 UNIQUE INDEX \`IDX_97672ac88f789774dd47f7c8be\` (\`email\`),
