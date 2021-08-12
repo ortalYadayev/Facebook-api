@@ -4,7 +4,8 @@ module.exports = {
   testEnvironment: 'node',
   collectCoverageFrom: [
     'src/**/*.ts',
-    '!src/migrations/**/*.ts',
+    '!src/database/migrations/**/*.ts',
+    '!src/database/seeders/**/*.ts',
     '!src/app.ts',
   ],
   globals: {
