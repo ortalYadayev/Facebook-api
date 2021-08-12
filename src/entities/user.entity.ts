@@ -1,14 +1,15 @@
-import {BaseEntity, BeforeInsert, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {BeforeInsert, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {FacebookBaseEntity} from "./FacebookBaseEntity";
 
 @Entity('users')
-export class User extends BaseEntity {
+export class User extends FacebookBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({name: 'first_name'})
+  @Column()
   firstName: string;
 
-  @Column({name: 'last_name'})
+  @Column()
   lastName: string;
 
   @Column({unique: true})
@@ -16,11 +17,4 @@ export class User extends BaseEntity {
 
   @Column({select: false})
   password: string;
-
-  @BeforeInsert()
-  async hashPassword() {
-    const bcrypt = require('bcrypt');
-
-    this.password = await bcrypt.hash(this.password, bcrypt.genSaltSync(10));
-  }
 }

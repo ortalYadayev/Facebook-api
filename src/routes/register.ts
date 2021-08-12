@@ -1,6 +1,7 @@
 import {DoneFuncWithErrOrRes, FastifyInstance, FastifyPluginOptions} from "fastify";
 import {User} from "../entities/user.entity";
 import {Static, Type} from '@sinclair/typebox'
+import bcrypt from 'bcrypt';
 
 const PayloadSchema = Type.Object({
   firstName: Type.String({minLength: 2, maxLength: 50}),
@@ -30,7 +31,8 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     user.firstName = payload.firstName;
     user.lastName = payload.lastName;
     user.email = payload.email;
-    user.password = payload.password;
+
+    user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS)));
 
     await user.save();
 

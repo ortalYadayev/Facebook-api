@@ -3,6 +3,7 @@ import {FastifyInstance} from "fastify";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
 import {factory, useSeeding} from "typeorm-seeding";
 import {createConnection, getConnection} from "typeorm";
+import bcrypt from 'bcrypt';
 
 describe('Register', () => {
   let app: FastifyInstance;
@@ -39,6 +40,10 @@ describe('Register', () => {
     expect(response.statusCode).toBe(201);
 
     expect(await User.count()).toBe(1);
+
+    const user = await User.find({id: 1});
+    console.log(user)
+    // expect(bcrypt.compare('password', user.))
 
     // @TODO test that the stored password is encrypted
   });
