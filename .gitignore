@@ -1,4 +1,11 @@
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+.env
 coverage
-dist
-node_modules
 yarn-error.log
+.nvmrc
+package-lock.json

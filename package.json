@@ -1,28 +1,44 @@
 {
   "name": "facebook-api",
   "version": "1.0.0",
-  "main": "dist/src/app.js",
+  "main": "src/app.ts",
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@sinclair/typebox": "^0.20.4",
+    "bcrypt": "^5.0.1",
     "fastify": "^3.20.1",
+    "fastify-compress": "^3.6.0",
     "mysql2": "^2.3.0",
-    "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.36"
+    "reflect-metadata": "^0.1.10",
+    "typeorm": "^0.2.36",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.21",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^16.4.13",
-    "chai": "^4.3.4",
-    "mocha": "^9.0.3",
+    "@types/bcrypt": "^5.0.0",
+    "@types/faker": "^5.5.7",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^8.0.29",
+    "better-sqlite3": "^7.4.3",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
     "ts-node": "^10.1.0",
+    "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   },
   "scripts": {
-    "start": "tsc && node .",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register 'tests/**/*.ts'"
+    "serve": "ts-node-dev src/app.ts",
+    "build": "@todo",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage",
+    "test:coverage:watch": "jest --coverage --watchAll",
+    "typeorm": "ts-node node_modules/.bin/typeorm",
+    "migration:generate": "ts-node node_modules/.bin/typeorm migration:generate --pretty",
+    "migration:run": "ts-node node_modules/.bin/typeorm migration:run",
+    "migration:revert": "ts-node node_modules/.bin/typeorm migration:revert",
+    "seed": "ts-node node_modules/.bin/typeorm-seeding seed"
   }
 }
