@@ -7,4 +7,11 @@ module.exports = {
     '!src/migrations/**/*.ts',
     '!src/app.ts',
   ],
+  globals: {
+    'ts-jest': {
+      diagnostics: {
+        warnOnly: true
+      }
+    }
+  },
 };

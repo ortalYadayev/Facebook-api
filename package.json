@@ -17,6 +17,7 @@
     "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/faker": "^5.5.7",
     "@types/jest": "^26.0.24",
     "@types/node": "^8.0.29",

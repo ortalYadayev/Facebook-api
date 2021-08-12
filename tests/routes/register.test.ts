@@ -41,11 +41,17 @@ describe('Register', () => {
 
     expect(await User.count()).toBe(1);
 
-    const user = await User.find({id: 1});
-    console.log(user)
-    // expect(bcrypt.compare('password', user.))
+    const user = await User.findOne({
+      where: {
+        firstName: 'Ortal',
+        lastName: 'Yadaev',
+        email: 'ortal@gmail.com',
+      },
+    });
 
-    // @TODO test that the stored password is encrypted
+    expect(user).toBeInstanceOf(User);
+
+    expect(await bcrypt.compare('password', user.password)).toBeTruthy();
   });
 
   it("shouldn't register - existing email", async () => {

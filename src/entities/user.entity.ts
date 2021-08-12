@@ -15,6 +15,6 @@ export class User extends FacebookBaseEntity {
   @Column({unique: true})
   email: string;
 
-  @Column({select: false})
+  @Column()
   password: string;
 }
