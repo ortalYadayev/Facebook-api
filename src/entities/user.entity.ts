@@ -1,11 +1,8 @@
 import {BeforeInsert, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn} from "typeorm";
-import {FacebookBaseEntity} from "./FacebookBaseEntity";
+import {BaseEntity} from "./BaseEntity";
 
 @Entity('users')
-export class User extends FacebookBaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column()
   firstName: string;
 
