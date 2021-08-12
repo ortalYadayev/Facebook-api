@@ -23,7 +23,7 @@ let ormconfig: ConnectionOptions = {
 if (process.env.NODE_ENV === 'test') {
   ormconfig = {
     ...ormconfig,
-    type: 'sqlite',
+    type: 'better-sqlite3',
     database: ":memory:",
     dropSchema: true,
     synchronize: true,

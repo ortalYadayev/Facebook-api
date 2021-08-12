@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 const PayloadSchema = Type.Object({
   firstName: Type.String({minLength: 2, maxLength: 50}),
   lastName: Type.String({minLength: 2, maxLength: 50}),
-  email: Type.String({format: "email"}),
+  email: Type.String({format: "email", maxLength: 255}),
   password: Type.String({minLength: 8, maxLength: 255}),
 });
 type PayloadType = Static<typeof PayloadSchema>;
@@ -28,15 +28,13 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     }
 
     const user = new User;
+
     user.firstName = payload.firstName;
     user.lastName = payload.lastName;
     user.email = payload.email;
-
     user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS)));
 
     await user.save();
-
-    // @TODO send an email to the user
 
     return reply.code(201).send();
   })
