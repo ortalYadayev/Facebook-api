@@ -1,5 +1,6 @@
-import {BeforeInsert, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Column, Entity, OneToMany} from "typeorm";
 import {BaseEntity} from "./BaseEntity";
+import {UserVerification} from "./user_verification.entity";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -14,4 +15,10 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column({nullable: true, default: null})
+  verifiedAt: Date | null;
+
+  @OneToMany(() => UserVerification, userVerification => userVerification.user)
+  verifications: UserVerification[];
 }
