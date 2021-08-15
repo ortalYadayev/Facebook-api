@@ -52,6 +52,10 @@ describe('Register', () => {
     expect(user).toBeInstanceOf(User);
 
     expect(await bcrypt.compare('password', user.password)).toBeTruthy();
+
+    //  @TODO assert the verification email is send
+
+    //  @TODO assert that the user is not verified
   });
 
   it("shouldn't register - existing email", async () => {
@@ -91,4 +95,28 @@ describe('Register', () => {
 
     expect(await User.count()).toBe(0);
   });
+
+  it("shouldn't register - existing unverified user - should resend verification email", async () => {
+    await factory(User)({
+      email: 'ortal@gmail.com'
+    }).create();
+
+    const response = await app.inject({
+      method: 'post',
+      url: '/register',
+      payload: {
+        firstName: 'Ortal',
+        lastName: 'Yadaev',
+        email: 'ortal@gmail.com',
+        password: 'password',
+      }
+    });
+
+    expect(response.statusCode).toBe(422);
+
+    expect(await User.count()).toBe(1);
+
+    //   @TODO assert that email verification is sent
+  });
 });
+

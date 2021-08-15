@@ -2,6 +2,8 @@ import {DoneFuncWithErrOrRes, FastifyInstance, FastifyPluginOptions} from "fasti
 import {User} from "../entities/user.entity";
 import {Static, Type} from '@sinclair/typebox'
 import bcrypt from 'bcrypt';
+import moment from "moment";
+import {URLToken} from "../entities/url_token.entity";
 
 const PayloadSchema = Type.Object({
   firstName: Type.String({minLength: 2, maxLength: 50}),
@@ -33,9 +35,20 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     user.lastName = payload.lastName;
     user.email = payload.email;
     user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS)));
+    user.verifiedAt = null;
 
     await user.save();
 
+    const urlToken = new URLToken();
+
+    urlToken.type = URLToken.TYPE_EMAIL_VERIFICATION;
+    urlToken.token = URLToken.generateRandomToken();
+    urlToken.expiresIn = moment().add(1, 'months').toDate();
+    urlToken.user = user;
+
+    await urlToken.save()
+
+    //  @TODO send an email to user
     return reply.code(201).send();
   })
 

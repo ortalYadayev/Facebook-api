@@ -8,6 +8,7 @@ define(User, (faker: typeof Faker, context: Object) => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
+    verifiedAt: faker.date.past(),
     ...context,
   });
 })

@@ -1,6 +1,6 @@
 import {Column, Entity, OneToMany} from "typeorm";
 import {BaseEntity} from "./BaseEntity";
-import {UserVerification} from "./user_verification.entity";
+import {URLToken} from "./url_token.entity";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -19,6 +19,6 @@ export class User extends BaseEntity {
   @Column({nullable: true, default: null})
   verifiedAt: Date | null;
 
-  @OneToMany(() => UserVerification, userVerification => userVerification.user)
-  verifications: UserVerification[];
+  @OneToMany(() => URLToken, urlToken => urlToken.user)
+  verifications: URLToken[];
 }
