@@ -116,7 +116,7 @@ describe('Register', () => {
 
     expect(await User.count()).toBe(1);
 
-    //   @TODO assert that email verification is sent
+    // @TODO assert that email verification is sent
   });
 });
 

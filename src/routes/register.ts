@@ -39,7 +39,7 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
 
     await user.save();
 
-    const urlToken = new URLToken();
+    const urlToken = await new URLToken();
 
     urlToken.type = URLToken.TYPE_EMAIL_VERIFICATION;
     urlToken.token = URLToken.generateRandomToken();
@@ -48,7 +48,13 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
 
     await urlToken.save()
 
+    // const users = await URLToken.find({ relations: ["user"] });
+    // await connection.manager.save(urlToken);
+
+    console.log(urlToken)
+
     //  @TODO send an email to user
+
     return reply.code(201).send();
   })
 
