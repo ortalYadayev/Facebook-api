@@ -1,7 +1,7 @@
 import {DoneFuncWithErrOrRes, FastifyInstance, FastifyPluginOptions} from "fastify";
 import {Static, Type} from '@sinclair/typebox'
 import {URLToken} from "../entities/url_token.entity";
-import {Raw} from "typeorm";
+import {MoreThan, Raw} from "typeorm";
 import {User} from "../entities/user.entity";
 import moment from "moment";
 
@@ -11,16 +11,16 @@ const PayloadSchema = Type.Object({
 type PayloadType = Static<typeof PayloadSchema>;
 
 export const verify = (app: FastifyInstance, options: FastifyPluginOptions, done: DoneFuncWithErrOrRes) => {
-  app.post<{ Body: PayloadType }>('/verify', {
-    schema: {body: PayloadSchema},
+  app.get<{ Querystring: PayloadType }>('/verify', {
+    schema: {querystring: PayloadSchema},
   }, async (request, reply) => {
-    const payload = request.body;
+    const payload = request.query;
 
     const urlToken = await URLToken.findOne({
       where: {
         token: payload.token,
         type: URLToken.TYPE_EMAIL_VERIFICATION,
-        expiresIn: Raw((expiresIn) => `${expiresIn} > NOW()`),
+        expireAt: MoreThan(moment().toISOString())
       },
       relations: ["user"]
     });
@@ -31,11 +31,9 @@ export const verify = (app: FastifyInstance, options: FastifyPluginOptions, done
       });
     }
 
-    // let userFromUrlToken: any = await URLToken.findOne({ relations: ["user"] });
-
     const user = urlToken.user;
 
-    if(user.verifiedAt != null){
+    if(user.verifiedAt){
       return reply.code(422).send({
         message: "The user is already verified",
       });
@@ -44,13 +42,12 @@ export const verify = (app: FastifyInstance, options: FastifyPluginOptions, done
     user.verifiedAt = moment().toDate();
 
     await user.save();
-    console.log(user);
 
-    urlToken.expiresIn = null;
+    urlToken.expireAt = null;
 
     await urlToken.save();
 
-    return reply.code(201).send();
+    return reply.code(200).send();
   })
 
   done();

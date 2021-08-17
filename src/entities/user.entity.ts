@@ -20,5 +20,5 @@ export class User extends BaseEntity {
   verifiedAt: Date | null;
 
   @OneToMany(() => URLToken, urlToken => urlToken.user)
-  verifications: URLToken[];
+  urlTokens: URLToken[];
 }

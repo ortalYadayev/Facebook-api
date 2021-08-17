@@ -14,9 +14,9 @@ export class URLToken extends BaseEntity {
   token: string;
 
   @Column({nullable: true})
-  expiresIn: Date | null;
+  expireAt: Date | null;
 
-  @ManyToOne(() => User, user => user.verifications)
+  @ManyToOne(() => User, user => user.urlTokens)
   user: User;
 
   public static generateRandomToken() {

@@ -8,42 +8,45 @@ import {URLToken} from "../../src/entities/url_token.entity";
 describe('Verify', () => {
   let app: FastifyInstance;
 
-  beforeAll(async () => {
-    app = await createFastifyInstance();
+  beforeAll(() => {
+    return createFastifyInstance().then((fastifyApp)=>{
+      app = fastifyApp;
+    });
   });
 
-  beforeEach(async () => {
-    await createConnection();
-    await useSeeding();
+  beforeEach(() => {
+    return Promise.all([createConnection(), useSeeding()]);
   })
 
-  afterEach(async () => {
-    await getConnection().close();
+  afterEach(() => {
+    return getConnection().close();
   })
 
-  afterAll(async () => {
-    await app.close();
+  afterAll(() => {
+    return app.close();
   });
 
   it('should verify the user', async () => {
     const user = await factory(User)().create();
-    const userVerification = await factory(URLToken)({
+    const urlToken = await factory(URLToken)().create({
       user: user
-    }).create();
+    });
 
     const response = await app.inject({
       method: 'get',
       url: '/verify',
       query: {
-        token: userVerification.token
+        token: urlToken.token
       }
     });
 
     expect(response.statusCode).toBe(200);
 
     await user.reload();
+    await urlToken.reload();
 
     expect(user.verifiedAt).not.toBeNull();
+    expect(urlToken.expireAt).toBeNull();
   });
 
   it('should not verify the user - expired token', async () => {
@@ -51,10 +54,10 @@ describe('Verify', () => {
     dateBeforeMonth.setMonth(dateBeforeMonth.getMonth() - 1);
 
     const user = await factory(User)().create();
-    const userVerification = await factory(URLToken)({
+    const userVerification = await factory(URLToken)().create({
       user: user,
-      createdAt: dateBeforeMonth
-    }).create();
+      created_at: dateBeforeMonth
+    });
 
     const response = await app.inject({
       method: 'get',
@@ -90,12 +93,12 @@ describe('Verify', () => {
   });
 
   it('should not verify the user - incorrect token', async () => {
-    const user = await factory(User)({
+    const user = await factory(User)().create({
       verifiedAt: null,
-    }).create();
-    const userVerification = await factory(URLToken)({
+    });
+    const userVerification = await factory(URLToken)().create({
       user: user,
-    }).create();
+    });
 
     const response = await app.inject({
       method: 'get',
@@ -114,9 +117,9 @@ describe('Verify', () => {
 
   it('should not verify the user - the user is already verified', async () => {
     const user = await factory(User)().create();
-    const userVerification = await factory(URLToken)({
+    const userVerification = await factory(URLToken)().create({
       user: user,
-    }).create();
+    });
 
     const response = await app.inject({
       method: 'get',

@@ -4,25 +4,28 @@ import {createFastifyInstance} from "../../src/createFastifyInstance";
 import {factory, useSeeding} from "typeorm-seeding";
 import {createConnection, getConnection} from "typeorm";
 import bcrypt from 'bcrypt';
+// @ts-ignore
+import {mock} from "nodemailer";
 
 describe('Register', () => {
   let app: FastifyInstance;
 
-  beforeAll(async () => {
-    app = await createFastifyInstance();
+  beforeAll(() => {
+    return createFastifyInstance().then((fastifyApp)=>{
+      app = fastifyApp;
+    });
   });
 
-  beforeEach(async () => {
-    await createConnection();
-    await useSeeding();
+  beforeEach(() => {
+    return Promise.all([createConnection(), useSeeding()]);
   })
 
-  afterEach(async () => {
-    await getConnection().close();
+  afterEach(() => {
+    return getConnection().close();
   })
 
-  afterAll(async () => {
-    await app.close();
+  afterAll(() => {
+    return app.close();
   });
 
   it('should register', async () => {
@@ -53,15 +56,17 @@ describe('Register', () => {
 
     expect(await bcrypt.compare('password', user.password)).toBeTruthy();
 
-    //  @TODO assert the verification email is send
+    const sentEmails = mock.getSentMail();
+    expect(sentEmails.length).toBe(1);
+    expect(sentEmails[0].to).toBe(user.email);
 
-    //  @TODO assert that the user is not verified
+    expect(user.verifiedAt).toBeNull();
   });
 
   it("shouldn't register - existing email", async () => {
-    await factory(User)({
+    await factory(User)().create({
       email: 'ortal@gmail.com'
-    }).create();
+    });
 
     const response = await app.inject({
       method: 'post',
@@ -97,9 +102,9 @@ describe('Register', () => {
   });
 
   it("shouldn't register - existing unverified user - should resend verification email", async () => {
-    await factory(User)({
+    await factory(User)().create({
       email: 'ortal@gmail.com'
-    }).create();
+    });
 
     const response = await app.inject({
       method: 'post',

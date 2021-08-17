@@ -4,6 +4,8 @@ import {Static, Type} from '@sinclair/typebox'
 import bcrypt from 'bcrypt';
 import moment from "moment";
 import {URLToken} from "../entities/url_token.entity";
+import nodemailer from "nodemailer";
+import {sendMail} from "../services/mail.service";
 
 const PayloadSchema = Type.Object({
   firstName: Type.String({minLength: 2, maxLength: 50}),
@@ -36,24 +38,30 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     user.email = payload.email;
     user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS)));
     user.verifiedAt = null;
+    user.urlTokens = [];
 
     await user.save();
 
-    const urlToken = await new URLToken();
+    const urlToken = new URLToken();
 
     urlToken.type = URLToken.TYPE_EMAIL_VERIFICATION;
     urlToken.token = URLToken.generateRandomToken();
-    urlToken.expiresIn = moment().add(1, 'months').toDate();
+    urlToken.expireAt = moment().add(1, 'months').toDate();
     urlToken.user = user;
 
     await urlToken.save()
 
-    // const users = await URLToken.find({ relations: ["user"] });
-    // await connection.manager.save(urlToken);
-
-    console.log(urlToken)
-
-    //  @TODO send an email to user
+    try {
+      await sendMail({
+        to: user.email,
+        subject: "verify",
+        text: "email verification",
+        html: '<p>Click <a href="http://localhost:3000/verify?token=\'+${urlToken.token}+\'" >here</a> to verify your email</p>'
+      })
+    }
+    catch(error) {
+      console.log(error);
+    }
 
     return reply.code(201).send();
   })
