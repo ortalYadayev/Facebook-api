@@ -1,31 +1,28 @@
 import {User} from "../../src/entities/user.entity";
 import {FastifyInstance} from "fastify";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
-import {factory, useSeeding} from "typeorm-seeding";
 import {createConnection, getConnection} from "typeorm";
 import bcrypt from 'bcrypt';
 // @ts-ignore
-import {mock} from "nodemailer";
+import {mock as nodemailerMock} from "nodemailer";
 
 describe('Register', () => {
   let app: FastifyInstance;
 
-  beforeAll(() => {
-    return createFastifyInstance().then((fastifyApp)=>{
-      app = fastifyApp;
-    });
+  beforeAll(async () => {
+    app = await createFastifyInstance();
   });
 
-  beforeEach(() => {
-    return Promise.all([createConnection(), useSeeding()]);
+  beforeEach(async () => {
+    await createConnection();
   })
 
-  afterEach(() => {
-    return getConnection().close();
+  afterEach(async () => {
+    await getConnection().close();
   })
 
-  afterAll(() => {
-    return app.close();
+  afterAll(async () => {
+    await app.close();
   });
 
   it('should register', async () => {
@@ -56,7 +53,7 @@ describe('Register', () => {
 
     expect(await bcrypt.compare('password', user.password)).toBeTruthy();
 
-    const sentEmails = mock.getSentMail();
+    const sentEmails = nodemailerMock.getSentMail();
     expect(sentEmails.length).toBe(1);
     expect(sentEmails[0].to).toBe(user.email);
 
@@ -64,7 +61,7 @@ describe('Register', () => {
   });
 
   it("shouldn't register - existing email", async () => {
-    await factory(User)().create({
+    await User.factory().create({
       email: 'ortal@gmail.com'
     });
 
@@ -102,8 +99,9 @@ describe('Register', () => {
   });
 
   it("shouldn't register - existing unverified user - should resend verification email", async () => {
-    await factory(User)().create({
-      email: 'ortal@gmail.com'
+    await User.factory().create({
+      email: 'ortal@gmail.com',
+      verifiedAt: null,
     });
 
     const response = await app.inject({
@@ -121,7 +119,9 @@ describe('Register', () => {
 
     expect(await User.count()).toBe(1);
 
-    // @TODO assert that email verification is sent
+    const sentEmails = nodemailerMock.getSentMail();
+    expect(sentEmails.length).toBe(1);
+    expect(sentEmails[0].to).toBe('ortal@gmail.com');
   });
 });
 

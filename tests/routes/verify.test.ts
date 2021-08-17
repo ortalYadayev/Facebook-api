@@ -1,34 +1,33 @@
 import {User} from "../../src/entities/user.entity";
 import {FastifyInstance} from "fastify";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
-import {factory, useSeeding} from "typeorm-seeding";
-import {createConnection, getConnection} from "typeorm";
+import { factory, useRefreshDatabase, useSeeding } from "typeorm-seeding";
+import { createConnection, getConnection, getConnectionOptions } from "typeorm";
 import {URLToken} from "../../src/entities/url_token.entity";
+import moment from "moment";
 
 describe('Verify', () => {
   let app: FastifyInstance;
 
-  beforeAll(() => {
-    return createFastifyInstance().then((fastifyApp)=>{
-      app = fastifyApp;
-    });
+  beforeAll(async () => {
+    app = await createFastifyInstance();
   });
 
-  beforeEach(() => {
-    return Promise.all([createConnection(), useSeeding()]);
+  beforeEach(async () => {
+    await createConnection();
   })
 
-  afterEach(() => {
-    return getConnection().close();
+  afterEach(async () => {
+    await getConnection().close();
   })
 
-  afterAll(() => {
-    return app.close();
+  afterAll(async () => {
+    await app.close();
   });
 
   it('should verify the user', async () => {
-    const user = await factory(User)().create();
-    const urlToken = await factory(URLToken)().create({
+    const user = await User.factory().create();
+    const urlToken = await URLToken.factory().create({
       user: user
     });
 
@@ -50,11 +49,10 @@ describe('Verify', () => {
   });
 
   it('should not verify the user - expired token', async () => {
-    const dateBeforeMonth = new Date();
-    dateBeforeMonth.setMonth(dateBeforeMonth.getMonth() - 1);
+    const dateBeforeMonth = moment().subtract(1, 'month').toDate();
 
-    const user = await factory(User)().create();
-    const userVerification = await factory(URLToken)().create({
+    const user = await User.factory().create();
+    const userVerification = await URLToken.factory().create({
       user: user,
       created_at: dateBeforeMonth
     });
@@ -75,7 +73,7 @@ describe('Verify', () => {
   });
 
   it('should not verify the user - token not exists', async () => {
-    const user = await factory(User)().create();
+    const user = await User.factory().create();
 
     const response = await app.inject({
       method: 'get',
@@ -93,10 +91,10 @@ describe('Verify', () => {
   });
 
   it('should not verify the user - incorrect token', async () => {
-    const user = await factory(User)().create({
+    const user = await User.factory().create({
       verifiedAt: null,
     });
-    const userVerification = await factory(URLToken)().create({
+    const userVerification = await URLToken.factory().create({
       user: user,
     });
 
@@ -116,8 +114,8 @@ describe('Verify', () => {
   });
 
   it('should not verify the user - the user is already verified', async () => {
-    const user = await factory(User)().create();
-    const userVerification = await factory(URLToken)().create({
+    const user = await User.factory().create();
+    const userVerification = await URLToken.factory().create({
       user: user,
     });
 
