@@ -5,6 +5,7 @@ import { factory, useRefreshDatabase, useSeeding } from "typeorm-seeding";
 import { createConnection, getConnection, getConnectionOptions } from "typeorm";
 import {URLToken} from "../../src/entities/url_token.entity";
 import moment from "moment";
+import faker from "faker";
 
 describe('Verify', () => {
   let app: FastifyInstance;
@@ -26,7 +27,9 @@ describe('Verify', () => {
   });
 
   it('should verify the user', async () => {
-    const user = await User.factory().create();
+    const user = await User.factory().create({
+      verifiedAt: null,
+    });
     const urlToken = await URLToken.factory().create({
       user: user
     });
@@ -51,10 +54,12 @@ describe('Verify', () => {
   it('should not verify the user - expired token', async () => {
     const dateBeforeMonth = moment().subtract(1, 'month').toDate();
 
-    const user = await User.factory().create();
+    const user = await User.factory().create({
+      verifiedAt: null,
+    });
     const userVerification = await URLToken.factory().create({
       user: user,
-      created_at: dateBeforeMonth
+      expireAt: dateBeforeMonth
     });
 
     const response = await app.inject({
@@ -73,7 +78,9 @@ describe('Verify', () => {
   });
 
   it('should not verify the user - token not exists', async () => {
-    const user = await User.factory().create();
+    const user = await User.factory().create({
+      verifiedAt: null,
+    });
 
     const response = await app.inject({
       method: 'get',
@@ -94,7 +101,7 @@ describe('Verify', () => {
     const user = await User.factory().create({
       verifiedAt: null,
     });
-    const userVerification = await URLToken.factory().create({
+    const urlToken = await URLToken.factory().create({
       user: user,
     });
 
@@ -102,7 +109,7 @@ describe('Verify', () => {
       method: 'get',
       url: '/verify',
       query: {
-        token: '12dse3c'
+        token: urlToken.token +'2d3fd0fc3'
       }
     });
 
