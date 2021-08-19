@@ -100,9 +100,8 @@ describe('Register', () => {
   });
 
   it("shouldn't register - existing unverified user - should resend verification email", async () => {
-    await User.factory().create({
+    await User.factory().unverified().create({
       email: 'ortal@gmail.com',
-      verifiedAt: null,
     });
 
     const response = await app.inject({

@@ -1,27 +1,25 @@
 import {User} from "../../entities/user.entity";
 import * as faker from "faker";
-import { EntityProperties } from "./types";
-import { BaseFactory } from "./base-factory";
+import { BaseFactory } from "./base_factory";
 
 export class UserFactory extends BaseFactory<User>
 {
-  definition(): EntityProperties<User>
+  entity(): User
   {
-    return {
+    return User.create({
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
-      urlTokens: []
-    }
+      urlTokens: [],
+    });
   }
 
-  create(overrideParameters?: EntityProperties<User>): Promise<User>
+  unverified(): this
   {
-    return User.create({
-      ...this.definition(),
-      ...overrideParameters,
-    }).save();
+    return this.addToState({
+      verifiedAt: null,
+    });
   }
 }

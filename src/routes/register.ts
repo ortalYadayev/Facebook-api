@@ -3,7 +3,7 @@ import {User} from "../entities/user.entity";
 import {Static, Type} from '@sinclair/typebox'
 import bcrypt from 'bcrypt';
 import moment from "moment";
-import {URLToken} from "../entities/url_token.entity";
+import { UrlToken, UrlTokenEnum } from "../entities/url_token.entity";
 import nodemailer from "nodemailer";
 import {sendMail} from "../services/mail.service";
 
@@ -42,14 +42,12 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
 
     await user.save();
 
-    const urlToken = new URLToken();
-
-    urlToken.type = URLToken.TYPE_EMAIL_VERIFICATION;
-    urlToken.token = URLToken.generateRandomToken();
-    urlToken.expireAt = moment().add(1, 'months').toDate();
-    urlToken.user = user;
-
-    await urlToken.save()
+    const urlToken = await UrlToken.create({
+      type: UrlTokenEnum.EMAIL_VERIFICATION,
+      token: UrlToken.generateRandomToken(),
+      expireAt: moment().add(1, 'months').toDate(),
+      user,
+    }).save()
 
     try {
       await sendMail({
