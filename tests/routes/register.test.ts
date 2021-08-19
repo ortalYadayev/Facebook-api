@@ -15,6 +15,7 @@ describe('Register', () => {
 
   beforeEach(async () => {
     await createConnection();
+    nodemailerMock.reset();
   })
 
   afterEach(async () => {
