@@ -1,16 +1,12 @@
-/// <reference types="node" />
+import Mail from "nodemailer/lib/mailer";
 
 declare module 'nodemailer' {
-  import Mail from "nodemailer/lib/mailer";
-
-  interface mock2 {
+  const mock: {
     reset(): void;
     getSentMail(): Mail.Options[]
-  }
-
-  const mock: mock2;
+  };
 
   export {
-    mock,
-  };
+    mock
+  }
 }

@@ -36,7 +36,7 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     user.firstName = payload.firstName;
     user.lastName = payload.lastName;
     user.email = payload.email;
-    user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS)));
+    user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS || '12')));
     user.verifiedAt = null;
     user.urlTokens = [];
 
