@@ -1,19 +1,22 @@
 import {User} from "../../entities/user.entity";
 import * as faker from "faker";
 import { BaseFactory } from "./base_factory";
+import { NonFunctionProperties } from "./types";
 
 export class UserFactory extends BaseFactory<User>
 {
-  entity(): User
+  entity = User;
+
+  definition(): NonFunctionProperties<User>
   {
-    return User.create({
+    return {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
       urlTokens: [],
-    });
+    };
   }
 
   unverified(): this

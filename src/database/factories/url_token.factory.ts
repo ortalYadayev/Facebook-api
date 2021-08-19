@@ -2,14 +2,18 @@ import { UrlToken, UrlTokenEnum } from "../../entities/url_token.entity";
 import * as faker from "faker";
 import { BaseFactory } from "./base_factory";
 import { User } from "../../entities/user.entity";
+import { NonFunctionProperties } from "./types";
 
 export class UrlTokenFactory extends BaseFactory<UrlToken>
 {
-  entity(): UrlToken {
-    return UrlToken.create({
+  entity = UrlToken;
+
+  definition(): NonFunctionProperties<UrlToken>
+  {
+    return {
       token: faker.random.alphaNumeric(120),
       expireAt: faker.date.future()
-    });
+    };
   }
 
   emailVerification(): this

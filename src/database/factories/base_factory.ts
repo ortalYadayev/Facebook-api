@@ -5,7 +5,9 @@ export abstract class BaseFactory<Entity extends BaseEntity>
 {
   private state: NonFunctionProperties<Entity> = {};
 
-  protected abstract entity(): Entity
+  protected entity: { new (): Entity };
+
+  protected abstract definition(): NonFunctionProperties<Entity>
 
   protected addToState(parameters: NonFunctionProperties<Entity>): this
   {
@@ -19,9 +21,10 @@ export abstract class BaseFactory<Entity extends BaseEntity>
 
   create(overrideParameters: NonFunctionProperties<Entity> = {}): Promise<Entity>
   {
-    const entity = this.entity();
+    const entity = new this.entity;
 
     overrideParameters = {
+      ...this.definition(),
       ...this.state,
       ...overrideParameters
     };
