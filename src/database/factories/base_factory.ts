@@ -7,11 +7,11 @@ export abstract class BaseFactory<Entity extends BaseEntity>
 
   protected abstract entity(): Entity
 
-  protected addToState(data: NonFunctionProperties<Entity>): this
+  protected addToState(parameters: NonFunctionProperties<Entity>): this
   {
     this.state = {
       ...this.state,
-      ...data,
+      ...parameters,
     }
 
     return this;
