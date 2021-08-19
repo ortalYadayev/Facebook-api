@@ -14,16 +14,16 @@ export class UrlToken extends BaseEntity {
     type: "simple-enum",
     enum: UrlTokenEnum,
   })
-  type: UrlTokenEnum;
+  type!: UrlTokenEnum;
 
   @Column({unique: true})
-  token: string;
+  token!: string;
 
-  @Column({nullable: true})
-  expireAt: Date | null;
+  @Column({type: "datetime", nullable: true})
+  expireAt!: Date | null;
 
   @ManyToOne(() => User, user => user.urlTokens)
-  user: User;
+  user!: User;
 
   public static generateRandomToken() {
     return uuid4();

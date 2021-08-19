@@ -3,7 +3,6 @@ import {FastifyInstance} from "fastify";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
 import {createConnection, getConnection} from "typeorm";
 import bcrypt from 'bcrypt';
-// @ts-ignore
 import {mock as nodemailerMock} from "nodemailer";
 
 describe('Register', () => {
@@ -48,9 +47,10 @@ describe('Register', () => {
         lastName: 'Yadaev',
         email: 'ortal@gmail.com',
       },
-    });
+    }) as User;
 
-    expect(user).toBeInstanceOf(User);
+    expect(user).not.toBeNull();
+
 
     expect(await bcrypt.compare('password', user.password)).toBeTruthy();
 

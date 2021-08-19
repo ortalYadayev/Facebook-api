@@ -4,9 +4,9 @@ export class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'datetime'})
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ type: 'datetime'})
+  updatedAt: Date;
 }
