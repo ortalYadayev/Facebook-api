@@ -29,9 +29,9 @@ export abstract class BaseFactory<Entity extends BaseEntity>
       ...overrideParameters
     };
 
-    for (const key in overrideParameters) {
-      entity[key] = overrideParameters[key];
-    }
+    Object.entries(overrideParameters).forEach(([key, value]) => {
+      entity[key] = value;
+    })
 
     return entity.save();
   }
