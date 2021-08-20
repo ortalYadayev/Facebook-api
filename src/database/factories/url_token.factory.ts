@@ -6,9 +6,9 @@ import { NonFunctionProperties } from "./types";
 
 export class UrlTokenFactory extends BaseFactory<UrlToken>
 {
-  entity = UrlToken;
+  protected entity = UrlToken;
 
-  definition(): NonFunctionProperties<UrlToken>
+  protected definition(): NonFunctionProperties<UrlToken>
   {
     return {
       token: faker.random.alphaNumeric(120),

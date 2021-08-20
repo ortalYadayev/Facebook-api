@@ -5,9 +5,9 @@ import { NonFunctionProperties } from "./types";
 
 export class UserFactory extends BaseFactory<User>
 {
-  entity = User;
+  protected entity = User;
 
-  definition(): NonFunctionProperties<User>
+  protected definition(): NonFunctionProperties<User>
   {
     return {
       firstName: faker.name.firstName(),

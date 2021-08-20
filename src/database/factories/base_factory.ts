@@ -5,7 +5,7 @@ export abstract class BaseFactory<Entity extends BaseEntity>
 {
   private state: NonFunctionProperties<Entity> = {};
 
-  protected entity: { new (): Entity };
+  protected abstract entity: { new (): Entity };
 
   protected abstract definition(): NonFunctionProperties<Entity>
 
