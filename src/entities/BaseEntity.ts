@@ -5,8 +5,8 @@ export class BaseEntity extends TypeOrmBaseEntity {
   id: number;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 }
