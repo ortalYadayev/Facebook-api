@@ -15,11 +15,9 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-const emailQueue = new Bull('email', { redis: 'redis://127.0.0.1:6379' }
-  // , {
-  // redis: process.env.REDIS_URL
-// }
-);
+const emailQueue = new Bull('email',{
+  redis: process.env.REDIS_URL
+});
 
 emailQueue.process((job: Job, done: DoneCallback) => {
   setTimeout(() =>{
@@ -29,10 +27,10 @@ emailQueue.process((job: Job, done: DoneCallback) => {
   },3000);
 });
 
-// emailQueue.on('completed', (job: Job, result: any) => {
-//   console.log('This message is from register');
-//   console.log(job, result);
-// });
+emailQueue.on('completed', (job: Job, result: any) => {
+  console.log('This message is from register');
+  console.log(job, result);
+});
 
 export const register = (app: FastifyInstance, options: FastifyPluginOptions, done: DoneFuncWithErrOrRes) => {
   app.post<{ Body: PayloadType }>('/register', {
@@ -71,8 +69,6 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     await urlToken.save()
 
     try {
-      // adding a job
-
       await emailQueue.add({email:
           await sendMail({
             to: user.email,
