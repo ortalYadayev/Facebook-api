@@ -69,13 +69,13 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     await urlToken.save()
 
     try {
-      await emailQueue.add({email:
-          await sendMail({
+      await emailQueue.add(await sendMail({
             to: user.email,
             subject: "verify",
             text: "email verification",
             html: '<p>Click <a href="http://localhost:3000/verify?token=\'+${urlToken.token}+\'" >here</a> to verify your email</p>'
-          })
+          }), {
+        attempts: 2
         });
     }
     catch(error) {
