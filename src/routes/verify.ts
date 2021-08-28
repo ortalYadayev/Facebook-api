@@ -2,6 +2,7 @@ import {DoneFuncWithErrOrRes, FastifyInstance, FastifyPluginOptions} from "fasti
 import {Static, Type} from '@sinclair/typebox'
 import {URLToken} from "../entities/url_token.entity";
 import {MoreThan, Raw} from "typeorm";
+import {User} from "../entities/user.entity";
 import moment from "moment";
 
 const PayloadSchema = Type.Object({
@@ -29,6 +30,7 @@ export const verify = (app: FastifyInstance, options: FastifyPluginOptions, done
         message: "This token doesn't exist or expired",
       });
     }
+
     const user = urlToken.user;
 
     if(user.verifiedAt){
