@@ -4,6 +4,8 @@ import {createFastifyInstance} from "../../src/createFastifyInstance";
 import {createConnection, getConnection} from "typeorm";
 import bcrypt from 'bcrypt';
 import {mock as nodemailerMock} from "nodemailer";
+import {URLToken} from "../../src/entities/url_token.entity";
+import {sendMail} from "../../src/services/mail.service";
 
 describe('Register', () => {
   let app: FastifyInstance;
@@ -25,7 +27,7 @@ describe('Register', () => {
     await app.close();
   });
 
-  it('should register', async () => {
+  it('should register and send email verification', async () => {
     const response = await app.inject({
       method: 'post',
       url: '/register',
@@ -57,6 +59,15 @@ describe('Register', () => {
     const sentEmails = nodemailerMock.getSentMail();
     expect(sentEmails.length).toBe(1);
     expect(sentEmails[0].to).toBe(user.email);
+
+    const urlToken = await URLToken.findOne({
+      where: {
+        user: user.id
+      },
+      relations: ["user"]
+    });
+
+
 
     expect(user.verifiedAt).toBeNull();
   });

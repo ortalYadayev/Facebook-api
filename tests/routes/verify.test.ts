@@ -5,7 +5,6 @@ import { factory, useRefreshDatabase, useSeeding } from "typeorm-seeding";
 import { createConnection, getConnection, getConnectionOptions } from "typeorm";
 import {UrlToken} from "../../src/entities/url_token.entity";
 import moment from "moment";
-import faker from "faker";
 
 describe('Verify', () => {
   let app: FastifyInstance;
