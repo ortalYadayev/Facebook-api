@@ -3,10 +3,10 @@ import {
   FastifyInstance,
   FastifyPluginOptions,
 } from 'fastify';
-import { User } from '../entities/user.entity';
 import { Static, Type } from '@sinclair/typebox';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
+import { User } from '../entities/user.entity';
 import { UrlToken, UrlTokenEnum } from '../entities/url_token.entity';
 import { sendMail } from '../services/mail.service';
 
@@ -39,15 +39,15 @@ async function sendEmailVerification(user: User) {
     to: user.email,
     subject: 'verify',
     text: 'email verification',
-    html: `<p>Click <a href="http://localhost:3000/verify?token=\'+${urlToken.token}+\'" >here</a> to verify your email</p>`,
+    html: `<p>Click <a href="http://localhost:3000/verify?token=${urlToken.token}">here</a> to verify your email</p>`,
   });
 }
 
-export const register = (
+const register = (
   app: FastifyInstance,
   options: FastifyPluginOptions,
   done: DoneFuncWithErrOrRes,
-) => {
+): void => {
   app.post<{ Body: PayloadType }>(
     '/register',
     {
@@ -92,3 +92,5 @@ export const register = (
 
   done();
 };
+
+export default register;

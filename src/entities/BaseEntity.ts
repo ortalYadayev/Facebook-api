@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export class BaseEntity extends TypeOrmBaseEntity {
+class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -15,3 +15,5 @@ export class BaseEntity extends TypeOrmBaseEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 }
+
+export default BaseEntity;

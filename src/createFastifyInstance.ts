@@ -1,12 +1,12 @@
-import fastify from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import fastifyCompress from 'fastify-compress';
-import { register } from './routes/register';
 import process from 'process';
 import * as dotenv from 'dotenv';
 import path from 'path';
-import { verify } from './routes/verify';
+import register from './routes/register';
+import verify from './routes/verify';
 
-export const createFastifyInstance = async () => {
+const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const app = fastify();
 
   app.register(fastifyCompress);
@@ -23,3 +23,5 @@ export const createFastifyInstance = async () => {
 
   return app;
 };
+
+export default createFastifyInstance;

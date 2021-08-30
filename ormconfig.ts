@@ -7,11 +7,11 @@ let ormconfig: ConnectionOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: ['src/entities/*.entity.ts'],
+  entities: ['src/**/*.entity.ts'],
   migrations: ['src/database/migrations/*.ts'],
-  subscribers: ['src/database/subscribers/*.subscriber.ts'],
-  seeds: ['src/database/seeders/*.seeder.ts'],
-  factories: ['src/database/factories/*.factory.ts'],
+  subscribers: ['src/**/*.subscriber.ts'],
+  seeds: ['src/**/*.seeder.ts'],
+  factories: ['src/**/*.factory.ts'],
   cli: {
     entitiesDir: 'src/entities',
     migrationsDir: 'src/database/migrations',
@@ -20,6 +20,7 @@ let ormconfig: ConnectionOptions = {
   logger: 'advanced-console',
   logging: ['warn', 'error'],
 };
+
 if (process.env.NODE_ENV === 'test') {
   ormconfig = {
     ...ormconfig,

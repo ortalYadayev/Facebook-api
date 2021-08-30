@@ -6,5 +6,6 @@ declare module 'nodemailer' {
     getSentMail(): Mail.Options[];
   };
 
+  // eslint-disable-next-line import/prefer-default-export
   export { mock };
 }

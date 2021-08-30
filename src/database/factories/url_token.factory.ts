@@ -1,10 +1,10 @@
-import { UrlToken, UrlTokenEnum } from '../../entities/url_token.entity';
 import * as faker from 'faker';
-import { BaseFactory } from './base_factory';
+import { UrlToken, UrlTokenEnum } from '../../entities/url_token.entity';
+import BaseFactory from './base_factory';
 import { User } from '../../entities/user.entity';
 import { NonFunctionProperties } from './types';
 
-export class UrlTokenFactory extends BaseFactory<UrlToken> {
+class UrlTokenFactory extends BaseFactory<UrlToken> {
   protected entity = UrlToken;
 
   protected definition(): NonFunctionProperties<UrlToken> {
@@ -30,3 +30,5 @@ export class UrlTokenFactory extends BaseFactory<UrlToken> {
     });
   }
 }
+
+export default UrlTokenFactory;

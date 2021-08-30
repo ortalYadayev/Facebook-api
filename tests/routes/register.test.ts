@@ -1,9 +1,9 @@
-import { User } from '../../src/entities/user.entity';
 import { FastifyInstance } from 'fastify';
-import { createFastifyInstance } from '../../src/createFastifyInstance';
 import { createConnection, getConnection } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { mock as nodemailerMock } from 'nodemailer';
+import createFastifyInstance from '../../src/createFastifyInstance';
+import { User } from '../../src/entities/user.entity';
 
 describe('Register', () => {
   let app: FastifyInstance;

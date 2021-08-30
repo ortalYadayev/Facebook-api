@@ -1,8 +1,12 @@
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-export function sendMail(mailOptions: Omit<Mail.Options, 'from'>) {
-  let transporter = nodemailer.createTransport({
+// eslint-disable-next-line import/prefer-default-export
+export function sendMail(
+  mailOptions: Omit<Mail.Options, 'from'>,
+): Promise<SMTPTransport.SentMessageInfo> {
+  const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
     port: parseInt(process.env.MAIL_PORT || ''),
     auth: {

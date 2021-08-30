@@ -1,9 +1,9 @@
-import { User } from '../../entities/user.entity';
 import * as faker from 'faker';
-import { BaseFactory } from './base_factory';
+import { User } from '../../entities/user.entity';
+import BaseFactory from './base_factory';
 import { NonFunctionProperties } from './types';
 
-export class UserFactory extends BaseFactory<User> {
+class UserFactory extends BaseFactory<User> {
   protected entity = User;
 
   protected definition(): NonFunctionProperties<User> {
@@ -23,3 +23,5 @@ export class UserFactory extends BaseFactory<User> {
     });
   }
 }
+
+export default UserFactory;

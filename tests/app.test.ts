@@ -1,5 +1,5 @@
 import { getConnection } from 'typeorm';
-import { startApp } from '../src/startApp';
+import startApp from '../src/startApp';
 
 describe('App', () => {
   it('starts the app', async () => {

@@ -1,9 +1,8 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { BaseEntity } from './BaseEntity';
-import { User } from './user.entity';
 import { v4 as uuid4 } from 'uuid';
-import { UserFactory } from '../database/factories/user.factory';
-import { UrlTokenFactory } from '../database/factories/url_token.factory';
+import BaseEntity from './BaseEntity';
+import { User } from './user.entity';
+import UrlTokenFactory from '../database/factories/url_token.factory';
 
 export enum UrlTokenEnum {
   EMAIL_VERIFICATION = 'email_verification',
@@ -26,11 +25,11 @@ export class UrlToken extends BaseEntity {
   @ManyToOne(() => User, (user) => user.urlTokens)
   user!: User;
 
-  public static generateRandomToken() {
+  public static generateRandomToken(): string {
     return uuid4();
   }
 
-  static factory() {
+  static factory(): UrlTokenFactory {
     return new UrlTokenFactory();
   }
 }

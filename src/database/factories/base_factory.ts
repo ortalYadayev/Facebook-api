@@ -1,7 +1,7 @@
-import { NonFunctionProperties } from './types';
 import { BaseEntity } from 'typeorm';
+import { NonFunctionProperties } from './types';
 
-export abstract class BaseFactory<Entity extends BaseEntity> {
+abstract class BaseFactory<Entity extends BaseEntity> {
   private state: NonFunctionProperties<Entity> = {};
 
   protected abstract entity: { new (): Entity };
@@ -20,8 +20,10 @@ export abstract class BaseFactory<Entity extends BaseEntity> {
   create(
     overrideParameters: NonFunctionProperties<Entity> = {},
   ): Promise<Entity> {
+    // eslint-disable-next-line new-cap
     const entity = new this.entity();
 
+    // eslint-disable-next-line no-param-reassign
     overrideParameters = {
       ...this.definition(),
       ...this.state,
@@ -35,3 +37,5 @@ export abstract class BaseFactory<Entity extends BaseEntity> {
     return entity.save();
   }
 }
+
+export default BaseFactory;

@@ -4,21 +4,20 @@ import {
   FastifyPluginOptions,
 } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
-import { UrlToken, UrlTokenEnum } from '../entities/url_token.entity';
-import { MoreThan, Raw } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { MoreThan } from 'typeorm';
 import moment from 'moment';
+import { UrlToken, UrlTokenEnum } from '../entities/url_token.entity';
 
 const PayloadSchema = Type.Object({
   token: Type.String({ minLength: 8, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-export const verify = (
+const verify = (
   app: FastifyInstance,
   options: FastifyPluginOptions,
   done: DoneFuncWithErrOrRes,
-) => {
+): void => {
   app.get<{ Querystring: PayloadType }>(
     '/verify',
     {
@@ -42,7 +41,7 @@ export const verify = (
         });
       }
 
-      const user = urlToken.user;
+      const { user } = urlToken;
 
       if (user.verifiedAt) {
         return reply.code(422).send({
@@ -64,3 +63,5 @@ export const verify = (
 
   done();
 };
+
+export default verify;

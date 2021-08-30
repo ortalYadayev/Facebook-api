@@ -1,10 +1,8 @@
-import { User } from '../../src/entities/user.entity';
 import { FastifyInstance } from 'fastify';
-import { createFastifyInstance } from '../../src/createFastifyInstance';
-import { factory, useRefreshDatabase, useSeeding } from 'typeorm-seeding';
-import { createConnection, getConnection, getConnectionOptions } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import { UrlToken } from '../../src/entities/url_token.entity';
-import moment from 'moment';
+import createFastifyInstance from '../../src/createFastifyInstance';
+import { User } from '../../src/entities/user.entity';
 
 describe('Verify', () => {
   let app: FastifyInstance;
@@ -101,7 +99,7 @@ describe('Verify', () => {
       method: 'get',
       url: '/verify',
       query: {
-        token: urlToken.token + '2d3fd0fc3',
+        token: `${urlToken.token}2d3fd0fc3`,
       },
     });
 

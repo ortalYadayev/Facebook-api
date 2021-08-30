@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './BaseEntity';
+import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
-import { UserFactory } from '../database/factories/user.factory';
+import UserFactory from '../database/factories/user.factory';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
-  static factory() {
+  static factory(): UserFactory {
     return new UserFactory();
   }
 }
