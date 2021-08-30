@@ -1,5 +1,5 @@
-import {createFastifyInstance} from "./createFastifyInstance";
-import {createConnection} from "typeorm";
+import { createFastifyInstance } from './createFastifyInstance';
+import { createConnection } from 'typeorm';
 
 const PORT = 3000;
 
@@ -12,8 +12,8 @@ export const startApp = async () => {
     await app.listen(PORT);
   } catch (error) {
     app.log.error(error);
-    process.exit(1)
+    process.exit(1);
   }
 
   return app;
-}
+};
