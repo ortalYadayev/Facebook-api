@@ -1,24 +1,37 @@
-import {URLToken} from "../../entities/url_token.entity";
+import { UrlToken, UrlTokenEnum } from "../../entities/url_token.entity";
 import * as faker from "faker";
-import { EntityProperties } from "./types";
-import { BaseFactory } from "./base-factory";
+import { BaseFactory } from "./base_factory";
+import { User } from "../../entities/user.entity";
+import { NonFunctionProperties } from "./types";
 
-export class UrlTokenFactory extends BaseFactory<URLToken>
+export class UrlTokenFactory extends BaseFactory<UrlToken>
 {
-  definition(): EntityProperties<URLToken>
+  protected entity = UrlToken;
+
+  protected definition(): NonFunctionProperties<UrlToken>
   {
     return {
       token: faker.random.alphaNumeric(120),
-      type: URLToken.TYPE_EMAIL_VERIFICATION,
       expireAt: faker.date.future()
-    }
+    };
   }
 
-  create(overrideParameters?: EntityProperties<URLToken>): Promise<URLToken>
+  emailVerification(): this
   {
-    return URLToken.create({
-      ...this.definition(),
-      ...overrideParameters,
-    }).save();
+    return this.addToState({
+      type: UrlTokenEnum.EMAIL_VERIFICATION,
+    });
+  }
+
+  user(user: User): this
+  {
+    return this.addToState({ user });
+  }
+
+  expired(): this
+  {
+    return this.addToState({
+      expireAt: faker.date.past(),
+    });
   }
 }

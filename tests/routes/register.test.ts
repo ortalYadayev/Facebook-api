@@ -3,10 +3,7 @@ import {FastifyInstance} from "fastify";
 import {createFastifyInstance} from "../../src/createFastifyInstance";
 import {createConnection, getConnection} from "typeorm";
 import bcrypt from 'bcrypt';
-// @ts-ignore
 import {mock as nodemailerMock} from "nodemailer";
-import {URLToken} from "../../src/entities/url_token.entity";
-import {sendMail} from "../../src/services/mail.service";
 
 describe('Register', () => {
   let app: FastifyInstance;
@@ -17,6 +14,7 @@ describe('Register', () => {
 
   beforeEach(async () => {
     await createConnection();
+    nodemailerMock.reset();
   })
 
   afterEach(async () => {
@@ -49,9 +47,10 @@ describe('Register', () => {
         lastName: 'Yadaev',
         email: 'ortal@gmail.com',
       },
-    });
+    }) as User;
 
-    expect(user).toBeInstanceOf(User);
+    expect(user).not.toBeNull();
+
 
     expect(await bcrypt.compare('password', user.password)).toBeTruthy();
 
@@ -59,20 +58,11 @@ describe('Register', () => {
     expect(sentEmails.length).toBe(1);
     expect(sentEmails[0].to).toBe(user.email);
 
-    const urlToken = await URLToken.findOne({
-      where: {
-        user: user.id
-      },
-      relations: ["user"]
-    });
-
-
-
     expect(user.verifiedAt).toBeNull();
   });
 
-  it("shouldn't register - existing email", async () => {
-    await User.factory().create({
+  it("shouldn't register - existing verified email - shouldn't resend verification email", async () => {
+    const user = await User.factory().create({
       email: 'ortal@gmail.com'
     });
 
@@ -82,7 +72,7 @@ describe('Register', () => {
       payload: {
         firstName: 'Ortal',
         lastName: 'Yadaev',
-        email: 'ortal@gmail.com',
+        email: user.email,
         password: 'password',
       }
     });
@@ -90,6 +80,8 @@ describe('Register', () => {
     expect(response.statusCode).toBe(422);
 
     expect(await User.count()).toBe(1);
+
+    expect(nodemailerMock.getSentMail().length).toBe(0);
   });
 
   it("shouldn't register - invalid email", async () => {
@@ -110,9 +102,8 @@ describe('Register', () => {
   });
 
   it("shouldn't register - existing unverified user - should resend verification email", async () => {
-    await User.factory().create({
+    const user = await User.factory().unverified().create({
       email: 'ortal@gmail.com',
-      verifiedAt: null,
     });
 
     const response = await app.inject({
@@ -121,7 +112,7 @@ describe('Register', () => {
       payload: {
         firstName: 'Ortal',
         lastName: 'Yadaev',
-        email: 'ortal@gmail.com',
+        email: user.email,
         password: 'password',
       }
     });
@@ -132,7 +123,7 @@ describe('Register', () => {
 
     const sentEmails = nodemailerMock.getSentMail();
     expect(sentEmails.length).toBe(1);
-    expect(sentEmails[0].to).toBe('ortal@gmail.com');
+    expect(sentEmails[0].to).toBe(user.email);
   });
 });
 

@@ -5,21 +5,26 @@ import { v4 as uuid4 } from 'uuid';
 import { UserFactory } from "../database/factories/user.factory";
 import { UrlTokenFactory } from "../database/factories/url_token.factory";
 
-@Entity('url_tokens')
-export class URLToken extends BaseEntity {
-  public static TYPE_EMAIL_VERIFICATION = 'email_verification';
+export enum UrlTokenEnum {
+  EMAIL_VERIFICATION = "email_verification",
+}
 
-  @Column()
-  type: string;
+@Entity('url_tokens')
+export class UrlToken extends BaseEntity {
+  @Column({
+    type: "simple-enum",
+    enum: UrlTokenEnum,
+  })
+  type!: UrlTokenEnum;
 
   @Column({unique: true})
-  token: string;
+  token!: string;
 
-  @Column({nullable: true})
-  expireAt: Date | null;
+  @Column({type: "datetime", nullable: true})
+  expireAt!: Date | null;
 
   @ManyToOne(() => User, user => user.urlTokens)
-  user: User;
+  user!: User;
 
   public static generateRandomToken() {
     return uuid4();

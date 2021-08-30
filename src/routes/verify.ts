@@ -1,6 +1,6 @@
 import {DoneFuncWithErrOrRes, FastifyInstance, FastifyPluginOptions} from "fastify";
 import {Static, Type} from '@sinclair/typebox'
-import {URLToken} from "../entities/url_token.entity";
+import { UrlToken, UrlTokenEnum } from "../entities/url_token.entity";
 import {MoreThan, Raw} from "typeorm";
 import {User} from "../entities/user.entity";
 import moment from "moment";
@@ -16,10 +16,10 @@ export const verify = (app: FastifyInstance, options: FastifyPluginOptions, done
   }, async (request, reply) => {
     const payload = request.query;
 
-    const urlToken = await URLToken.findOne({
+    const urlToken = await UrlToken.findOne({
       where: {
         token: payload.token,
-        type: URLToken.TYPE_EMAIL_VERIFICATION,
+        type: UrlTokenEnum.EMAIL_VERIFICATION,
         expireAt: MoreThan(moment().toISOString())
       },
       relations: ["user"]

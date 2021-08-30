@@ -1,27 +1,27 @@
 import {Column, Entity, OneToMany} from "typeorm";
 import {BaseEntity} from "./BaseEntity";
-import {URLToken} from "./url_token.entity";
+import {UrlToken} from "./url_token.entity";
 import { UserFactory } from "../database/factories/user.factory";
 
 @Entity('users')
 export class User extends BaseEntity {
   @Column()
-  firstName: string;
+  firstName!: string;
 
   @Column()
-  lastName: string;
+  lastName!: string;
 
   @Column({unique: true})
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
-  @Column({nullable: true, default: null})
-  verifiedAt: Date | null;
+  @Column({type: "datetime", nullable: true})
+  verifiedAt!: Date | null;
 
-  @OneToMany(() => URLToken, urlToken => urlToken.user)
-  urlTokens: URLToken[];
+  @OneToMany(() => UrlToken, urlToken => urlToken.user)
+  urlTokens!: UrlToken[];
 
   static factory()
   {

@@ -3,7 +3,7 @@ import {User} from "../entities/user.entity";
 import {Static, Type} from '@sinclair/typebox'
 import bcrypt from 'bcrypt';
 import moment from "moment";
-import {URLToken} from "../entities/url_token.entity";
+import { UrlToken, UrlTokenEnum } from "../entities/url_token.entity";
 import {sendMail} from "../services/mail.service";
 
 const PayloadSchema = Type.Object({
@@ -14,17 +14,43 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
+async function sendEmailVerification(user: User) {
+  await UrlToken.update({
+    user,
+  }, {
+    expireAt: moment().toDate(),
+  });
+
+  const urlToken = await UrlToken.create({
+    type: UrlTokenEnum.EMAIL_VERIFICATION,
+    token: UrlToken.generateRandomToken(),
+    expireAt: moment().add(1, 'months').toDate(),
+    user,
+  }).save()
+
+  await sendMail({
+    to: user.email,
+    subject: "verify",
+    text: "email verification",
+    html: `<p>Click <a href="http://localhost:3000/verify?token=\'+${urlToken.token}+\'" >here</a> to verify your email</p>`
+  });
+}
+
 export const register = (app: FastifyInstance, options: FastifyPluginOptions, done: DoneFuncWithErrOrRes) => {
   app.post<{ Body: PayloadType }>('/register', {
     schema: {body: PayloadSchema},
   }, async (request, reply) => {
     const payload = request.body;
 
-    const emailIsAlreadyExists = await User.count({
+    const existingUser = await User.findOne({
       where: {email: payload.email}
     });
 
-    if (emailIsAlreadyExists) {
+    if (existingUser) {
+      if (!existingUser.verifiedAt) {
+        sendEmailVerification(existingUser);
+      }
+
       return reply.code(422).send({
         message: 'This email is already being used',
       });
@@ -35,32 +61,13 @@ export const register = (app: FastifyInstance, options: FastifyPluginOptions, do
     user.firstName = payload.firstName;
     user.lastName = payload.lastName;
     user.email = payload.email;
-    user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS)));
+    user.password = await bcrypt.hash(payload.password, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS || '12')));
     user.verifiedAt = null;
     user.urlTokens = [];
 
     await user.save();
 
-    const urlToken = new URLToken();
-
-    urlToken.type = URLToken.TYPE_EMAIL_VERIFICATION;
-    urlToken.token = URLToken.generateRandomToken();
-    urlToken.expireAt = moment().add(1, 'months').toDate();
-    urlToken.user = user;
-
-    await urlToken.save()
-
-    try {
-      await sendMail({
-        to: user.email,
-        subject: "verify",
-        text: "email verification",
-        html: '<p>Click <a href="http://localhost:3000/verify?token=\'+${urlToken.token}+\'" >here</a> to verify your email</p>'
-      });
-    }
-    catch(error) {
-      console.log(error);
-    }
+    sendEmailVerification(user);
 
     return reply.code(201).send();
   })

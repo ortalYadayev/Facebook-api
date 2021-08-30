@@ -1,3 +1,3 @@
-export type EntityProperties<Entity> = {
-  [Property in keyof Entity]?: Entity[Property]
-}
+export type NonFunctionProperties<T> = {
+  [K in keyof T]?: T[K] extends Function ? never : T[K];
+};
