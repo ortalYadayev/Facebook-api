@@ -1,10 +1,8 @@
-import {User} from "../../src/entities/user.entity";
-import {FastifyInstance} from "fastify";
-import {createFastifyInstance} from "../../src/createFastifyInstance";
-import { factory, useRefreshDatabase, useSeeding } from "typeorm-seeding";
-import { createConnection, getConnection, getConnectionOptions } from "typeorm";
-import {UrlToken} from "../../src/entities/url_token.entity";
-import moment from "moment";
+import { FastifyInstance } from 'fastify';
+import { createConnection, getConnection } from 'typeorm';
+import { UrlToken } from '../../src/entities/url_token.entity';
+import createFastifyInstance from '../../src/createFastifyInstance';
+import { User } from '../../src/entities/user.entity';
 
 describe('Verify', () => {
   let app: FastifyInstance;
@@ -15,11 +13,11 @@ describe('Verify', () => {
 
   beforeEach(async () => {
     await createConnection();
-  })
+  });
 
   afterEach(async () => {
     await getConnection().close();
-  })
+  });
 
   afterAll(async () => {
     await app.close();
@@ -27,14 +25,17 @@ describe('Verify', () => {
 
   it('should verify the user', async () => {
     const user = await User.factory().unverified().create();
-    const urlToken = await UrlToken.factory().emailVerification().user(user).create();
+    const urlToken = await UrlToken.factory()
+      .emailVerification()
+      .user(user)
+      .create();
 
     const response = await app.inject({
       method: 'get',
       url: '/verify',
       query: {
-        token: urlToken.token
-      }
+        token: urlToken.token,
+      },
     });
 
     expect(response.statusCode).toBe(200);
@@ -48,14 +49,18 @@ describe('Verify', () => {
 
   it('should not verify the user - expired token', async () => {
     const user = await User.factory().unverified().create();
-    const userVerification = await UrlToken.factory().emailVerification().user(user).expired().create();
+    const userVerification = await UrlToken.factory()
+      .emailVerification()
+      .user(user)
+      .expired()
+      .create();
 
     const response = await app.inject({
       method: 'get',
       url: '/verify',
       query: {
-        token: userVerification.token
-      }
+        token: userVerification.token,
+      },
     });
 
     expect(response.statusCode).toBe(422);
@@ -72,8 +77,8 @@ describe('Verify', () => {
       method: 'get',
       url: '/verify',
       query: {
-        token: '346pq775tg2fdf4r3fg'
-      }
+        token: '346pq775tg2fdf4r3fg',
+      },
     });
 
     expect(response.statusCode).toBe(422);
@@ -85,14 +90,17 @@ describe('Verify', () => {
 
   it('should not verify the user - incorrect token', async () => {
     const user = await User.factory().unverified().create();
-    const urlToken = await UrlToken.factory().emailVerification().user(user).create();
+    const urlToken = await UrlToken.factory()
+      .emailVerification()
+      .user(user)
+      .create();
 
     const response = await app.inject({
       method: 'get',
       url: '/verify',
       query: {
-        token: urlToken.token +'2d3fd0fc3'
-      }
+        token: `${urlToken.token}2d3fd0fc3`,
+      },
     });
 
     expect(response.statusCode).toBe(422);
@@ -104,14 +112,17 @@ describe('Verify', () => {
 
   it('should not verify the user - the user is already verified', async () => {
     const user = await User.factory().create();
-    const userVerification = await UrlToken.factory().emailVerification().user(user).create();
+    const userVerification = await UrlToken.factory()
+      .emailVerification()
+      .user(user)
+      .create();
 
     const response = await app.inject({
       method: 'get',
       url: '/verify',
       query: {
         token: userVerification.token,
-      }
+      },
     });
 
     expect(response.statusCode).toBe(422);

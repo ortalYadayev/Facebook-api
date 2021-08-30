@@ -1,0 +1,62 @@
+{
+  "root": true,
+  "extends": [
+    "airbnb-typescript-prettier"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "radix": "off",
+    "import/no-mutable-exports": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.test.ts",
+          "__mocks__/**/*.ts",
+          "src/**/*.factory.ts"
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/database/**/*.ts"],
+      "rules": {
+        "class-methods-use-this": "off"
+      }
+    },
+    {
+      "files": ["src/database/migrations/*.ts"],
+      "rules": {
+        "import/prefer-default-export": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.entity.ts"],
+      "rules": {
+        "import/prefer-default-export": "off",
+        "import/no-cycle": "off"
+      }
+    },
+    {
+      "files": ["src/entities/BaseEntity.ts"],
+      "rules": {
+        "import/prefer-default-export": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.factory.ts"],
+      "rules": {
+        "import/no-cycle": "off"
+      }
+    }
+  ],
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  }
+}

@@ -1,12 +1,11 @@
-import Mail from "nodemailer/lib/mailer";
+import Mail from 'nodemailer/lib/mailer';
 
 declare module 'nodemailer' {
   const mock: {
     reset(): void;
-    getSentMail(): Mail.Options[]
+    getSentMail(): Mail.Options[];
   };
 
-  export {
-    mock
-  }
+  // eslint-disable-next-line import/prefer-default-export
+  export { mock };
 }

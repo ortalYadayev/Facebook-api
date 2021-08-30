@@ -1,54 +1,67 @@
-import {DoneFuncWithErrOrRes, FastifyInstance, FastifyPluginOptions} from "fastify";
-import {Static, Type} from '@sinclair/typebox'
-import { UrlToken, UrlTokenEnum } from "../entities/url_token.entity";
-import {MoreThan, Raw} from "typeorm";
-import {User} from "../entities/user.entity";
-import moment from "moment";
+import {
+  DoneFuncWithErrOrRes,
+  FastifyInstance,
+  FastifyPluginOptions,
+} from 'fastify';
+import { Static, Type } from '@sinclair/typebox';
+import { MoreThan } from 'typeorm';
+import moment from 'moment';
+import { UrlToken, UrlTokenEnum } from '../entities/url_token.entity';
 
 const PayloadSchema = Type.Object({
-  token: Type.String({minLength: 8, maxLength: 255}),
+  token: Type.String({ minLength: 8, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-export const verify = (app: FastifyInstance, options: FastifyPluginOptions, done: DoneFuncWithErrOrRes) => {
-  app.get<{ Querystring: PayloadType }>('/verify', {
-    schema: {querystring: PayloadSchema},
-  }, async (request, reply) => {
-    const payload = request.query;
+const verify = (
+  app: FastifyInstance,
+  options: FastifyPluginOptions,
+  done: DoneFuncWithErrOrRes,
+): void => {
+  app.get<{ Querystring: PayloadType }>(
+    '/verify',
+    {
+      schema: { querystring: PayloadSchema },
+    },
+    async (request, reply) => {
+      const payload = request.query;
 
-    const urlToken = await UrlToken.findOne({
-      where: {
-        token: payload.token,
-        type: UrlTokenEnum.EMAIL_VERIFICATION,
-        expireAt: MoreThan(moment().toISOString())
-      },
-      relations: ["user"]
-    });
-
-    if(!urlToken) {
-      return reply.code(422).send({
-        message: "This token doesn't exist or expired",
+      const urlToken = await UrlToken.findOne({
+        where: {
+          token: payload.token,
+          type: UrlTokenEnum.EMAIL_VERIFICATION,
+          expireAt: MoreThan(moment().toISOString()),
+        },
+        relations: ['user'],
       });
-    }
 
-    const user = urlToken.user;
+      if (!urlToken) {
+        return reply.code(422).send({
+          message: "This token doesn't exist or expired",
+        });
+      }
 
-    if(user.verifiedAt){
-      return reply.code(422).send({
-        message: "The user is already verified",
-      });
-    }
+      const { user } = urlToken;
 
-    user.verifiedAt = moment().toDate();
+      if (user.verifiedAt) {
+        return reply.code(422).send({
+          message: 'The user is already verified',
+        });
+      }
 
-    await user.save();
+      user.verifiedAt = moment().toDate();
 
-    urlToken.expireAt = null;
+      await user.save();
 
-    await urlToken.save();
+      urlToken.expireAt = null;
 
-    return reply.code(200).send();
-  })
+      await urlToken.save();
+
+      return reply.code(200).send();
+    },
+  );
 
   done();
-}
+};
+
+export default verify;

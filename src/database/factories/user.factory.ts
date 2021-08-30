@@ -1,14 +1,12 @@
-import {User} from "../../entities/user.entity";
-import * as faker from "faker";
-import { BaseFactory } from "./base_factory";
-import { NonFunctionProperties } from "./types";
+import * as faker from 'faker';
+import { User } from '../../entities/user.entity';
+import BaseFactory from './base_factory';
+import { NonFunctionProperties } from './types';
 
-export class UserFactory extends BaseFactory<User>
-{
+class UserFactory extends BaseFactory<User> {
   protected entity = User;
 
-  protected definition(): NonFunctionProperties<User>
-  {
+  protected definition(): NonFunctionProperties<User> {
     return {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
@@ -19,10 +17,11 @@ export class UserFactory extends BaseFactory<User>
     };
   }
 
-  unverified(): this
-  {
+  unverified(): this {
     return this.addToState({
       verifiedAt: null,
     });
   }
 }
+
+export default UserFactory;

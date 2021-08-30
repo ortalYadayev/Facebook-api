@@ -1,9 +1,9 @@
-.idea/
 .vscode/
 node_modules/
 build/
 tmp/
 temp/
+coverage/
 .env
 coverage
 yarn-error.log
