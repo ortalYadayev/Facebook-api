@@ -1,8 +1,4 @@
-import {
-  DoneFuncWithErrOrRes,
-  FastifyInstance,
-  FastifyPluginOptions,
-} from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { MoreThan } from 'typeorm';
 import moment from 'moment';
@@ -13,17 +9,12 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-const verify = (
-  app: FastifyInstance,
-  options: FastifyPluginOptions,
-  done: DoneFuncWithErrOrRes,
-): void => {
-  app.get<{ Querystring: PayloadType }>(
-    '/verify',
-    {
-      schema: { querystring: PayloadSchema },
-    },
-    async (request, reply) => {
+const verify = (app: FastifyInstance): void => {
+  app.route<{ Querystring: PayloadType }>({
+    url: '/verify',
+    method: 'GET',
+    schema: { querystring: PayloadSchema },
+    handler: async (request, reply) => {
       const payload = request.query;
 
       const urlToken = await UrlToken.findOne({
@@ -59,9 +50,7 @@ const verify = (
 
       return reply.code(200).send();
     },
-  );
-
-  done();
+  });
 };
 
 export default verify;

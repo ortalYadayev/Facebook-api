@@ -1,8 +1,4 @@
-import {
-  DoneFuncWithErrOrRes,
-  FastifyInstance,
-  FastifyPluginOptions,
-} from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
@@ -43,17 +39,12 @@ async function sendEmailVerification(user: User) {
   });
 }
 
-const register = (
-  app: FastifyInstance,
-  options: FastifyPluginOptions,
-  done: DoneFuncWithErrOrRes,
-): void => {
-  app.post<{ Body: PayloadType }>(
-    '/register',
-    {
-      schema: { body: PayloadSchema },
-    },
-    async (request, reply) => {
+const register = (app: FastifyInstance): void => {
+  app.route<{ Body: PayloadType }>({
+    url: '/register',
+    method: 'POST',
+    schema: { body: PayloadSchema },
+    handler: async (request, reply) => {
       const payload = request.body;
 
       const existingUser = await User.findOne({
@@ -62,7 +53,7 @@ const register = (
 
       if (existingUser) {
         if (!existingUser.verifiedAt) {
-          sendEmailVerification(existingUser);
+          await sendEmailVerification(existingUser);
         }
 
         return reply.code(422).send({
@@ -84,13 +75,11 @@ const register = (
 
       await user.save();
 
-      sendEmailVerification(user);
+      await sendEmailVerification(user);
 
       return reply.code(201).send();
     },
-  );
-
-  done();
+  });
 };
 
 export default register;

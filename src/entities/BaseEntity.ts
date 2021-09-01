@@ -9,10 +9,10 @@ class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt!: Date;
 }
 

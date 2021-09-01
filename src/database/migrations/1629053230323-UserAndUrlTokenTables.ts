@@ -7,8 +7,8 @@ export class UserAndUrlTokenTables1629053230323 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE \`facebook_clone\`.\`users\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
-                \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-                \`updated_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+                \`createdAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                \`updatedAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 \`firstName\` varchar(255) NOT NULL,
                 \`lastName\` varchar(255) NOT NULL,
                 \`email\` varchar(255) NOT NULL,
@@ -21,8 +21,8 @@ export class UserAndUrlTokenTables1629053230323 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE \`facebook_clone\`.\`url_tokens\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
-                \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-                \`updated_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+                \`createdAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                \`updatedAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 \`type\` varchar(255) NOT NULL,
                 \`token\` varchar(255) NOT NULL,
                 \`expiresIn\` datetime NULL,

@@ -11,9 +11,9 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
 
   app.register(fastifyCompress);
 
-  app.register(register);
+  register(app);
 
-  app.register(verify);
+  verify(app);
 
   if (process.env.NODE_ENV !== 'test') {
     dotenv.config({ path: path.resolve(__dirname, '../.env') });
