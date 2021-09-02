@@ -19,6 +19,7 @@ async function sendEmailVerification(user: User) {
     {
       user,
     },
+
     {
       expireAt: moment().toDate(),
     },
