@@ -8,10 +8,12 @@
   },
   "dependencies": {
     "@sinclair/typebox": "^0.20.4",
+    "@vitejs/plugin-vue": "^1.6.2",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "fastify": "^3.20.1",
     "fastify-compress": "^3.6.0",
+    "fastify-cors": "^6.0.2",
     "moment": "^2.29.1",
     "mysql2": "^2.3.0",
     "nodemailer": "^6.6.3",
