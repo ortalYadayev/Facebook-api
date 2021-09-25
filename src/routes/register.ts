@@ -59,6 +59,7 @@ const register = (app: FastifyInstance): void => {
 
         return reply.code(422).send({
           message: 'This email is already being used',
+          type: 'email',
         });
       }
 

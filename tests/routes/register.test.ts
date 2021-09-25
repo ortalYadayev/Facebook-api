@@ -95,7 +95,7 @@ describe('Register', () => {
       },
     });
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
 
     expect(await User.count()).toBe(0);
   });

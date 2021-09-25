@@ -9,6 +9,12 @@ import verify from './routes/verify';
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const app = fastify();
 
+  app.setErrorHandler((error, request, reply) => {
+    if (error.validation) {
+      reply.status(422).send(error.validation);
+    }
+  });
+
   app.register(fastifyCompress);
 
   register(app);
