@@ -27,7 +27,7 @@ const login = (app: FastifyInstance): void => {
           !(await bcrypt.compare(payload.password, existingUser.password)))
       ) {
         return reply.code(422).send({
-          message: 'Incorrect email or password',
+          message: 'The email or password are incorrect',
         });
       }
 
