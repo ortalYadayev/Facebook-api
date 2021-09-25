@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import register from './routes/register';
 import verify from './routes/verify';
+import login from './routes/login';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const app = fastify();
@@ -20,6 +21,8 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   register(app);
 
   verify(app);
+
+  login(app);
 
   if (process.env.NODE_ENV !== 'test') {
     dotenv.config({ path: path.resolve(__dirname, '../.env') });
