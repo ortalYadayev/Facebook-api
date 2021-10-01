@@ -23,8 +23,9 @@ describe('Login', () => {
   });
 
   it('should login', async () => {
-    await User.factory().hashPassword('password').create({
+    await User.factory().create({
       email: 'ortal@gmail.com',
+      password: 'password',
     });
 
     const response = await app.inject({
@@ -70,9 +71,11 @@ describe('Login', () => {
   });
 
   it('should not login - password is incorrect', async () => {
-    await User.factory().hashPassword('password').create({
+    await User.factory().create({
       email: 'ortal@gmail.com',
+      password: 'password',
     });
+
     const response = await app.inject({
       method: 'post',
       url: '/login',

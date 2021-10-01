@@ -17,10 +17,12 @@ class UserFactory extends BaseFactory<User> {
     };
   }
 
-  hashPassword(password: string): this {
-    return this.addToState({
-      password: User.hashPassword(password),
-    });
+  protected beforeCreate(
+    parameters: NonFunctionProperties<User>,
+  ): NonFunctionProperties<User> {
+    parameters.password = User.hashPassword(parameters.password as string);
+
+    return parameters;
   }
 
   unverified(): this {

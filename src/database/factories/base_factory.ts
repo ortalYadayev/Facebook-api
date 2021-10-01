@@ -17,18 +17,23 @@ abstract class BaseFactory<Entity extends BaseEntity> {
     return this;
   }
 
+  protected beforeCreate(
+    parameters: NonFunctionProperties<Entity>,
+  ): NonFunctionProperties<Entity> {
+    return parameters;
+  }
+
   create(
     overrideParameters: NonFunctionProperties<Entity> = {},
   ): Promise<Entity> {
     // eslint-disable-next-line new-cap
     const entity = new this.entity();
 
-    // eslint-disable-next-line no-param-reassign
-    overrideParameters = {
+    overrideParameters = this.beforeCreate({
       ...this.definition(),
       ...this.state,
       ...overrideParameters,
-    };
+    });
 
     Object.entries(overrideParameters).forEach(([key, value]) => {
       entity[key] = value;

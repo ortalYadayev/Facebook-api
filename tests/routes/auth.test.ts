@@ -23,8 +23,9 @@ describe('Auth', () => {
   });
 
   it('should return user from token', async () => {
-    const user = await User.factory().hashPassword('password').create({
+    const user = await User.factory().create({
       email: 'ortal@gmail.com',
+      password: 'password',
     });
 
     const token = app.jwt.sign({ id: user.id });
@@ -50,8 +51,9 @@ describe('Auth', () => {
   });
 
   it('should receive error if there is an invalid token', async () => {
-    const user = await User.factory().hashPassword('password').create({
+    const user = await User.factory().create({
       email: 'ortal@gmail.com',
+      password: 'password',
     });
 
     const token = app.jwt.sign({ id: user.id });
