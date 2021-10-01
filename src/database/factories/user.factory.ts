@@ -17,6 +17,12 @@ class UserFactory extends BaseFactory<User> {
     };
   }
 
+  hashPassword(password: string): this {
+    return this.addToState({
+      password: User.hashPassword(password),
+    });
+  }
+
   unverified(): this {
     return this.addToState({
       verifiedAt: null,

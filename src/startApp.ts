@@ -1,6 +1,7 @@
 import { createConnection } from 'typeorm';
 import { FastifyInstance } from 'fastify';
 import fastifyCors from 'fastify-cors';
+import fastifyJWT from 'fastify-jwt';
 import createFastifyInstance from './createFastifyInstance';
 
 const startApp = async (): Promise<FastifyInstance> => {
@@ -10,6 +11,10 @@ const startApp = async (): Promise<FastifyInstance> => {
     origin: '*',
     methods: '*',
     allowedHeaders: '*',
+  });
+
+  app.register(fastifyJWT, {
+    secret: process.env.TOKEN_SECRET || '',
   });
 
   await createConnection();

@@ -1,7 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { User } from '../entities/user.entity';
 
 const PayloadSchema = Type.Object({
@@ -24,15 +22,13 @@ const login = (app: FastifyInstance): void => {
         },
       });
 
-      if (!user || !(await bcrypt.compare(payload.password, user.password))) {
+      if (!user || !User.comparePasswords(payload.password, user.password)) {
         return reply.code(422).send({
           message: 'The email or password are incorrect',
         });
       }
 
-      const secretKey = process.env.TOKEN_SECRET || '';
-
-      const token = jwt.sign(user.id.toString(), secretKey);
+      const token = app.jwt.sign({ id: user.id });
 
       return reply.code(200).send({
         token,

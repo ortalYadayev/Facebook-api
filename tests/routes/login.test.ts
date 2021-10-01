@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import { createConnection, getConnection } from 'typeorm';
-import bcrypt from 'bcrypt';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
 
@@ -24,15 +23,8 @@ describe('Login', () => {
   });
 
   it('should login', async () => {
-    await app.inject({
-      method: 'post',
-      url: '/register',
-      payload: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: 'ortal@gmail.com',
-        password: 'password',
-      },
+    await User.factory().hashPassword('password').create({
+      email: 'ortal@gmail.com',
     });
 
     const response = await app.inject({
@@ -43,54 +35,6 @@ describe('Login', () => {
         password: 'password',
       },
     });
-
-    expect(response.statusCode).toBe(201);
-  });
-
-  it('should not login - email does not exist', async () => {
-    const response = await app.inject({
-      method: 'post',
-      url: '/login',
-      payload: {
-        email: 'ortal1@gmail.com',
-        password: 'password',
-      },
-    });
-
-    expect(response.statusCode).toBe(422);
-
-    const user = (await User.findOne({
-      where: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: 'ortal1@gmail.com',
-      },
-    })) as User;
-
-    expect(user).toBeUndefined();
-  });
-  it('should not login - password is not correct', async () => {
-    await app.inject({
-      method: 'post',
-      url: '/register',
-      payload: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: 'ortal@gmail.com',
-        password: 'password',
-      },
-    });
-
-    const response = await app.inject({
-      method: 'post',
-      url: '/login',
-      payload: {
-        email: 'ortal@gmail.com',
-        password: 'password1',
-      },
-    });
-
-    expect(response.statusCode).toBe(422);
 
     const user = (await User.findOne({
       where: {
@@ -99,7 +43,53 @@ describe('Login', () => {
     })) as User;
 
     expect(user).not.toBeNull();
+    expect(response.statusCode).toBe(200);
+    expect(User.comparePasswords('password', user.password)).toBeTruthy();
+  });
 
-    expect(await bcrypt.compare('password1', user.password)).not.toBeTruthy();
+  it('should not login - email does not exist', async () => {
+    const response = await app.inject({
+      method: 'post',
+      url: '/login',
+      payload: {
+        email: 'ortal@gmail.com',
+        password: 'password',
+      },
+    });
+
+    const user = (await User.findOne({
+      where: {
+        firstName: 'Ortal',
+        lastName: 'Yadaev',
+        email: 'ortal@gmail.com',
+      },
+    })) as User;
+
+    expect(response.statusCode).toBe(422);
+    expect(user).toBeUndefined();
+  });
+
+  it('should not login - password is incorrect', async () => {
+    await User.factory().hashPassword('password').create({
+      email: 'ortal@gmail.com',
+    });
+    const response = await app.inject({
+      method: 'post',
+      url: '/login',
+      payload: {
+        email: 'ortal@gmail.com',
+        password: 'incorrect',
+      },
+    });
+
+    const user = (await User.findOne({
+      where: {
+        email: 'ortal@gmail.com',
+      },
+    })) as User;
+
+    expect(response.statusCode).toBe(422);
+    expect(user).not.toBeNull();
+    expect(User.comparePasswords('incorrect', user.password)).not.toBeTruthy();
   });
 });

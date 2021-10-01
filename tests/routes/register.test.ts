@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import { createConnection, getConnection } from 'typeorm';
-import bcrypt from 'bcrypt';
 import { mock as nodemailerMock } from 'nodemailer';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
@@ -51,7 +50,7 @@ describe('Register', () => {
 
     expect(user).not.toBeNull();
 
-    expect(await bcrypt.compare('password', user.password)).toBeTruthy();
+    expect(User.comparePasswords('password', user.password)).toBeTruthy();
 
     const sentEmails = nodemailerMock.getSentMail();
     expect(sentEmails.length).toBe(1);
