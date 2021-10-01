@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import bcrypt from 'bcrypt';
+import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
@@ -35,7 +36,19 @@ export class User extends BaseEntity {
     );
   }
 
-  static comparePasswords(password: string, cryptedPassword: string): boolean {
-    return bcrypt.compareSync(password, cryptedPassword);
+  static comparePasswords(
+    password: string,
+    encryptedPassword: string,
+  ): boolean {
+    return bcrypt.compareSync(password, encryptedPassword);
+  }
+
+  toJSON(): Partial<User> {
+    const user = classToPlain(this);
+
+    delete user.password;
+    delete user.urlTokens;
+
+    return JSON.parse(JSON.stringify(user));
   }
 }

@@ -10,6 +10,7 @@
     "@sinclair/typebox": "^0.20.4",
     "@vitejs/plugin-vue": "^1.6.2",
     "bcrypt": "^5.0.1",
+    "class-transformer": "^0.4.0",
     "dotenv": "^10.0.0",
     "fastify": "^3.20.1",
     "fastify-auth": "^1.1.0",

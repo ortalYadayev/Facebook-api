@@ -28,12 +28,7 @@ const login = (app: FastifyInstance): void => {
         });
       }
 
-      const token = app.jwt.sign({ id: user.id });
-
-      return reply.code(200).send({
-        token,
-        user,
-      });
+      return reply.code(200).send(user);
     },
   });
 };

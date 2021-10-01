@@ -37,9 +37,7 @@ describe('Auth', () => {
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    expect(response.body.user).toEqual(user);
+    expect(response.json().user).toMatchObject(user.toJSON());
   });
 
   it('should receive error if there is no token', async () => {
@@ -70,6 +68,6 @@ describe('Auth', () => {
       },
     });
 
-    expect(response.statusCode).toBe(401);
+    expect(response.statusCode).toBe(422);
   });
 });
