@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { User } from '../entities/user.entity';
 
 const authMiddleware = (app: FastifyInstance): void => {
-  app.decorate('authApi', async (request, reply, done) => {
+  app.decorate('authMiddleware', async (request, reply, done) => {
     try {
       await request.jwtVerify();
 
