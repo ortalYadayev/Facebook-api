@@ -1,4 +1,4 @@
-import { ConnectionOptions } from 'typeorm-seeding';
+import { ConnectionOptions } from 'typeorm';
 
 let ormconfig: ConnectionOptions = {
   type: 'mysql',
@@ -10,8 +10,6 @@ let ormconfig: ConnectionOptions = {
   entities: ['src/**/*.entity.ts'],
   migrations: ['src/database/migrations/*.ts'],
   subscribers: ['src/**/*.subscriber.ts'],
-  seeds: ['src/**/*.seeder.ts'],
-  factories: ['src/**/*.factory.ts'],
   cli: {
     entitiesDir: 'src/entities',
     migrationsDir: 'src/database/migrations',

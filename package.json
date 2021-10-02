@@ -22,7 +22,6 @@
     "nodemailer": "^6.6.3",
     "reflect-metadata": "^0.1.10",
     "typeorm": "^0.2.36",
-    "typeorm-seeding": "^1.6.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -53,7 +52,6 @@
     "typescript": "^4.3.5"
   },
   "scripts": {
-    "generate-jwt-secret": "ts-node src/commands/generateJwtSecret.ts",
     "serve": "ts-node-dev src/app.ts",
     "build": "@todo",
     "test": "jest",
@@ -64,9 +62,10 @@
     "migration:generate": "ts-node node_modules/.bin/typeorm migration:generate --pretty",
     "migration:run": "ts-node node_modules/.bin/typeorm migration:run",
     "migration:revert": "ts-node node_modules/.bin/typeorm migration:revert",
-    "seed": "ts-node node_modules/.bin/typeorm-seeding seed",
+    "seed": "ts-node src/commands/seed.ts",
     "format": "prettier --config .prettierrc '**/*.(ts|js|json|md)' --write",
     "lint": "eslint . --ext=ts --fix",
+    "generate-jwt-secret": "ts-node src/commands/generateJwtSecret.ts",
     "prepare": "husky install"
   }
 }

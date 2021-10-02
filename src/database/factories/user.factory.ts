@@ -10,7 +10,7 @@ class UserFactory extends BaseFactory<User> {
     return {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      email: faker.internet.email(),
+      email: faker.unique(faker.internet.email),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
       urlTokens: [],

@@ -40,6 +40,19 @@ abstract class BaseFactory<Entity extends BaseEntity> {
 
     return entity.save();
   }
+
+  async createMany(
+    count: number,
+    overrideParameters: NonFunctionProperties<Entity> = {},
+  ): Promise<Entity[]> {
+    const entities: Entity[] = [];
+
+    for (let i = 0; i < count; i++) {
+      entities.push(await this.create(overrideParameters));
+    }
+
+    return entities;
+  }
 }
 
 export default BaseFactory;
