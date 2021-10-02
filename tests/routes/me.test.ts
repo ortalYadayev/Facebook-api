@@ -3,7 +3,7 @@ import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
 
-describe('Auth', () => {
+describe('Me', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -23,53 +23,38 @@ describe('Auth', () => {
   });
 
   it('should return user from token', async () => {
-    const user = await User.factory().create({
-      email: 'ortal@gmail.com',
-      password: 'password',
-    });
+    const user = await User.factory().create();
 
-    const token = app.jwt.sign({ id: user.id });
-
-    const response = await app.inject({
+    const response = await app.loginAs(user).inject({
       method: 'post',
-      url: '/auth',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      url: '/me',
     });
 
     expect(response.json().user).toMatchObject(user.toJSON());
   });
 
   it('should receive error if there is no token', async () => {
+    await User.factory().create();
+
     const response = await app.inject({
       method: 'post',
-      url: '/auth',
+      url: '/me',
     });
 
     expect(response.statusCode).toBe(401);
   });
 
   it('should receive error if there is an invalid token', async () => {
-    const user = await User.factory().create({
-      email: 'ortal@gmail.com',
-      password: 'password',
-    });
-
-    const token = app.jwt.sign({ id: user.id });
+    await User.factory().create();
 
     const response = await app.inject({
       method: 'post',
-      url: '/login',
-      payload: {
-        email: 'ortal@gmail.com',
-        password: 'incorrect',
-      },
+      url: '/me',
       headers: {
-        Authorization: `Bearer ${token}-invalid`,
+        Authorization: `Bearer invalid-token`,
       },
     });
 
-    expect(response.statusCode).toBe(422);
+    expect(response.statusCode).toBe(401);
   });
 });

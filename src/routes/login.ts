@@ -16,7 +16,7 @@ const login = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       const payload = request.body;
 
-      const user: User | undefined = await User.findOne({
+      const user = await User.findOne({
         where: {
           email: payload.email,
         },
@@ -35,7 +35,7 @@ const login = (app: FastifyInstance): void => {
         });
       }
 
-      const token = app.jwt.sign({ id: user.id });
+      const token = await reply.jwtSign({ id: user.id });
 
       return reply.code(200).send({
         token,

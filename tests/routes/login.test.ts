@@ -23,76 +23,56 @@ describe('Login', () => {
   });
 
   it('should login', async () => {
-    await User.factory().create({
-      email: 'ortal@gmail.com',
-      password: 'password',
-    });
+    const password = 'password';
+    const user = await User.factory().create({ password });
 
     const response = await app.inject({
       method: 'post',
       url: '/login',
       payload: {
-        email: 'ortal@gmail.com',
-        password: 'password',
+        email: user.email,
+        password,
       },
     });
 
-    const user = (await User.findOne({
-      where: {
-        email: 'ortal@gmail.com',
-      },
-    })) as User;
-
-    expect(user).not.toBeNull();
     expect(response.statusCode).toBe(200);
-    expect(User.comparePasswords('password', user.password)).toBeTruthy();
+    expect(response.json().user).toMatchObject(user.toJSON());
+    expect(app.jwt.verify(response.json().token)).toMatchObject({
+      id: user.id,
+    });
   });
 
   it('should not login - email does not exist', async () => {
+    const password = 'password';
+    await User.factory().create({
+      email: 'ortal@gmail.com',
+      password,
+    });
+
     const response = await app.inject({
       method: 'post',
       url: '/login',
       payload: {
-        email: 'ortal@gmail.com',
-        password: 'password',
+        email: 'incorrect@gmail.com',
+        password,
       },
     });
 
-    const user = (await User.findOne({
-      where: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: 'ortal@gmail.com',
-      },
-    })) as User;
-
     expect(response.statusCode).toBe(422);
-    expect(user).toBeUndefined();
   });
 
   it('should not login - password is incorrect', async () => {
-    await User.factory().create({
-      email: 'ortal@gmail.com',
-      password: 'password',
-    });
+    const user = await User.factory().create({ password: 'password' });
 
     const response = await app.inject({
       method: 'post',
       url: '/login',
       payload: {
-        email: 'ortal@gmail.com',
+        email: user.email,
         password: 'incorrect',
       },
     });
 
-    const user = (await User.findOne({
-      where: {
-        email: 'ortal@gmail.com',
-      },
-    })) as User;
-
     expect(response.statusCode).toBe(422);
-    expect(user).not.toBeNull();
-    expect(User.comparePasswords('incorrect', user.password)).not.toBeTruthy();
   });
 });

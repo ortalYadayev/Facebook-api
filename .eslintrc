@@ -8,16 +8,7 @@
     "radix": "off",
     "import/no-mutable-exports": "off",
     "no-param-reassign": "off",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "**/*.test.ts",
-          "__mocks__/**/*.ts",
-          "src/**/*.factory.ts"
-        ]
-      }
-    ]
+    "import/no-extraneous-dependencies": "off"
   },
   "overrides": [
     {
