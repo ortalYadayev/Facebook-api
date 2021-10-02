@@ -28,7 +28,19 @@ const login = (app: FastifyInstance): void => {
         });
       }
 
-      return reply.code(200).send(user);
+      if (!user.verifiedAt) {
+        return reply.code(422).send({
+          message:
+            'Your email is not verified. Please verify your email address to continue.',
+        });
+      }
+
+      const token = app.jwt.sign({ id: user.id });
+
+      return reply.code(200).send({
+        token,
+        user,
+      });
     },
   });
 };
