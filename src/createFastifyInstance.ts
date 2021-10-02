@@ -33,7 +33,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
     secret: process.env.TOKEN_SECRET || '',
   });
   app.register(fastifyCors, {
-    origin: '*',
+    origin: process.env.USER_APP_URL,
     methods: '*',
     allowedHeaders: '*',
   });

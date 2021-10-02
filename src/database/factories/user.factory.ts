@@ -4,7 +4,7 @@ import BaseFactory from './base_factory';
 import { NonFunctionProperties } from './types';
 
 class UserFactory extends BaseFactory<User> {
-  protected entity = User;
+  protected Entity = User;
 
   protected definition(): NonFunctionProperties<User> {
     return {

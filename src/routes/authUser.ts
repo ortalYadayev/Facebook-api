@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 
 const authUser = (app: FastifyInstance): void => {
   app.route({
-    url: '/auth',
+    url: '/me',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {

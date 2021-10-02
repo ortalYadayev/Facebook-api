@@ -16,10 +16,18 @@ const login = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       const payload = request.body;
 
-      const user: User | undefined = await User.findOne({
-        where: {
-          email: payload.email,
-        },
+      const user = await User.findOne({
+        select: [
+          'id',
+          'createdAt',
+          'updatedAt',
+          'firstName',
+          'lastName',
+          'email',
+          'password',
+          'verifiedAt',
+        ],
+        where: { email: payload.email },
       });
 
       if (!user || !User.comparePasswords(payload.password, user.password)) {

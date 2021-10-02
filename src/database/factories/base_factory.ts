@@ -4,7 +4,7 @@ import { NonFunctionProperties } from './types';
 abstract class BaseFactory<Entity extends BaseEntity> {
   private state: NonFunctionProperties<Entity> = {};
 
-  protected abstract entity: { new (): Entity };
+  protected abstract Entity: { new (): Entity };
 
   protected abstract definition(): NonFunctionProperties<Entity>;
 
@@ -26,8 +26,7 @@ abstract class BaseFactory<Entity extends BaseEntity> {
   create(
     overrideParameters: NonFunctionProperties<Entity> = {},
   ): Promise<Entity> {
-    // eslint-disable-next-line new-cap
-    const entity = new this.entity();
+    const entity = new this.Entity();
 
     overrideParameters = this.beforeCreate({
       ...this.definition(),

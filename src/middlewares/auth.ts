@@ -1,32 +1,28 @@
-import {
-  FastifyInstance,
-  FastifyRequest,
-  preValidationHookHandler,
-} from 'fastify';
-import { SignPayloadType } from 'fastify-jwt';
+import { FastifyInstance, preValidationHookHandler } from 'fastify';
 import { User } from '../entities/user.entity';
 
 const authMiddleware = (app: FastifyInstance): void => {
-  app.decorate(
-    'authMiddleware',
-    async (request: FastifyRequest, reply, done) => {
-      try {
-        await request.jwtVerify();
+  app.decorate('authMiddleware', async (request, reply, done) => {
+    try {
+      await request.jwtVerify();
 
-        const { id } = request.user as SignPayloadType;
+      const { id } = request.user;
 
-        request.user = await User.findOne({
-          where: { id },
-        });
+      request.user = await User.findOne({
+        where: { id },
+      });
 
-        done();
-      } catch (error) {
-        reply.code(401).send({
-          message: 'Unauthorized!',
-        });
+      if (!request.user) {
+        throw new Error();
       }
-    },
-  );
+
+      done();
+    } catch (error) {
+      reply.code(401).send({
+        message: 'Unauthorized',
+      });
+    }
+  });
 };
 
 declare module 'fastify' {

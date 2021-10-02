@@ -32,7 +32,7 @@ describe('Auth', () => {
 
     const response = await app.inject({
       method: 'post',
-      url: '/auth',
+      url: '/me',
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -44,7 +44,7 @@ describe('Auth', () => {
   it('should receive error if there is no token', async () => {
     const response = await app.inject({
       method: 'post',
-      url: '/auth',
+      url: '/me',
     });
 
     expect(response.statusCode).toBe(401);
@@ -60,16 +60,12 @@ describe('Auth', () => {
 
     const response = await app.inject({
       method: 'post',
-      url: '/login',
-      payload: {
-        email: 'ortal@gmail.com',
-        password: 'incorrect',
-      },
+      url: '/me',
       headers: {
         Authorization: `Bearer ${token}-invalid`,
       },
     });
 
-    expect(response.statusCode).toBe(422);
+    expect(response.statusCode).toBe(401);
   });
 });

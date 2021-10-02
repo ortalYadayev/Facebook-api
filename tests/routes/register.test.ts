@@ -37,10 +37,10 @@ describe('Register', () => {
     });
 
     expect(response.statusCode).toBe(201);
-
     expect(await User.count()).toBe(1);
 
     const user = (await User.findOne({
+      select: ['email', 'verifiedAt', 'password'],
       where: {
         firstName: 'Ortal',
         lastName: 'Yadaev',
@@ -49,7 +49,6 @@ describe('Register', () => {
     })) as User;
 
     expect(user).not.toBeNull();
-
     expect(User.comparePasswords('password', user.password)).toBeTruthy();
 
     const sentEmails = nodemailerMock.getSentMail();
