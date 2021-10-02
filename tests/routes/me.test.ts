@@ -2,7 +2,6 @@ import { FastifyInstance } from 'fastify';
 import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
-import { UrlToken } from '../../src/entities/url_token.entity';
 
 describe('Me', () => {
   let app: FastifyInstance;
