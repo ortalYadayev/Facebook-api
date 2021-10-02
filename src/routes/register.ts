@@ -36,7 +36,7 @@ async function sendEmailVerification(user: User) {
     to: user.email,
     subject: 'verify',
     text: 'email verification',
-    html: `<p>Click <a href="http://localhost:3000/verify?token=${urlToken.token}">here</a> to verify your email</p>`,
+    html: `<p>Click <a href="${process.env.USER_APP_URL}/verify?token=${urlToken.token}">here</a> to verify your email</p>`,
   });
 }
 

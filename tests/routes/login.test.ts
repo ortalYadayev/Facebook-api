@@ -22,55 +22,69 @@ describe('Login', () => {
     await app.close();
   });
 
-  it('should login with correct credentials', async () => {
-    await User.factory().create({
-      email: 'ortal@gmail.com',
-      password: 'password',
-    });
+  it('should login', async () => {
+    const password = 'password';
+    const user = await User.factory().create({ password });
 
     const response = await app.inject({
       method: 'post',
       url: '/login',
       payload: {
-        email: 'ortal@gmail.com',
-        password: 'password',
+        email: user.email,
+        password,
       },
     });
 
     expect(response.statusCode).toBe(200);
+    expect(response.json().user).toMatchObject(user.toJSON());
+    expect(app.jwt.verify(response.json().token)).toMatchObject({
+      id: user.id,
+    });
   });
 
   it("should not login if the email doesn't exist", async () => {
+    const password = 'password';
+    await User.factory().create({
+      email: 'ortal@gmail.com',
+      password,
+    });
+
     const response = await app.inject({
       method: 'post',
       url: '/login',
       payload: {
-        email: 'ortal@gmail.com',
-        password: 'password',
+        email: 'incorrect@gmail.com',
+        password,
       },
     });
 
-    const user = (await User.findOne({
-      where: {
-        email: 'ortal@gmail.com',
+    expect(response.statusCode).toBe(422);
+  });
+
+  it("should not login if the email isn't verified", async () => {
+    const password = 'password';
+    const user = await User.factory().unverified().create({ password });
+
+    const response = await app.inject({
+      method: 'post',
+      url: '/login',
+      payload: {
+        email: user.email,
+        password,
       },
-    })) as User;
+    });
 
     expect(response.statusCode).toBe(422);
-    expect(user).toBeUndefined();
   });
 
   it('should not login if password is incorrect', async () => {
-    await User.factory().create({
-      email: 'ortal@gmail.com',
-      password: 'password',
-    });
+    const user = await User.factory().create({ password: 'password' });
 
     const response = await app.inject({
       method: 'post',
       url: '/login',
       payload: {
-        email: 'ortal@gmail.com',
+        email: user.email,
         password: 'incorrect',
       },
     });

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 
-const authUser = (app: FastifyInstance): void => {
+const me = (app: FastifyInstance): void => {
   app.route({
     url: '/me',
     method: 'POST',
@@ -15,4 +15,4 @@ const authUser = (app: FastifyInstance): void => {
   });
 };
 
-export default authUser;
+export default me;

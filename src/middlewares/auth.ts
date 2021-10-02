@@ -8,13 +8,9 @@ const authMiddleware = (app: FastifyInstance): void => {
 
       const { id } = request.user;
 
-      request.user = await User.findOne({
+      request.user = await User.findOneOrFail({
         where: { id },
       });
-
-      if (!request.user) {
-        throw new Error();
-      }
 
       done();
     } catch (error) {
