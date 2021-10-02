@@ -53,6 +53,7 @@
     "typescript": "^4.3.5"
   },
   "scripts": {
+    "generate-jwt-secret": "ts-node src/commands/generateJwtSecret.ts",
     "serve": "ts-node-dev src/app.ts",
     "build": "@todo",
     "test": "jest",
