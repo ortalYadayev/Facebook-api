@@ -7,16 +7,11 @@
     "no-console": "warn",
     "radix": "off",
     "import/no-mutable-exports": "off",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "**/*.test.ts",
-          "__mocks__/**/*.ts",
-          "src/**/*.factory.ts"
-        ]
-      }
-    ]
+    "no-param-reassign": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "import/no-extraneous-dependencies": "off",
+    "no-plusplus": "off",
+    "no-await-in-loop": "off"
   },
   "overrides": [
     {

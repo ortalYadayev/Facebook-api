@@ -8,7 +8,9 @@
 
 ## Installation
 
-1. Configure your environment variables: `cp .env.example .env`
+1. Run `npm install -g crypto`
+2. Configure your environment variables: `cp .env.example .env`
+3. Run `yarn generate-jwt-secret` in order to generate new secured JWT secret
 
 ## Syncing migrations
 

@@ -5,7 +5,7 @@ import { User } from '../../entities/user.entity';
 import { NonFunctionProperties } from './types';
 
 class UrlTokenFactory extends BaseFactory<UrlToken> {
-  protected entity = UrlToken;
+  protected Entity = UrlToken;
 
   protected definition(): NonFunctionProperties<UrlToken> {
     return {

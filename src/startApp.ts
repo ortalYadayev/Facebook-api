@@ -1,16 +1,9 @@
 import { createConnection } from 'typeorm';
 import { FastifyInstance } from 'fastify';
-import fastifyCors from 'fastify-cors';
 import createFastifyInstance from './createFastifyInstance';
 
 const startApp = async (): Promise<FastifyInstance> => {
   const app = await createFastifyInstance();
-
-  app.register(fastifyCors, {
-    origin: '*',
-    methods: '*',
-    allowedHeaders: '*',
-  });
 
   await createConnection();
 

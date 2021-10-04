@@ -4,17 +4,25 @@ import BaseFactory from './base_factory';
 import { NonFunctionProperties } from './types';
 
 class UserFactory extends BaseFactory<User> {
-  protected entity = User;
+  protected Entity = User;
 
   protected definition(): NonFunctionProperties<User> {
     return {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      email: faker.internet.email(),
+      email: faker.unique(faker.internet.email),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
       urlTokens: [],
     };
+  }
+
+  protected beforeCreate(
+    parameters: NonFunctionProperties<User>,
+  ): NonFunctionProperties<User> {
+    parameters.password = User.hashPassword(parameters.password as string);
+
+    return parameters;
   }
 
   unverified(): this {
