@@ -52,12 +52,9 @@ const register = (app: FastifyInstance): void => {
         where: { email: payload.email },
       });
       if (existingUser) {
-        if (!existingUser.verifiedAt) {
-          await sendEmailVerification(existingUser);
-        }
-
         return reply.code(422).send({
-          message: 'This email is already being used',
+          message:
+            'This email is already being used, resend verify click here.',
           type: 'email',
         });
       }

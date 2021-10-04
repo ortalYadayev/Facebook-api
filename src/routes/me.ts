@@ -8,9 +8,7 @@ const me = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       const { user } = request;
 
-      return reply.code(200).send({
-        user,
-      });
+      return reply.code(200).send(user);
     },
   });
 };
