@@ -35,7 +35,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   app.register(fastifyCompress);
   app.register(fastifyAuth);
   app.register(fastifyJWT, {
-    secret: process.env.TOKEN_SECRET || '',
+    secret: process.env.JWT_SECRET || '',
   });
   app.register(fastifyCors, {
     origin: process.env.USER_APP_URL,

@@ -1,8 +1,8 @@
-import { Factory, Seeder } from 'typeorm-seeding';
 import { User } from '../../entities/user.entity';
+import { BaseSeeder } from './base_seeder';
 
-export default class UserSeeder implements Seeder {
-  public async run(factory: Factory): Promise<void> {
-    await factory(User)().createMany(1000);
+export default class UserSeeder implements BaseSeeder {
+  public async execute(): Promise<void> {
+    await User.factory().createMany(100);
   }
 }

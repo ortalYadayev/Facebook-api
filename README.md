@@ -9,8 +9,8 @@
 ## Installation
 
 1. Run `npm install -g crypto`
-2. Run `node`, and inside it run `require('crypto').randomBytes(64).toString('hex')` and use it for `TOKEN_SECRET` in .env
-3. Configure your environment variables: `cp .env.example .env`
+2. Configure your environment variables: `cp .env.example .env`
+3. Run `yarn generate-jwt-secret` in order to generate new secured JWT secret
 
 ## Syncing migrations
 

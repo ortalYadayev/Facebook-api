@@ -9,7 +9,9 @@
     "import/no-mutable-exports": "off",
     "no-param-reassign": "off",
     "@typescript-eslint/ban-ts-comment": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "no-plusplus": "off",
+    "no-await-in-loop": "off"
   },
   "overrides": [
     {
