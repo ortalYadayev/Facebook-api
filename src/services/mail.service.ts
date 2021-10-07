@@ -7,7 +7,6 @@ export function sendMail(
   mailOptions: Omit<Mail.Options, 'from'>,
 ): Promise<SMTPTransport.SentMessageInfo> {
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
     host: process.env.MAIL_HOST,
     port: parseInt(process.env.MAIL_PORT || ''),
     auth: {
