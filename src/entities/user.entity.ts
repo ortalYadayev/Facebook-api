@@ -16,11 +16,17 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email!: string;
 
+  @Column({ unique: true })
+  username!: string;
+
   @Column({ select: false })
   password!: string;
 
   @Column({ type: 'datetime', nullable: true })
   verifiedAt!: Date | null;
+
+  @Column({ nullable: true })
+  imageUrl!: string;
 
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
@@ -43,7 +49,19 @@ export class User extends BaseEntity {
     return bcrypt.compareSync(password, encryptedPassword);
   }
 
+  getImageUrlAttribute(): void {
+    let { imageUrl } = this;
+
+    if (!imageUrl) {
+      imageUrl = '/public/assets/images/user.png';
+    }
+
+    this.imageUrl = process.env.APP_URL + imageUrl;
+  }
+
   toJSON(): Partial<User> {
+    this.getImageUrlAttribute();
+
     const user = classToPlain(this);
 
     delete user.password;

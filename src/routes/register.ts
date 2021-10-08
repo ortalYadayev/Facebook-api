@@ -7,6 +7,7 @@ import { sendMail } from '../services/mail.service';
 
 const PayloadSchema = Type.Object({
   firstName: Type.String({ minLength: 2, maxLength: 50 }),
+  username: Type.RegEx(/^[\w]{2,20}$/),
   lastName: Type.String({ minLength: 2, maxLength: 50 }),
   email: Type.String({ format: 'email', maxLength: 255 }),
   password: Type.String({ minLength: 8, maxLength: 255 }),
@@ -63,6 +64,7 @@ const register = (app: FastifyInstance): void => {
       user.firstName = payload.firstName;
       user.lastName = payload.lastName;
       user.email = payload.email;
+      user.username = payload.username;
       user.password = User.hashPassword(payload.password);
       user.verifiedAt = null;
 
