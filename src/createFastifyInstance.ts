@@ -1,11 +1,12 @@
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCompress from 'fastify-compress';
 import fastifyAuth from 'fastify-auth';
+import fastifyJWT from 'fastify-jwt';
+import fastifyCors from 'fastify-cors';
+import fastifyStatic from 'fastify-static';
 import process from 'process';
 import * as dotenv from 'dotenv';
 import path from 'path';
-import fastifyJWT from 'fastify-jwt';
-import fastifyCors from 'fastify-cors';
 import {
   InjectOptions,
   Response as LightMyRequestResponse,
@@ -41,6 +42,10 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
     origin: process.env.USER_APP_URL,
     methods: '*',
     allowedHeaders: '*',
+  });
+  app.register(fastifyStatic, {
+    root: path.join(__dirname, '../public'),
+    prefix: '/storage/',
   });
 
   authMiddleware(app);

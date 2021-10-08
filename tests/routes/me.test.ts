@@ -22,7 +22,7 @@ describe('Me', () => {
     await app.close();
   });
 
-  it('should return user from token', async () => {
+  it.only('should return user from token', async () => {
     const user = await User.factory().create();
 
     const response = await app.loginAs(user).inject({
@@ -30,6 +30,6 @@ describe('Me', () => {
       url: '/me',
     });
 
-    expect(response.json().user).toMatchObject(user.toJSON());
+    expect(response.json()).toMatchObject(user.toJSON());
   });
 });

@@ -32,6 +32,7 @@ describe('Register', () => {
         firstName: 'Ortal',
         lastName: 'Yadaev',
         email: 'ortal@gmail.com',
+        username: 'ortalyad',
         password: 'password',
       },
     });
@@ -94,11 +95,10 @@ describe('Register', () => {
     });
 
     expect(response.statusCode).toBe(422);
-
     expect(await User.count()).toBe(0);
   });
 
-  it("shouldn't register - existing unverified user - should resend verification email", async () => {
+  it("shouldn't register - existing unverified user - shouldn't resend verification email", async () => {
     const user = await User.factory().unverified().create({
       email: 'ortal@gmail.com',
     });
@@ -115,11 +115,6 @@ describe('Register', () => {
     });
 
     expect(response.statusCode).toBe(422);
-
     expect(await User.count()).toBe(1);
-
-    const sentEmails = nodemailerMock.getSentMail();
-    expect(sentEmails.length).toBe(1);
-    expect(sentEmails[0].to).toBe(user.email);
   });
 });

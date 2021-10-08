@@ -11,8 +11,10 @@ class UserFactory extends BaseFactory<User> {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.unique(faker.internet.email),
+      username: faker.unique(faker.internet.userName),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
+      imageUrl: faker.image.people(40, 40),
       urlTokens: [],
     };
   }
@@ -28,6 +30,12 @@ class UserFactory extends BaseFactory<User> {
   unverified(): this {
     return this.addToState({
       verifiedAt: null,
+    });
+  }
+
+  defaultImageUrl(): this {
+    return this.addToState({
+      imageUrl: undefined,
     });
   }
 }
