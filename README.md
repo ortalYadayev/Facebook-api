@@ -11,7 +11,7 @@
 1. Run `npm install -g crypto`
 2. Configure your environment variables: `cp .env.example .env`
 3. Run `yarn generate-jwt-secret` in order to generate new secured JWT secret
-3. Run `yarn create-link` in order to create a public symlink
+4. Run `yarn create-link` in order to create a public symlink
 
 ## Syncing migrations
 

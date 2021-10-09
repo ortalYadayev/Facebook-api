@@ -54,8 +54,9 @@ export class User extends BaseEntity {
 
     if (!imageUrl) {
       imageUrl = '/storage/assets/images/user.png';
-      this.imageUrl = process.env.APP_URL + imageUrl;
     }
+
+    this.imageUrl = process.env.APP_URL + imageUrl;
   }
 
   toJSON(): Partial<User> {

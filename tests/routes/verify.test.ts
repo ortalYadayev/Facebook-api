@@ -23,7 +23,7 @@ describe('Verify', () => {
     await app.close();
   });
 
-  it('should verify the user', async () => {
+  it('should verify the show', async () => {
     const user = await User.factory().unverified().create();
     const urlToken = await UrlToken.factory()
       .emailVerification()
@@ -47,7 +47,7 @@ describe('Verify', () => {
     expect(urlToken.expireAt).toBeNull();
   });
 
-  it('should not verify the user - expired token', async () => {
+  it('should not verify the show - expired token', async () => {
     const user = await User.factory().unverified().create();
     const userVerification = await UrlToken.factory()
       .emailVerification()
@@ -70,7 +70,7 @@ describe('Verify', () => {
     expect(user.verifiedAt).toBeNull();
   });
 
-  it('should not verify the user - token not exists', async () => {
+  it('should not verify the show - token not exists', async () => {
     const user = await User.factory().unverified().create();
 
     const response = await app.inject({
@@ -88,7 +88,7 @@ describe('Verify', () => {
     expect(user.verifiedAt).toBeNull();
   });
 
-  it('should not verify the user - incorrect token', async () => {
+  it('should not verify the show - incorrect token', async () => {
     const user = await User.factory().unverified().create();
     const urlToken = await UrlToken.factory()
       .emailVerification()
@@ -110,7 +110,7 @@ describe('Verify', () => {
     expect(user.verifiedAt).toBeNull();
   });
 
-  it('should not verify the user - the user is already verified', async () => {
+  it('should not verify the show - the show is already verified', async () => {
     const user = await User.factory().create();
     const userVerification = await UrlToken.factory()
       .emailVerification()
