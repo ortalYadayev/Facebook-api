@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import '../authMiddleware';
 
 const me = (app: FastifyInstance): void => {
   app.route({

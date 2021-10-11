@@ -6,12 +6,12 @@ import { User } from '../../entities/user.entity';
 export default class PostSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     await Post.factory()
-      .userFrom(
+      .fromUser(
         await User.findOne({
           where: { id: faker.random.number(100) },
         }),
       )
-      .userTo(
+      .toUser(
         await User.findOne({
           where: { id: faker.random.number(100) },
         }),

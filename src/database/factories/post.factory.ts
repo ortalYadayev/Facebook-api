@@ -10,16 +10,15 @@ class PostFactory extends BaseFactory<Post> {
   protected definition(): NonFunctionProperties<Post> {
     return {
       post: faker.lorem.paragraph(4),
-      uploadDate: faker.date.recent(),
     };
   }
 
-  userFrom(user: User | undefined): this {
-    return this.addToState({ userFrom: user });
+  fromUser(user: User | undefined): this {
+    return this.addToState({ fromUser: user });
   }
 
-  userTo(user: User | undefined): this {
-    return this.addToState({ userTo: user });
+  toUser(user: User | undefined): this {
+    return this.addToState({ toUser: user });
   }
 }
 

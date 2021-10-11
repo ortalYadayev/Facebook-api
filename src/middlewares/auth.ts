@@ -1,4 +1,5 @@
-import { FastifyInstance, preValidationHookHandler } from 'fastify';
+import { FastifyInstance } from 'fastify';
+import '../authMiddleware';
 import { SignPayloadType } from 'fastify-jwt';
 import { User } from '../entities/user.entity';
 
@@ -21,12 +22,6 @@ const authMiddleware = (app: FastifyInstance): void => {
     }
   });
 };
-
-declare module 'fastify' {
-  interface FastifyInstance {
-    authMiddleware: preValidationHookHandler;
-  }
-}
 
 declare module 'fastify-jwt' {
   export interface FastifyJWT {

@@ -22,19 +22,50 @@ describe('Post', () => {
     await app.close();
   });
 
-  it.only('should add post', async () => {
+  it('should add post', async () => {
     const user = await User.factory().create();
 
     const response = await app.inject({
       method: 'post',
       url: '/posts',
+      headers: {
+        Authorization: `Bearer ${app.jwt.sign({ id: user.id })}`,
+      },
       payload: {
         post: 'post',
-        from: user.id,
-        to: user.id,
+        toUser: user,
       },
     });
 
-    expect(response.json()).toMatchObject(user.toJSON());
+    expect(response.statusCode).toBe(201);
+  });
+
+  it('should not add post because there is not post', async () => {
+    const user = await User.factory().create();
+
+    const response = await app.inject({
+      method: 'post',
+      url: '/posts',
+      headers: {
+        Authorization: `Bearer ${app.jwt.sign({ id: user.id })}`,
+      },
+      payload: {
+        toUser: user,
+      },
+    });
+
+    expect(response.statusCode).toBe(422);
+  });
+
+  it('should not add post because there is not a user', async () => {
+    const response = await app.inject({
+      method: 'post',
+      url: '/posts',
+      payload: {
+        post: 'post',
+      },
+    });
+
+    expect(response.statusCode).toBe(401);
   });
 });

@@ -8,14 +8,11 @@ export class Post extends BaseEntity {
   @Column()
   post!: string;
 
-  @ManyToOne(() => User, (user) => user.postsFrom)
-  userFrom!: User;
+  @ManyToOne(() => User, (user) => user.postsFrom, { nullable: false })
+  fromUser!: User;
 
-  @ManyToOne(() => User, (user) => user.postsTo)
-  userTo!: User;
-
-  @Column({ type: 'datetime' })
-  uploadDate!: Date;
+  @ManyToOne(() => User, (user) => user.postsTo, { nullable: false })
+  toUser!: User;
 
   static factory(): PostFactory {
     return new PostFactory();

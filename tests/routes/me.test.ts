@@ -22,7 +22,7 @@ describe('Me', () => {
     await app.close();
   });
 
-  it.only('should return show from token', async () => {
+  it('should return show from token', async () => {
     const user = await User.factory().create();
 
     const response = await app.loginAs(user).inject({

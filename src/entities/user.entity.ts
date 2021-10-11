@@ -32,10 +32,10 @@ export class User extends BaseEntity {
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => Post, (post) => post.userFrom)
+  @OneToMany(() => Post, (post) => post.fromUser)
   postsFrom!: Post[];
 
-  @OneToMany(() => Post, (post) => post.userTo)
+  @OneToMany(() => Post, (post) => post.toUser)
   postsTo!: Post[];
 
   static factory(): UserFactory {

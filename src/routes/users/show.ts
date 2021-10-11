@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { User } from '../../entities/user.entity';
+import '../../authMiddleware';
 
 type ParamsType = { username: string };
 
@@ -7,6 +8,7 @@ const show = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
     url: '/users/:username(^[\\w]{2,20}$)',
     method: 'GET',
+    preValidation: app.authMiddleware,
     handler: async (request, reply) => {
       const { username } = request.params;
 
