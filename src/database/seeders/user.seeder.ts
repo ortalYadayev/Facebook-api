@@ -3,6 +3,6 @@ import { BaseSeeder } from './base_seeder';
 
 export default class UserSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
-    await User.factory().createMany(100);
+    await User.factory().defaultImageUrl().createMany(100);
   }
 }

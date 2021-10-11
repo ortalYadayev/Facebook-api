@@ -4,6 +4,7 @@ import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
+import { Post } from './post.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -30,6 +31,12 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
+
+  @OneToMany(() => Post, (post) => post.userFrom)
+  postsFrom!: Post[];
+
+  @OneToMany(() => Post, (post) => post.userTo)
+  postsTo!: Post[];
 
   static factory(): UserFactory {
     return new UserFactory();
