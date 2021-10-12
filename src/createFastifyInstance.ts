@@ -12,12 +12,14 @@ import {
   Response as LightMyRequestResponse,
 } from 'light-my-request';
 import authMiddleware from './middlewares/auth';
+import getDataByParams from './hooks/getDataByParams';
 import register from './routes/register';
 import verify from './routes/verify';
 import login from './routes/login';
 import me from './routes/me';
 import show from './routes/users/show';
 import { User } from './entities/user.entity';
+import storePost from './routes/users/storePost';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   if (process.env.NODE_ENV !== 'test') {
@@ -49,6 +51,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
     prefix: '/storage/',
   });
 
+  getDataByParams(app);
   authMiddleware(app);
 
   register(app);
@@ -56,6 +59,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   login(app);
   me(app);
   show(app);
+  storePost(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (

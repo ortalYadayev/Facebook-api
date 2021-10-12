@@ -32,11 +32,11 @@ export class User extends BaseEntity {
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => Post, (post) => post.fromUser)
-  postsFrom!: Post[];
+  @OneToMany(() => Post, (post) => post.createdBy)
+  posts!: Post[];
 
-  @OneToMany(() => Post, (post) => post.toUser)
-  postsTo!: Post[];
+  @OneToMany(() => Post, (post) => post.user)
+  relatedPosts!: Post[];
 
   static factory(): UserFactory {
     return new UserFactory();
@@ -71,6 +71,7 @@ export class User extends BaseEntity {
 
     const user = classToPlain(this);
 
+    delete user.id;
     delete user.password;
     delete user.urlTokens;
 

@@ -6,13 +6,13 @@ import { User } from './user.entity';
 @Entity('posts')
 export class Post extends BaseEntity {
   @Column()
-  post!: string;
+  description!: string;
 
-  @ManyToOne(() => User, (user) => user.postsFrom, { nullable: false })
-  fromUser!: User;
+  @ManyToOne(() => User, (user) => user.relatedPosts, { nullable: false })
+  user!: User | undefined;
 
-  @ManyToOne(() => User, (user) => user.postsTo, { nullable: false })
-  toUser!: User;
+  @ManyToOne(() => User, (user) => user.posts, { nullable: false })
+  createdBy!: User | undefined;
 
   static factory(): PostFactory {
     return new PostFactory();

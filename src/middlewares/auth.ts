@@ -10,9 +10,11 @@ const authMiddleware = (app: FastifyInstance): void => {
 
       const { id } = request.user as SignPayloadType;
 
-      request.user = await User.findOneOrFail({
+      request.authUser = await User.findOneOrFail({
         where: { id },
       });
+
+      delete request.user;
 
       done();
     } catch (error) {
@@ -29,6 +31,12 @@ declare module 'fastify-jwt' {
       id: number;
     };
     user: User | undefined;
+  }
+}
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    authUser: User | undefined;
   }
 }
 

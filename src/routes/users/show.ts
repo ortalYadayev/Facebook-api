@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { User } from '../../entities/user.entity';
-import '../../authMiddleware';
+import { UrlToken } from '../../entities/url_token.entity';
+import { Post } from '../../entities/post.entity';
 
 type ParamsType = { username: string };
 
@@ -10,21 +11,15 @@ const show = (app: FastifyInstance): void => {
     method: 'GET',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { username } = request.params;
-
-      try {
-        const user = await User.findOneOrFail({
-          where: {
-            username,
-          },
-        });
-
-        return reply.code(200).send(user);
-      } catch {
-        return reply.code(404).send();
-      }
+      return reply.code(200).send(request.user);
     },
   });
 };
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    user: User | undefined;
+  }
+}
 
 export default show;
