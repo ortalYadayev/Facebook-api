@@ -1,8 +1,6 @@
-import { FastifyInstance, preValidationHookHandler } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
-import { User } from '../../entities/user.entity';
-import { UrlToken } from '../../entities/url_token.entity';
 
 const PayloadSchema = Type.Object({
   description: Type.String({ minLength: 1, maxLength: 255 }),
