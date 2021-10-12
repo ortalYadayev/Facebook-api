@@ -9,7 +9,7 @@ class PostFactory extends BaseFactory<Post> {
 
   protected definition(): NonFunctionProperties<Post> {
     return {
-      description: faker.lorem.paragraph(4),
+      description: faker.lorem.words(10),
     };
   }
 

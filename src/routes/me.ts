@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import '../authMiddleware';
-import { User } from '../entities/user.entity';
+import '../FastifyRequest';
 
 const me = (app: FastifyInstance): void => {
   app.route({
@@ -14,11 +14,5 @@ const me = (app: FastifyInstance): void => {
     },
   });
 };
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    authUser: User | undefined;
-  }
-}
 
 export default me;

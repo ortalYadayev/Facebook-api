@@ -5,6 +5,6 @@ declare module 'fastify-jwt' {
     payload: {
       id: number;
     };
-    authUser: User | undefined;
+    user: User | undefined;
   }
 }

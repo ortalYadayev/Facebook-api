@@ -2,27 +2,28 @@ import { FastifyInstance } from 'fastify';
 import { User } from '../entities/user.entity';
 import { UrlToken } from '../entities/url_token.entity';
 import { Post } from '../entities/post.entity';
+import '../FastifyRequest';
 
 const entities = {
   user: {
     model: User,
     field: 'id',
-    name: 'User',
+    name: 'user',
   },
   username: {
     model: User,
     field: 'username',
-    name: 'User',
+    name: 'user',
   },
   urlToken: {
     model: UrlToken,
     field: 'id',
-    name: 'Url Token',
+    name: 'urlToken',
   },
   post: {
     model: Post,
     field: 'id',
-    name: 'Post',
+    name: 'post',
   },
 };
 
@@ -54,13 +55,5 @@ const getDataByParams = (app: FastifyInstance): void => {
     }
   });
 };
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    user: User | undefined;
-    urlToken: UrlToken | undefined;
-    post: Post | undefined;
-  }
-}
 
 export default getDataByParams;

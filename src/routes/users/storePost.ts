@@ -1,6 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
+import '../../authMiddleware';
+import '../../getDataByParams';
+import '../../FastifyRequest';
 
 const PayloadSchema = Type.Object({
   description: Type.String({ minLength: 1, maxLength: 255 }),
@@ -13,7 +16,8 @@ const storePost = (app: FastifyInstance): void => {
   app.route<{ Body: PayloadType; Params: ParamsType }>({
     url: '/users/:username(^[\\w]{2,20}$)/posts',
     method: 'POST',
-    preValidation: [app.authMiddleware, app.getDataByParams],
+    preValidation: app.authMiddleware,
+    preHandler: app.getDataByParams,
     schema: { body: PayloadSchema },
     handler: async (request, reply) => {
       const payload = request.body;

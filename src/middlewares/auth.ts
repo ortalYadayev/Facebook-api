@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import '../authMiddleware';
 import { SignPayloadType } from 'fastify-jwt';
 import { User } from '../entities/user.entity';
+import '../FastifyRequest';
+import '../FastifyJWT';
 
 const authMiddleware = (app: FastifyInstance): void => {
   app.decorate('authMiddleware', async (request, reply, done) => {
@@ -24,20 +25,5 @@ const authMiddleware = (app: FastifyInstance): void => {
     }
   });
 };
-
-declare module 'fastify-jwt' {
-  export interface FastifyJWT {
-    payload: {
-      id: number;
-    };
-    user: User | undefined;
-  }
-}
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    authUser: User | undefined;
-  }
-}
 
 export default authMiddleware;
