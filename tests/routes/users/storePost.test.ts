@@ -3,7 +3,7 @@ import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Post', () => {
+describe('storePost', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -23,12 +23,12 @@ describe('Post', () => {
   });
 
   it('should add post', async () => {
+    const createdBy = await User.factory().create();
     const user = await User.factory().create();
-    const toUser = await User.factory().create();
 
-    const response = await app.loginAs(user).inject({
+    const response = await app.loginAs(createdBy).inject({
       method: 'POST',
-      url: `/users/${toUser.username}/posts`,
+      url: `/users/${user.username}/posts`,
       payload: {
         description: 'description',
       },

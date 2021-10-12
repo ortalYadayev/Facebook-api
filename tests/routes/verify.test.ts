@@ -23,7 +23,7 @@ describe('Verify', () => {
     await app.close();
   });
 
-  it('should verify the show', async () => {
+  it('should verify the user', async () => {
     const user = await User.factory().unverified().create();
     const urlToken = await UrlToken.factory()
       .emailVerification()

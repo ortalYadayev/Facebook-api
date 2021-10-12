@@ -27,34 +27,29 @@ describe('Show user', () => {
       username: 'username',
     });
 
-    const response = await app.inject({
+    const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: '/users/username',
-      headers: {
-        Authorization: `Bearer ${app.jwt.sign({ id: user.id })}`,
-      },
+      url: `/users/${user.username}`,
     });
+
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchObject(user.toJSON());
   });
 
-  it('should not return a user because he is not exists', async () => {
+  it('should not return a user - not exists user', async () => {
     const user = await User.factory().create();
 
-    const response = await app.inject({
-      method: 'get',
-      url: '/users/username',
-      headers: {
-        Authorization: `Bearer ${app.jwt.sign({ id: user.id })}`,
-      },
+    const response = await app.loginAs(user).inject({
+      method: 'GET',
+      url: '/users/notexist',
     });
 
     expect(response.statusCode).toBe(404);
   });
 
-  it('should not return a user because he is not logged in', async () => {
+  it('should not return a user - not logged in', async () => {
     const response = await app.inject({
-      method: 'get',
+      method: 'GET',
       url: '/users/username',
     });
 
