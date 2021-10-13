@@ -3,7 +3,7 @@ import '../../FastifyRequest';
 
 type ParamsType = { username: string };
 
-const show = (app: FastifyInstance): void => {
+const getUser = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
     url: '/users/:username(^[\\w]{2,20}$)',
     method: 'GET',
@@ -15,4 +15,4 @@ const show = (app: FastifyInstance): void => {
   });
 };
 
-export default show;
+export default getUser;
