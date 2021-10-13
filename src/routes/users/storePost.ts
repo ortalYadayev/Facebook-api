@@ -1,12 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
-import '../../authMiddleware';
-import '../../getDataByParams';
+import '../../preValidationHookHandler';
 import '../../FastifyRequest';
 
 const PayloadSchema = Type.Object({
-  description: Type.String({ minLength: 1, maxLength: 255 }),
+  content: Type.String({ minLength: 1, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
@@ -24,7 +23,7 @@ const storePost = (app: FastifyInstance): void => {
       const { authUser, user } = request;
 
       const post = new Post();
-      post.description = payload.description;
+      post.content = payload.content;
       post.createdBy = authUser;
       post.user = user;
 

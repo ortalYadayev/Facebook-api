@@ -22,41 +22,43 @@ describe('storePost', () => {
     await app.close();
   });
 
-  it('should add post', async () => {
+  it('should add a post', async () => {
     const createdBy = await User.factory().create();
-    const user = await User.factory().create();
+    const username = 'username';
+    await User.factory().create({ username });
 
     const response = await app.loginAs(createdBy).inject({
       method: 'POST',
-      url: `/users/${user.username}/posts`,
+      url: `/users/${username}/posts`,
       payload: {
-        description: 'description',
+        content: 'content',
       },
     });
 
     expect(response.statusCode).toBe(201);
   });
 
-  it('should not add post because there is not post', async () => {
+  it("shouldn't add a post - there is not a content", async () => {
     const user = await User.factory().create();
-    const toUser = await User.factory().create();
+    const username = 'username';
+    await User.factory().create({ username });
 
     const response = await app.loginAs(user).inject({
       method: 'POST',
-      url: `/users/${toUser.username}/posts`,
+      url: `/users/${username}/posts`,
     });
 
     expect(response.statusCode).toBe(422);
   });
 
-  it('should not add post because there is not a user', async () => {
+  it("shouldn't add a post - the user doesn't exist", async () => {
     const user = await User.factory().create();
 
     const response = await app.loginAs(user).inject({
       method: 'POST',
       url: '/users/notexist/posts',
       payload: {
-        description: 'description',
+        content: 'content',
       },
     });
 

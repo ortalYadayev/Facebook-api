@@ -98,7 +98,7 @@ describe('Register', () => {
     expect(await User.count()).toBe(0);
   });
 
-  it("shouldn't register - existing unverified show - shouldn't resend verification email", async () => {
+  it("shouldn't register - existing unverified user - shouldn't resend verification email", async () => {
     const user = await User.factory().unverified().create({
       email: 'ortal@gmail.com',
     });

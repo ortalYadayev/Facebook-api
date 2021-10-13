@@ -23,13 +23,15 @@ describe('Show user', () => {
   });
 
   it('should return a user', async () => {
+    const username = 'username';
+
     const user = await User.factory().create({
-      username: 'username',
+      username,
     });
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/users/${user.username}`,
+      url: `/users/${username}`,
     });
 
     expect(response.statusCode).toBe(200);
@@ -41,13 +43,13 @@ describe('Show user', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: '/users/notexist',
+      url: '/users/invalid',
     });
 
     expect(response.statusCode).toBe(404);
   });
 
-  it('should not return a user - not logged in', async () => {
+  it('should not return a user - not token', async () => {
     const response = await app.inject({
       method: 'GET',
       url: '/users/username',

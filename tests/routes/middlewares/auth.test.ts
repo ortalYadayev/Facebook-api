@@ -47,7 +47,7 @@ describe('Me', () => {
     expect(response.statusCode).toBe(401);
   });
 
-  it('should not return show if the show has removed', async () => {
+  it('should not return a user if the user has removed', async () => {
     const user = await User.factory().create();
 
     await User.delete(user.id);

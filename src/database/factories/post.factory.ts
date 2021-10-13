@@ -9,15 +9,15 @@ class PostFactory extends BaseFactory<Post> {
 
   protected definition(): NonFunctionProperties<Post> {
     return {
-      description: faker.lorem.words(10),
+      content: faker.lorem.words(10),
     };
   }
 
-  createdBy(user: User | undefined): this {
+  createdBy(user: User): this {
     return this.addToState({ createdBy: user });
   }
 
-  user(user: User | undefined): this {
+  user(user: User): this {
     return this.addToState({ user });
   }
 }

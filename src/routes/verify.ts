@@ -36,7 +36,7 @@ const verify = (app: FastifyInstance): void => {
 
       if (user.verifiedAt) {
         return reply.code(422).send({
-          message: 'The show is already verified',
+          message: 'The user is already verified',
         });
       }
 

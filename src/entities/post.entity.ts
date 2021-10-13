@@ -6,7 +6,7 @@ import { User } from './user.entity';
 @Entity('posts')
 export class Post extends BaseEntity {
   @Column()
-  description!: string;
+  content!: string;
 
   @ManyToOne(() => User, (user) => user.relatedPosts, { nullable: false })
   user!: User | undefined;

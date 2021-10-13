@@ -2,7 +2,6 @@ import { FastifyInstance } from 'fastify';
 import { User } from '../entities/user.entity';
 import { UrlToken } from '../entities/url_token.entity';
 import { Post } from '../entities/post.entity';
-import '../FastifyRequest';
 
 const entities = {
   user: {

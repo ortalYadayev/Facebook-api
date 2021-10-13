@@ -25,6 +25,7 @@ const login = (app: FastifyInstance): void => {
           'lastName',
           'email',
           'username',
+          'profilePicturePath',
           'password',
           'verifiedAt',
         ],

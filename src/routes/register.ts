@@ -7,8 +7,8 @@ import { sendMail } from '../services/mail.service';
 
 const PayloadSchema = Type.Object({
   firstName: Type.String({ minLength: 2, maxLength: 50 }),
-  username: Type.RegEx(/^[\w]{2,20}$/),
   lastName: Type.String({ minLength: 2, maxLength: 50 }),
+  username: Type.RegEx(/^[\w]{2,20}$/),
   email: Type.String({ format: 'email', maxLength: 255 }),
   password: Type.String({ minLength: 8, maxLength: 255 }),
 });

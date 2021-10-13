@@ -8,16 +8,16 @@ import { Post } from './post.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
-  @Column()
+  @Column({ length: 50 })
   firstName!: string;
 
-  @Column()
+  @Column({ length: 50 })
   lastName!: string;
 
   @Column({ unique: true })
   email!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 20 })
   username!: string;
 
   @Column({ select: false })
@@ -27,7 +27,7 @@ export class User extends BaseEntity {
   verifiedAt!: Date | null;
 
   @Column({ nullable: true })
-  imageUrl!: string;
+  profilePicturePath!: string;
 
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
@@ -56,18 +56,17 @@ export class User extends BaseEntity {
     return bcrypt.compareSync(password, encryptedPassword);
   }
 
-  getImageUrlAttribute(): void {
-    let { imageUrl } = this;
+  getProfilePicturePathAttribute(): void {
+    let { profilePicturePath } = this;
 
-    if (!imageUrl) {
-      imageUrl = '/storage/assets/images/user.png';
+    if (!profilePicturePath) {
+      profilePicturePath = '/storage/assets/images/user.png';
+      this.profilePicturePath = process.env.APP_URL + profilePicturePath;
     }
-
-    this.imageUrl = process.env.APP_URL + imageUrl;
   }
 
   toJSON(): Partial<User> {
-    this.getImageUrlAttribute();
+    this.getProfilePicturePathAttribute();
 
     const user = classToPlain(this);
 

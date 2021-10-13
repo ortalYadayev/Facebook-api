@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import '../authMiddleware';
 import '../FastifyRequest';
+import '../preValidationHookHandler';
 
 const me = (app: FastifyInstance): void => {
   app.route({

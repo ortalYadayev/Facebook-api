@@ -1,7 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import '../../FastifyRequest';
-import '../../getDataByParams';
-import '../../authMiddleware';
 
 type ParamsType = { username: string };
 
