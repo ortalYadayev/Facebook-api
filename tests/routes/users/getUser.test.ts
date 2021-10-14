@@ -3,7 +3,7 @@ import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Show user', () => {
+describe('Get user', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

@@ -17,7 +17,7 @@ import register from './routes/register';
 import verify from './routes/verify';
 import login from './routes/login';
 import me from './routes/me';
-import show from './routes/users/show';
+import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
 
@@ -58,7 +58,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   verify(app);
   login(app);
   me(app);
-  show(app);
+  getUser(app);
   storePost(app);
 
   if (process.env.NODE_ENV === 'test') {
