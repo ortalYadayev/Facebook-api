@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { SignPayloadType } from 'fastify-jwt';
 import { User } from '../entities/user.entity';
-import '../FastifyJWT';
+import '../fasify-jwt';
 
 const authMiddleware = (app: FastifyInstance): void => {
   app.decorate('authMiddleware', async (request, reply, done) => {
@@ -10,11 +10,9 @@ const authMiddleware = (app: FastifyInstance): void => {
 
       const { id } = request.user as SignPayloadType;
 
-      request.authUser = await User.findOneOrFail({
+      request.user = await User.findOneOrFail({
         where: { id },
       });
-
-      delete request.user;
 
       done();
     } catch (error) {

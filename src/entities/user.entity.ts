@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
@@ -27,7 +27,9 @@ export class User extends BaseEntity {
   verifiedAt!: Date | null;
 
   @Column({ nullable: true })
-  profilePicturePath!: string;
+  profilePicturePath!: string | null;
+
+  profilePictureUrl!: string | null;
 
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
@@ -56,18 +58,17 @@ export class User extends BaseEntity {
     return bcrypt.compareSync(password, encryptedPassword);
   }
 
-  getProfilePicturePathAttribute(): void {
-    let { profilePicturePath } = this;
-
-    if (!profilePicturePath) {
-      profilePicturePath = '/storage/assets/images/user.png';
-      this.profilePicturePath = process.env.APP_URL + profilePicturePath;
+  @AfterLoad()
+  setComputedProperties(): void {
+    if (!this.profilePicturePath) {
+      this.profilePictureUrl = null;
+    } else {
+      // check if is url
+      this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePicturePath}`;
     }
   }
 
   toJSON(): Partial<User> {
-    this.getProfilePicturePathAttribute();
-
     const user = classToPlain(this);
 
     delete user.id;

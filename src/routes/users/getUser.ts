@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import '../../FastifyRequest';
+import { User } from '../../entities/user.entity';
 
 type ParamsType = { username: string };
 
@@ -10,7 +10,13 @@ const getUser = (app: FastifyInstance): void => {
     preValidation: app.authMiddleware,
     preHandler: app.getDataByParams,
     handler: async (request, reply) => {
-      return reply.code(200).send(request.user);
+      const user = await User.findOne({
+        where: {
+          username: request.params.username,
+        },
+      });
+
+      return reply.code(200).send(user);
     },
   });
 };

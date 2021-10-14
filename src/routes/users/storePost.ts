@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
 import '../../preValidationHookHandler';
-import '../../FastifyRequest';
+import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
   content: Type.String({ minLength: 1, maxLength: 255 }),
@@ -20,11 +20,22 @@ const storePost = (app: FastifyInstance): void => {
     schema: { body: PayloadSchema },
     handler: async (request, reply) => {
       const payload = request.body;
-      const { authUser, user } = request;
+
+      let user: User;
+
+      try {
+        user = await User.findOneOrFail({
+          where: {
+            username: request.params.username,
+          },
+        });
+      } catch (error) {
+        return reply.code(404).send("User doesn't exists");
+      }
 
       const post = new Post();
       post.content = payload.content;
-      post.createdBy = authUser;
+      post.createdBy = request.user;
       post.user = user;
 
       await post.save();
