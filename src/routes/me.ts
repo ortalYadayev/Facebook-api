@@ -1,6 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import '../FastifyRequest';
-import '../preValidationHookHandler';
 
 const me = (app: FastifyInstance): void => {
   app.route({
@@ -8,9 +6,9 @@ const me = (app: FastifyInstance): void => {
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { authUser } = request;
+      const { user } = request;
 
-      return reply.code(200).send(authUser);
+      return reply.code(200).send(user);
     },
   });
 };

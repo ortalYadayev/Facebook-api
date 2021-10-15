@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import '../../FastifyRequest';
 
 type ParamsType = { username: string };
 
@@ -8,7 +7,6 @@ const getUser = (app: FastifyInstance): void => {
     url: '/users/:username(^[\\w]{2,20}$)',
     method: 'GET',
     preValidation: app.authMiddleware,
-    preHandler: app.getDataByParams,
     handler: async (request, reply) => {
       return reply.code(200).send(request.user);
     },

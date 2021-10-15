@@ -3,7 +3,6 @@ import fastifyCompress from 'fastify-compress';
 import fastifyAuth from 'fastify-auth';
 import fastifyJWT from 'fastify-jwt';
 import fastifyCors from 'fastify-cors';
-import fastifyStatic from 'fastify-static';
 import process from 'process';
 import * as dotenv from 'dotenv';
 import path from 'path';
@@ -11,8 +10,7 @@ import {
   InjectOptions,
   Response as LightMyRequestResponse,
 } from 'light-my-request';
-import authMiddleware from './middlewares/auth';
-import getDataByParams from './hooks/getDataByParams';
+import authMiddleware from './middlewares/auth.middleware';
 import register from './routes/register';
 import verify from './routes/verify';
 import login from './routes/login';
@@ -46,12 +44,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
     methods: '*',
     allowedHeaders: '*',
   });
-  app.register(fastifyStatic, {
-    root: path.join(__dirname, '../public'),
-    prefix: '/storage/',
-  });
 
-  getDataByParams(app);
   authMiddleware(app);
 
   register(app);

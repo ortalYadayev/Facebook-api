@@ -1,10 +1,10 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
-import { Post } from './post.entity';
+import { StorePost } from './storePost.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -29,14 +29,16 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   profilePicturePath!: string;
 
+  profilePictureUrl!: string | undefined;
+
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => Post, (post) => post.createdBy)
-  posts!: Post[];
+  @OneToMany(() => StorePost, (storePost) => storePost.createdBy)
+  posts!: StorePost[];
 
-  @OneToMany(() => Post, (post) => post.user)
-  relatedPosts!: Post[];
+  @OneToMany(() => StorePost, (storePost) => storePost.user)
+  relatedPosts!: StorePost[];
 
   static factory(): UserFactory {
     return new UserFactory();
@@ -56,18 +58,17 @@ export class User extends BaseEntity {
     return bcrypt.compareSync(password, encryptedPassword);
   }
 
-  getProfilePicturePathAttribute(): void {
-    let { profilePicturePath } = this;
-
-    if (!profilePicturePath) {
-      profilePicturePath = '/storage/assets/images/user.png';
-      this.profilePicturePath = process.env.APP_URL + profilePicturePath;
+  @AfterLoad()
+  setComputedProperties(): void {
+    if (!this.profilePicturePath) {
+      this.profilePictureUrl = undefined;
+    } else {
+      // check if is url
+      this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePicturePath}`;
     }
   }
 
   toJSON(): Partial<User> {
-    this.getProfilePicturePathAttribute();
-
     const user = classToPlain(this);
 
     delete user.id;
