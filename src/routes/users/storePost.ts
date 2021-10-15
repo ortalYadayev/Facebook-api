@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
-import { Post } from '../../entities/post.entity';
-import '../../preValidationHookHandler';
+import { StorePost } from '../../entities/storePost.entity';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
@@ -16,7 +15,6 @@ const storePost = (app: FastifyInstance): void => {
     url: '/users/:username(^[\\w]{2,20}$)/posts',
     method: 'POST',
     preValidation: app.authMiddleware,
-    preHandler: app.getDataByParams,
     schema: { body: PayloadSchema },
     handler: async (request, reply) => {
       const payload = request.body;
@@ -33,7 +31,7 @@ const storePost = (app: FastifyInstance): void => {
         return reply.code(404).send("User doesn't exists");
       }
 
-      const post = new Post();
+      const post = new StorePost();
       post.content = payload.content;
       post.createdBy = request.user;
       post.user = user;

@@ -1,14 +1,12 @@
 import { FastifyInstance } from 'fastify';
-import { SignPayloadType } from 'fastify-jwt';
 import { User } from '../entities/user.entity';
-import '../fasify-jwt';
 
 const authMiddleware = (app: FastifyInstance): void => {
   app.decorate('authMiddleware', async (request, reply, done) => {
     try {
       await request.jwtVerify();
 
-      const { id } = request.user as SignPayloadType;
+      const { id } = request.user;
 
       request.user = await User.findOneOrFail({
         where: { id },

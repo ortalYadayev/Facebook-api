@@ -1,10 +1,10 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
-import PostFactory from '../database/factories/post.factory';
+import StorePostFactory from '../database/factories/storePost.factory';
 import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
 
-@Entity('posts')
-export class Post extends BaseEntity {
+@Entity('store_posts')
+export class StorePost extends BaseEntity {
   @Column()
   content!: string;
 
@@ -14,7 +14,7 @@ export class Post extends BaseEntity {
   @ManyToOne(() => User, (user) => user.posts, { nullable: false })
   createdBy!: User | undefined;
 
-  static factory(): PostFactory {
-    return new PostFactory();
+  static factory(): StorePostFactory {
+    return new StorePostFactory();
   }
 }

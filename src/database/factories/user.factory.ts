@@ -32,12 +32,6 @@ class UserFactory extends BaseFactory<User> {
       verifiedAt: null,
     });
   }
-
-  removeProfilePicturePath(): this {
-    return this.addToState({
-      profilePicturePath: undefined,
-    });
-  }
 }
 
 export default UserFactory;

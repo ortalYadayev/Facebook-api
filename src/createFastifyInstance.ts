@@ -11,13 +11,12 @@ import {
   InjectOptions,
   Response as LightMyRequestResponse,
 } from 'light-my-request';
-import authMiddleware from './middlewares/auth';
-import getDataByParams from './hooks/getDataByParams';
+import authMiddleware from './middlewares/auth.middleware';
 import register from './routes/register';
 import verify from './routes/verify';
 import login from './routes/login';
 import me from './routes/me';
-import show from './routes/users/show';
+import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
 
@@ -46,19 +45,18 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
     methods: '*',
     allowedHeaders: '*',
   });
-  app.register(fastifyStatic, {
-    root: path.join(__dirname, '../public'),
-    prefix: '/storage/',
-  });
+  // app.register(fastifyStatic, {
+  //   root: path.join(__dirname, '../public'),
+  //   prefix: '/storage/',
+  // });
 
-  getDataByParams(app);
   authMiddleware(app);
 
   register(app);
   verify(app);
   login(app);
   me(app);
-  show(app);
+  getUser(app);
   storePost(app);
 
   if (process.env.NODE_ENV === 'test') {

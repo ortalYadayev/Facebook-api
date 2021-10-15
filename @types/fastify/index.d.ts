@@ -1,8 +1,7 @@
-import { preValidationHookHandler } from 'fastify';
+import 'fastify';
 
 declare module 'fastify' {
   interface FastifyInstance {
     authMiddleware: preValidationHookHandler;
-    getDataByParams: preValidationHookHandler;
   }
 }

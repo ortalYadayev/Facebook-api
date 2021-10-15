@@ -4,7 +4,7 @@ import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
-import { Post } from './post.entity';
+import { StorePost } from './storePost.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -27,18 +27,18 @@ export class User extends BaseEntity {
   verifiedAt!: Date | null;
 
   @Column({ nullable: true })
-  profilePicturePath!: string | null;
+  profilePicturePath!: string;
 
-  profilePictureUrl!: string | null;
+  profilePictureUrl!: string | undefined;
 
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => Post, (post) => post.createdBy)
-  posts!: Post[];
+  @OneToMany(() => StorePost, (storePost) => storePost.createdBy)
+  posts!: StorePost[];
 
-  @OneToMany(() => Post, (post) => post.user)
-  relatedPosts!: Post[];
+  @OneToMany(() => StorePost, (storePost) => storePost.user)
+  relatedPosts!: StorePost[];
 
   static factory(): UserFactory {
     return new UserFactory();
@@ -61,7 +61,7 @@ export class User extends BaseEntity {
   @AfterLoad()
   setComputedProperties(): void {
     if (!this.profilePicturePath) {
-      this.profilePictureUrl = null;
+      this.profilePictureUrl = undefined;
     } else {
       // check if is url
       this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePicturePath}`;

@@ -8,7 +8,6 @@ const getUser = (app: FastifyInstance): void => {
     url: '/users/:username(^[\\w]{2,20}$)',
     method: 'GET',
     preValidation: app.authMiddleware,
-    preHandler: app.getDataByParams,
     handler: async (request, reply) => {
       const user = await User.findOne({
         where: {

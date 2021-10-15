@@ -1,12 +1,12 @@
 import { createConnection } from 'typeorm';
+import StorePostSeeder from '../database/seeders/storePost.seeder';
 import UserSeeder from '../database/seeders/user.seeder';
-import PostSeeder from '../database/seeders/post.seeder';
 
 const seed = async (): Promise<void> => {
   const connection = await createConnection();
 
   await new UserSeeder().execute();
-  await new PostSeeder().execute();
+  await new StorePostSeeder().execute();
 
   await connection.close();
 };

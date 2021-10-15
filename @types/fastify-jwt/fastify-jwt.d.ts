@@ -1,4 +1,4 @@
-import { User } from './entities/user.entity';
+import { User } from '../../src/entities/user.entity';
 
 declare module 'fastify-jwt' {
   export interface FastifyJWT {
