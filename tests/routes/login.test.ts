@@ -41,54 +41,52 @@ describe('Login', () => {
       id: user.id,
     });
   });
+  describe("shouldn't login", () => {
+    it("the email doesn't exist", async () => {
+      const password = 'password';
 
-  it("should not login if the email doesn't exist", async () => {
-    const password = 'password';
-    await User.factory().create({
-      email: 'ortal@gmail.com',
-      password,
+      const response = await app.inject({
+        method: 'post',
+        url: '/login',
+        payload: {
+          email: 'incorrect@gmail.com',
+          password,
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
     });
 
-    const response = await app.inject({
-      method: 'post',
-      url: '/login',
-      payload: {
-        email: 'incorrect@gmail.com',
-        password,
-      },
+    it("the email isn't verified", async () => {
+      const password = 'password';
+      const user = await User.factory().unverified().create({ password });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/login',
+        payload: {
+          email: user.email,
+          password,
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
     });
 
-    expect(response.statusCode).toBe(422);
-  });
+    it('password is incorrect', async () => {
+      const password = 'password';
+      const user = await User.factory().create({ password });
 
-  it("should not login if the email isn't verified", async () => {
-    const password = 'password';
-    const user = await User.factory().unverified().create({ password });
+      const response = await app.inject({
+        method: 'post',
+        url: '/login',
+        payload: {
+          email: user.email,
+          password: 'incorrect',
+        },
+      });
 
-    const response = await app.inject({
-      method: 'post',
-      url: '/login',
-      payload: {
-        email: user.email,
-        password,
-      },
+      expect(response.statusCode).toBe(422);
     });
-
-    expect(response.statusCode).toBe(422);
-  });
-
-  it('should not login if password is incorrect', async () => {
-    const user = await User.factory().create({ password: 'password' });
-
-    const response = await app.inject({
-      method: 'post',
-      url: '/login',
-      payload: {
-        email: user.email,
-        password: 'incorrect',
-      },
-    });
-
-    expect(response.statusCode).toBe(422);
   });
 });

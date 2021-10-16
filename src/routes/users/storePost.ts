@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { StorePost } from '../../entities/storePost.entity';
 import { User } from '../../entities/user.entity';
@@ -19,10 +19,12 @@ const storePost = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       const payload = request.body;
 
-      let user: User;
+      const { user } = request;
+
+      let toUser: User;
 
       try {
-        user = await User.findOneOrFail({
+        toUser = await User.findOneOrFail({
           where: {
             username: request.params.username,
           },
@@ -33,8 +35,8 @@ const storePost = (app: FastifyInstance): void => {
 
       const post = new StorePost();
       post.content = payload.content;
-      post.createdBy = request.user;
-      post.user = user;
+      post.createdBy = user;
+      post.user = toUser;
 
       await post.save();
 

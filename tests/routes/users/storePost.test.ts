@@ -3,7 +3,7 @@ import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { User } from '../../../src/entities/user.entity';
 
-describe('storePost', () => {
+describe('Store Ppost', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -38,30 +38,32 @@ describe('storePost', () => {
     expect(response.statusCode).toBe(201);
   });
 
-  it("shouldn't add a post - there is not a content", async () => {
-    const user = await User.factory().create();
-    const username = 'username';
-    await User.factory().create({ username });
+  describe("shouldn't add a post", () => {
+    it('there is not a content', async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      await User.factory().create({ username });
 
-    const response = await app.loginAs(user).inject({
-      method: 'POST',
-      url: `/users/${username}/posts`,
+      const response = await app.loginAs(user).inject({
+        method: 'POST',
+        url: `/users/${username}/posts`,
+      });
+
+      expect(response.statusCode).toBe(422);
     });
 
-    expect(response.statusCode).toBe(422);
-  });
+    it("the user doesn't exist", async () => {
+      const user = await User.factory().create();
 
-  it("shouldn't add a post - the user doesn't exist", async () => {
-    const user = await User.factory().create();
+      const response = await app.loginAs(user).inject({
+        method: 'POST',
+        url: '/users/notexist/posts',
+        payload: {
+          content: 'content',
+        },
+      });
 
-    const response = await app.loginAs(user).inject({
-      method: 'POST',
-      url: '/users/notexist/posts',
-      payload: {
-        content: 'content',
-      },
+      expect(response.statusCode).toBe(404);
     });
-
-    expect(response.statusCode).toBe(404);
   });
 });

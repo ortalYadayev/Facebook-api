@@ -67,7 +67,6 @@
     "format": "prettier --config .prettierrc '**/*.(ts|js|json|md)' --write",
     "lint": "eslint . --ext=ts --fix",
     "generate-jwt-secret": "ts-node src/commands/generateJwtSecret.ts",
-    "create-symlink": "ts-node src/commands/createSymlink.ts",
     "prepare": "husky install"
   }
 }

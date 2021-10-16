@@ -37,9 +37,6 @@ describe('Register', () => {
       },
     });
 
-    expect(response.statusCode).toBe(201);
-    expect(await User.count()).toBe(1);
-
     const user = (await User.findOne({
       select: ['email', 'verifiedAt', 'password'],
       where: {
@@ -49,6 +46,8 @@ describe('Register', () => {
       },
     })) as User;
 
+    expect(response.statusCode).toBe(201);
+    expect(await User.count()).toBe(1);
     expect(user).not.toBeNull();
     expect(User.comparePasswords('password', user.password)).toBeTruthy();
 
@@ -59,62 +58,66 @@ describe('Register', () => {
     expect(user.verifiedAt).toBeNull();
   });
 
-  it("shouldn't register - existing verified email - shouldn't resend verification email", async () => {
-    const user = await User.factory().create({
-      email: 'ortal@gmail.com',
+  describe("shouldn't register", () => {
+    it("existing verified email - shouldn't resend verification email", async () => {
+      const email = 'ortal@gmail.com';
+      await User.factory().create({ email });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email,
+          password: 'password',
+          username: 'ortalyad',
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(1);
+      expect(nodemailerMock.getSentMail().length).toBe(0);
     });
 
-    const response = await app.inject({
-      method: 'post',
-      url: '/register',
-      payload: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: user.email,
-        password: 'password',
-      },
+    it("existing unverified user - shouldn't resend verification email", async () => {
+      const email = 'ortal@gmail.com';
+      await User.factory().unverified().create({
+        email,
+      });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email,
+          password: 'password',
+          username: 'ortalyad',
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(1);
+      expect(nodemailerMock.getSentMail().length).toBe(0);
     });
 
-    expect(response.statusCode).toBe(422);
+    it('invalid email', async () => {
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email: 'invalid-email',
+          password: 'password',
+          username: 'ortalyad',
+        },
+      });
 
-    expect(await User.count()).toBe(1);
-
-    expect(nodemailerMock.getSentMail().length).toBe(0);
-  });
-
-  it("shouldn't register - invalid email", async () => {
-    const response = await app.inject({
-      method: 'post',
-      url: '/register',
-      payload: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: 'invalid-email',
-        password: 'password',
-      },
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(0);
     });
-
-    expect(response.statusCode).toBe(422);
-    expect(await User.count()).toBe(0);
-  });
-
-  it("shouldn't register - existing unverified user - shouldn't resend verification email", async () => {
-    const user = await User.factory().unverified().create({
-      email: 'ortal@gmail.com',
-    });
-
-    const response = await app.inject({
-      method: 'post',
-      url: '/register',
-      payload: {
-        firstName: 'Ortal',
-        lastName: 'Yadaev',
-        email: user.email,
-        password: 'password',
-      },
-    });
-
-    expect(response.statusCode).toBe(422);
-    expect(await User.count()).toBe(1);
   });
 });
