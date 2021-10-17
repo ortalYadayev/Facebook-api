@@ -24,7 +24,7 @@ describe('Get user', () => {
 
   it('should return a user', async () => {
     const username = 'username';
-    const user = await User.factory().create({
+    const user = await User.factory().removeProfilePicturePath().create({
       username,
     });
 

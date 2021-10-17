@@ -35,7 +35,7 @@ class UserFactory extends BaseFactory<User> {
 
   removeProfilePicturePath(): this {
     return this.addToState({
-      profilePicturePath: undefined,
+      profilePictureUrl: undefined,
     });
   }
 }
