@@ -19,12 +19,10 @@ import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
 
+const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
+
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
-  if (process.env.NODE_ENV !== 'test') {
-    dotenv.config({ path: path.resolve(__dirname, '../.env') });
-  } else {
-    dotenv.config({ path: path.resolve(__dirname, '../.env.test') });
-  }
+  dotenv.config({ path: path.resolve(__dirname, envFile) });
 
   const app = fastify();
 
