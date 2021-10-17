@@ -25,14 +25,10 @@ export default class StorePostSeeder implements BaseSeeder {
 
       const toUserIndex = randomExcluded(1, users.length - 1, fromUserKey);
 
-      try {
-        await StorePost.factory()
-          .createdBy(users[fromUserKey])
-          .user(users[toUserIndex])
-          .create();
-      } catch (error) {
-        console.log(error);
-      }
+      await StorePost.factory()
+        .createdBy(users[fromUserKey])
+        .user(users[toUserIndex])
+        .create();
     }
   }
 }
