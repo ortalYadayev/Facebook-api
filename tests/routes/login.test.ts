@@ -24,7 +24,9 @@ describe('Login', () => {
 
   it('should login', async () => {
     const password = 'password';
-    const user = await User.factory().create({ password });
+    const user = await User.factory()
+      .removeProfilePicturePath()
+      .create({ password });
 
     const response = await app.inject({
       method: 'post',

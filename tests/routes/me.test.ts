@@ -23,7 +23,7 @@ describe('Me', () => {
   });
 
   it('should return user from token', async () => {
-    const user = await User.factory().create();
+    const user = await User.factory().removeProfilePicturePath().create();
 
     const response = await app.loginAs(user).inject({
       method: 'post',
