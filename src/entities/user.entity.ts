@@ -1,6 +1,7 @@
 import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
+import { parse } from 'url';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
@@ -62,8 +63,7 @@ export class User extends BaseEntity {
   setComputedProperties(): void {
     if (!this.profilePicturePath) {
       this.profilePictureUrl = undefined;
-    } else {
-      // check if is url
+    } else if (!parse(this.profilePicturePath).slashes) {
       this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePicturePath}`;
     }
   }

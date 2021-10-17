@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { StorePost } from '../../entities/storePost.entity';
 import { User } from '../../entities/user.entity';

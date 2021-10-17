@@ -14,7 +14,7 @@ class UserFactory extends BaseFactory<User> {
       username: faker.unique(faker.internet.userName).substring(0, 20),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
-      profilePicturePath: faker.internet.avatar(),
+      profilePictureUrl: faker.internet.avatar(),
       urlTokens: [],
     };
   }
@@ -30,6 +30,12 @@ class UserFactory extends BaseFactory<User> {
   unverified(): this {
     return this.addToState({
       verifiedAt: null,
+    });
+  }
+
+  removeProfilePicturePath(): this {
+    return this.addToState({
+      profilePicturePath: undefined,
     });
   }
 }
