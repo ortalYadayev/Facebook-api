@@ -25,11 +25,12 @@ const getUser = (app: FastifyInstance): void => {
       }
 
       const usersFound = users.filter((user) => {
-        const found = names.filter(
-          (name) => user.firstName === name || user.lastName === name,
+        const namesFound = names.filter(
+          (name) =>
+            user.firstName.includes(name) || user.lastName.includes(name),
         );
 
-        return found.length;
+        return namesFound.length;
       });
 
       if (usersFound.length) {
