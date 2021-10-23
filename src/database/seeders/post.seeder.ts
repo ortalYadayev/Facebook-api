@@ -1,6 +1,6 @@
 import { BaseSeeder } from './base_seeder';
 import { User } from '../../entities/user.entity';
-import { StorePost } from '../../entities/storePost.entity';
+import { Post } from '../../entities/post.entity';
 
 function random(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
@@ -16,7 +16,7 @@ function randomExcluded(min: number, max: number, excluded: number): number {
   return number;
 }
 
-export default class StorePostSeeder implements BaseSeeder {
+export default class PostSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
 
@@ -25,7 +25,7 @@ export default class StorePostSeeder implements BaseSeeder {
 
       const toUserIndex = randomExcluded(1, users.length - 1, fromUserKey);
 
-      await StorePost.factory()
+      await Post.factory()
         .createdBy(users[fromUserKey])
         .user(users[toUserIndex])
         .create();

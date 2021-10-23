@@ -2,12 +2,12 @@ import * as faker from 'faker';
 import BaseFactory from './base_factory';
 import { User } from '../../entities/user.entity';
 import { NonFunctionProperties } from './types';
-import { StorePost } from '../../entities/storePost.entity';
+import { Post } from '../../entities/post.entity';
 
-class StorePostFactory extends BaseFactory<StorePost> {
-  protected Entity = StorePost;
+class PostFactory extends BaseFactory<Post> {
+  protected Entity = Post;
 
-  protected definition(): NonFunctionProperties<StorePost> {
+  protected definition(): NonFunctionProperties<Post> {
     return {
       content: faker.lorem.words(10),
     };
@@ -22,4 +22,4 @@ class StorePostFactory extends BaseFactory<StorePost> {
   }
 }
 
-export default StorePostFactory;
+export default PostFactory;

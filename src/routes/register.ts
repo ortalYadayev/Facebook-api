@@ -49,14 +49,26 @@ const register = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       const payload = request.body;
 
-      const existingUser = await User.findOne({
+      const existingUserByEmail = await User.findOne({
         where: { email: payload.email },
       });
-      if (existingUser) {
+
+      if (existingUserByEmail) {
         return reply.code(422).send({
           message:
             'This email is already being used, resend verify click here.',
           type: 'email',
+        });
+      }
+
+      const existingUserByUsername = await User.findOne({
+        where: { username: payload.username },
+      });
+
+      if (existingUserByUsername) {
+        return reply.code(422).send({
+          message: 'This username is already being used.',
+          type: 'username',
         });
       }
 

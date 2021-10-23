@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
-import { StorePost } from '../../entities/storePost.entity';
+import { Post } from '../../entities/post.entity';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
@@ -33,7 +33,7 @@ const storePost = (app: FastifyInstance): void => {
         return reply.code(404).send("User doesn't exists");
       }
 
-      const post = new StorePost();
+      const post = new Post();
       post.content = payload.content;
       post.createdBy = user;
       post.user = toUser;

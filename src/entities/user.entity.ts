@@ -5,7 +5,7 @@ import { parse } from 'url';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
-import { StorePost } from './storePost.entity';
+import { Post } from './post.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -35,11 +35,11 @@ export class User extends BaseEntity {
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => StorePost, (storePost) => storePost.createdBy)
-  posts!: StorePost[];
+  @OneToMany(() => Post, (post) => post.createdBy)
+  posts!: Post[];
 
-  @OneToMany(() => StorePost, (storePost) => storePost.user)
-  relatedPosts!: StorePost[];
+  @OneToMany(() => Post, (post) => post.user)
+  relatedPosts!: Post[];
 
   static factory(): UserFactory {
     return new UserFactory();
