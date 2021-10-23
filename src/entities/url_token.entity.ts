@@ -25,7 +25,7 @@ export class UrlToken extends BaseEntity {
   @ManyToOne(() => User, (user) => user.urlTokens)
   user!: User;
 
-  public static generateRandomToken(): string {
+  static generateRandomToken(): string {
     return uuid4();
   }
 

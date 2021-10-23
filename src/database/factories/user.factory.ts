@@ -8,11 +8,13 @@ class UserFactory extends BaseFactory<User> {
 
   protected definition(): NonFunctionProperties<User> {
     return {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
+      firstName: faker.name.firstName(50),
+      lastName: faker.name.lastName(50),
       email: faker.unique(faker.internet.email),
+      username: faker.unique(faker.internet.userName).substring(0, 20),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
+      profilePictureUrl: faker.internet.avatar(),
       urlTokens: [],
     };
   }
@@ -28,6 +30,12 @@ class UserFactory extends BaseFactory<User> {
   unverified(): this {
     return this.addToState({
       verifiedAt: null,
+    });
+  }
+
+  removeProfilePicturePath(): this {
+    return this.addToState({
+      profilePictureUrl: undefined,
     });
   }
 }

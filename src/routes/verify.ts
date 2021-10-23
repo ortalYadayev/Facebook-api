@@ -48,6 +48,8 @@ const verify = (app: FastifyInstance): void => {
 
       await urlToken.save();
 
+      // @TODO Need to redirect to login
+
       return reply.code(200).send();
     },
   });
