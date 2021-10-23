@@ -24,11 +24,11 @@ describe('Search', () => {
 
   describe('should return a user', () => {
     it('by first name', async () => {
-      const user1 = await User.factory().create();
+      const user = await User.factory().create();
       const firstName = 'name';
-      const user2 = await User.factory().create({ firstName });
+      await User.factory().create({ firstName });
 
-      const response = await app.loginAs(user1).inject({
+      const response = await app.loginAs(user).inject({
         method: 'POST',
         url: `/search`,
         payload: {
@@ -37,15 +37,17 @@ describe('Search', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toMatchObject(user2.toJSON());
+      expect(response.json()).toEqual(
+        expect.arrayContaining([expect.objectContaining({ firstName })]),
+      );
     });
 
     it('by last name', async () => {
-      const user1 = await User.factory().create();
+      const user = await User.factory().create();
       const lastName = 'name';
-      const user2 = await User.factory().create({ lastName });
+      await User.factory().create({ lastName });
 
-      const response = await app.loginAs(user1).inject({
+      const response = await app.loginAs(user).inject({
         method: 'POST',
         url: `/search`,
         payload: {
@@ -54,18 +56,20 @@ describe('Search', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toMatchObject(user2.toJSON());
+      expect(response.json()).toEqual(
+        expect.arrayContaining([expect.objectContaining({ lastName })]),
+      );
     });
   });
 
   it('should return users', async () => {
-    const user1 = await User.factory().create();
+    const user = await User.factory().create();
     const firstName = 'first';
     const lastName = 'last';
-    const user2 = await User.factory().create({ firstName, lastName });
-    const user3 = await User.factory().create({ firstName, lastName });
+    await User.factory().create({ firstName, lastName });
+    await User.factory().create({ firstName, lastName });
 
-    const response = await app.loginAs(user1).inject({
+    const response = await app.loginAs(user).inject({
       method: 'POST',
       url: `/search`,
       payload: {
@@ -74,19 +78,21 @@ describe('Search', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchObject(
-      expect.arrayContaining([user2, user3]),
+    expect(response.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ firstName, lastName }),
+      ]),
     );
   });
 
   describe("shouldn't return any user", () => {
     it("the user doesn't exist", async () => {
-      const user1 = await User.factory().create();
+      const user = await User.factory().create();
       const firstName = 'first';
       const lastName = 'last';
       await User.factory().create({ firstName, lastName });
 
-      const response = await app.loginAs(user1).inject({
+      const response = await app.loginAs(user).inject({
         method: 'POST',
         url: `/search`,
         payload: {

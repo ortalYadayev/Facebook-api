@@ -18,6 +18,7 @@ import me from './routes/me';
 import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
+import search from './routes/users/search';
 
 const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
 
@@ -51,6 +52,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   me(app);
   getUser(app);
   storePost(app);
+  search(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (
