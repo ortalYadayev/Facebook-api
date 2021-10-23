@@ -35,8 +35,8 @@ const storePost = (app: FastifyInstance): void => {
 
       const post = new Post();
       post.content = payload.content;
-      post.createdBy = user;
-      post.user = toUser;
+      post.user = user;
+      post.friend = toUser;
 
       await post.save();
 

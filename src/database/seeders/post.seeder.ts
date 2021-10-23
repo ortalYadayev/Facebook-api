@@ -26,8 +26,8 @@ export default class PostSeeder implements BaseSeeder {
       const toUserIndex = randomExcluded(1, users.length - 1, fromUserKey);
 
       await Post.factory()
-        .createdBy(users[fromUserKey])
-        .user(users[toUserIndex])
+        .user(users[fromUserKey])
+        .friend(users[toUserIndex])
         .create();
     }
   }

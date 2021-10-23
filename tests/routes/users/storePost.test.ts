@@ -23,11 +23,11 @@ describe('Store Post', () => {
   });
 
   it('should add a post', async () => {
-    const createdBy = await User.factory().create();
+    const user = await User.factory().create();
     const username = 'username';
     await User.factory().create({ username });
 
-    const response = await app.loginAs(createdBy).inject({
+    const response = await app.loginAs(user).inject({
       method: 'POST',
       url: `/users/${username}/posts`,
       payload: {

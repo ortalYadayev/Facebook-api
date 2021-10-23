@@ -12,7 +12,7 @@ export class Post extends BaseEntity {
   user!: User | undefined;
 
   @ManyToOne(() => User, (user) => user.posts, { nullable: false })
-  createdBy!: User | undefined;
+  friend!: User | undefined;
 
   static factory(): PostFactory {
     return new PostFactory();
