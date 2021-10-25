@@ -16,10 +16,6 @@ class PostFactory extends BaseFactory<Post> {
   user(user: User): this {
     return this.addToState({ user });
   }
-
-  friend(user: User): this {
-    return this.addToState({ friend: user });
-  }
 }
 
 export default PostFactory;

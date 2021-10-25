@@ -8,11 +8,8 @@ export class Post extends BaseEntity {
   @Column()
   content!: string;
 
-  @ManyToOne(() => User, (user) => user.relatedPosts, { nullable: false })
-  user!: User | undefined;
-
   @ManyToOne(() => User, (user) => user.posts, { nullable: false })
-  friend!: User | undefined;
+  user!: User | undefined;
 
   static factory(): PostFactory {
     return new PostFactory();

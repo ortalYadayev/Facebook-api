@@ -9,3 +9,4 @@ coverage
 yarn-error.log
 .nvmrc
 package-lock.json
+storage

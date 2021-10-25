@@ -3,19 +3,19 @@ import { FastifyInstance } from 'fastify';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
-  query: Type.String({ minLength: 1, maxLength: 255 }),
+  searchQuery: Type.String({ minLength: 1, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-const getUser = (app: FastifyInstance): void => {
+const searchUsers = (app: FastifyInstance): void => {
   app.route<{ Querystring: PayloadType }>({
-    url: '/search',
+    url: '/users/search',
     method: 'GET',
     preValidation: app.authMiddleware,
     schema: { querystring: PayloadSchema },
     handler: async (request, reply) => {
       const payload = request.query;
-      const names: string[] = payload.query.split(' ');
+      const names: string[] = payload.searchQuery.split(' ');
 
       let users: User[];
       try {
@@ -42,4 +42,4 @@ const getUser = (app: FastifyInstance): void => {
   });
 };
 
-export default getUser;
+export default searchUsers;

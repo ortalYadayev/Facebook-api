@@ -24,12 +24,10 @@ describe('Store Post', () => {
 
   it('should add a post', async () => {
     const user = await User.factory().create();
-    const username = 'username';
-    await User.factory().create({ username });
 
     const response = await app.loginAs(user).inject({
       method: 'POST',
-      url: `/users/${username}/posts`,
+      url: `/posts`,
       payload: {
         content: 'content',
       },
@@ -41,29 +39,13 @@ describe('Store Post', () => {
   describe("shouldn't add a post", () => {
     it('there is not a content', async () => {
       const user = await User.factory().create();
-      const username = 'username';
-      await User.factory().create({ username });
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: `/users/${username}/posts`,
+        url: `/posts`,
       });
 
       expect(response.statusCode).toBe(422);
-    });
-
-    it("the user doesn't exist", async () => {
-      const user = await User.factory().create();
-
-      const response = await app.loginAs(user).inject({
-        method: 'POST',
-        url: '/users/notexist/posts',
-        payload: {
-          content: 'content',
-        },
-      });
-
-      expect(response.statusCode).toBe(404);
     });
   });
 });

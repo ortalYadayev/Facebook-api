@@ -1,7 +1,6 @@
 import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
-import { parse } from 'url';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
@@ -27,19 +26,16 @@ export class User extends BaseEntity {
   @Column({ type: 'datetime', nullable: true })
   verifiedAt!: Date | null;
 
-  @Column({ nullable: true })
-  profilePicturePath!: string;
+  @Column({ type: 'varchar', nullable: true })
+  profilePicturePath!: string | null;
 
-  profilePictureUrl!: string | undefined;
+  profilePictureUrl!: string | null;
 
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
 
   @OneToMany(() => Post, (post) => post.user)
   posts!: Post[];
-
-  @OneToMany(() => Post, (post) => post.friend)
-  relatedPosts!: Post[];
 
   static factory(): UserFactory {
     return new UserFactory();
@@ -62,9 +58,11 @@ export class User extends BaseEntity {
   @AfterLoad()
   setComputedProperties(): void {
     if (!this.profilePicturePath) {
-      this.profilePictureUrl = undefined;
-    } else if (!parse(this.profilePicturePath).slashes) {
+      this.profilePictureUrl = null;
+    } else if (!this.profilePicturePath.startsWith('http')) {
       this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePicturePath}`;
+    } else {
+      this.profilePictureUrl = `${this.profilePicturePath}`;
     }
   }
 
