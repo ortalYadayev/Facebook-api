@@ -3,19 +3,19 @@ import { FastifyInstance } from 'fastify';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
-  body: Type.String({ minLength: 1, maxLength: 255 }),
+  query: Type.String({ minLength: 1, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
 const getUser = (app: FastifyInstance): void => {
-  app.route<{ Body: PayloadType }>({
+  app.route<{ Querystring: PayloadType }>({
     url: '/search',
-    method: 'POST',
+    method: 'GET',
     preValidation: app.authMiddleware,
-    schema: { body: PayloadSchema },
+    schema: { querystring: PayloadSchema },
     handler: async (request, reply) => {
-      const payload = request.body;
-      const names: string[] = payload.body.split(' ');
+      const payload = request.query;
+      const names: string[] = payload.query.split(' ');
 
       let users: User[];
       try {
@@ -37,9 +37,7 @@ const getUser = (app: FastifyInstance): void => {
         return reply.code(200).send(usersFound);
       }
 
-      return reply.code(422).send({
-        message: "We didn't find any results.",
-      });
+      return reply.code(200).send();
     },
   });
 };

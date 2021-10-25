@@ -100,7 +100,7 @@ describe('Search', () => {
         },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
     });
   });
 });

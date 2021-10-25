@@ -1,10 +1,10 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class PostTable1635015794896 implements MigrationInterface {
-    name = 'PostTable1635015794896'
+  name = 'PostTable1635015794896';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
             CREATE TABLE \`facebook_clone\`.\`url_tokens\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
                 \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -17,7 +17,7 @@ export class PostTable1635015794896 implements MigrationInterface {
                 PRIMARY KEY (\`id\`)
             ) ENGINE = InnoDB
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE TABLE \`facebook_clone\`.\`users\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
                 \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -34,7 +34,7 @@ export class PostTable1635015794896 implements MigrationInterface {
                 PRIMARY KEY (\`id\`)
             ) ENGINE = InnoDB
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE TABLE \`facebook_clone\`.\`posts\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
                 \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -45,48 +45,47 @@ export class PostTable1635015794896 implements MigrationInterface {
                 PRIMARY KEY (\`id\`)
             ) ENGINE = InnoDB
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE \`facebook_clone\`.\`url_tokens\`
             ADD CONSTRAINT \`FK_2d85a0e769ad0d87b4d1e78ebf0\` FOREIGN KEY (\`userId\`) REFERENCES \`facebook_clone\`.\`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE \`facebook_clone\`.\`posts\`
             ADD CONSTRAINT \`FK_ae05faaa55c866130abef6e1fee\` FOREIGN KEY (\`userId\`) REFERENCES \`facebook_clone\`.\`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE \`facebook_clone\`.\`posts\`
             ADD CONSTRAINT \`FK_f82334e9bdabd80a7ea07e5269a\` FOREIGN KEY (\`friendId\`) REFERENCES \`facebook_clone\`.\`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
             ALTER TABLE \`facebook_clone\`.\`posts\` DROP FOREIGN KEY \`FK_f82334e9bdabd80a7ea07e5269a\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE \`facebook_clone\`.\`posts\` DROP FOREIGN KEY \`FK_ae05faaa55c866130abef6e1fee\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE \`facebook_clone\`.\`url_tokens\` DROP FOREIGN KEY \`FK_2d85a0e769ad0d87b4d1e78ebf0\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP TABLE \`facebook_clone\`.\`posts\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX \`IDX_fe0bb3f6520ee0469504521e71\` ON \`facebook_clone\`.\`users\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\` ON \`facebook_clone\`.\`users\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP TABLE \`facebook_clone\`.\`users\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX \`IDX_a2822d37fa5c0456c6f1a82ff8\` ON \`facebook_clone\`.\`url_tokens\`
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP TABLE \`facebook_clone\`.\`url_tokens\`
         `);
-    }
-
+  }
 }
