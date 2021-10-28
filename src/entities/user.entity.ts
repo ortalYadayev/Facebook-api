@@ -1,4 +1,4 @@
-import { AfterLoad, Column, Entity, OneToMany } from 'typeorm';
+import { AfterLoad, Column, Entity, OneToMany, Index } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
@@ -7,6 +7,7 @@ import UserFactory from '../database/factories/user.factory';
 import { Post } from './post.entity';
 
 @Entity('users')
+@Index(['firstName', 'lastName'], { fulltext: true })
 export class User extends BaseEntity {
   @Column({ length: 50 })
   firstName!: string;

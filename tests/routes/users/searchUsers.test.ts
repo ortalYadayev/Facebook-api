@@ -108,6 +108,31 @@ describe('Search', () => {
         expect.arrayContaining([expect.objectContaining({ firstName: name2 })]),
       );
     });
+
+    it('just verified users', async () => {
+      const user = await User.factory().create();
+      const firstName = 'name';
+      const email1 = 'ortal@gmail.com';
+      const email2 = 'mail@gmail.com';
+      await User.factory().unverified().create({ firstName, email: email1 });
+      await User.factory().create({ firstName, email: email2 });
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: '/users/search',
+        query: {
+          searchQuery: `${firstName}`,
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ email: email1 })]),
+      );
+      expect(response.json()).toEqual(
+        expect.arrayContaining([expect.objectContaining({ email: email2 })]),
+      );
+    });
   });
 
   describe("shouldn't return any user", () => {
