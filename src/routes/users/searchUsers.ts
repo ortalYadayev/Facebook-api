@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
-import { Like, LessThan } from 'typeorm';
+import { LessThan, Raw } from 'typeorm';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
@@ -9,38 +9,29 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-function isExist(users: User[], userExist): boolean {
-  return users.some((user) => user.id === userExist.id);
+async function findUsers(searchQuery: string): Promise<User[]> {
+  const users = User.find({
+    where: {
+      firstName: Raw(
+        () =>
+          `MATCH(firstName, lastName) AGAINST (:searchQuery IN BOOLEAN MODE)`,
+        { searchQuery: `${searchQuery}*` },
+      ),
+      verifiedAt: LessThan(moment().toISOString()),
+    },
+  });
+  return users;
 }
 
-async function find(names: string[]): Promise<User[]> {
-  const usersFound: User[] = [];
+function beFirst(users: User[], me: User): User[] {
+  const index = users.findIndex((user) => user.id === me.id);
 
-  for (let index = 0; index < names.length; index++) {
-    const users = await User.find({
-      where: [
-        {
-          firstName: Like(`%${names[index]}%`),
-          verifiedAt: LessThan(moment().toISOString()),
-        },
-        {
-          lastName: Like(`%${names[index]}%`),
-          verifiedAt: LessThan(moment().toISOString()),
-        },
-      ],
-    });
-
-    if (index === 0) {
-      usersFound.push(...users);
-    } else {
-      users.forEach((user) => {
-        if (!isExist(usersFound, user)) {
-          usersFound.push(user);
-        }
-      });
-    }
+  if (index !== -1 && index !== 0) {
+    users.splice(index, index);
+    users.unshift(me);
   }
-  return usersFound;
+
+  return users;
 }
 
 const searchUsers = (app: FastifyInstance): void => {
@@ -51,22 +42,14 @@ const searchUsers = (app: FastifyInstance): void => {
     schema: { querystring: PayloadSchema },
     handler: async (request, reply) => {
       const payload = request.query;
-
       const me = request.user;
 
-      const names: string[] = payload.searchQuery
-        .replace(/\s+/g, ' ')
+      const searchQuery: string = payload.searchQuery
         .trim()
-        .split(' ');
+        .replace(/\s+/g, '* ');
 
-      const users: User[] = await find(names);
-
-      // move me to be first in array
-      const index = users.findIndex((user) => user.id === me.id);
-      if (index !== -1) {
-        users.splice(index, index);
-        users.unshift(me);
-      }
+      let users: User[] = await findUsers(searchQuery);
+      users = beFirst(users, me);
 
       return reply.code(200).send(users);
     },

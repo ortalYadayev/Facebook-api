@@ -20,9 +20,10 @@ import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
 import searchUsers from './routes/users/searchUsers';
 
-const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
+// const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
+  const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
   dotenv.config({ path: path.resolve(__dirname, envFile) });
 
   const app = fastify();

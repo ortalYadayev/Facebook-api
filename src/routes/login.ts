@@ -17,18 +17,6 @@ const login = (app: FastifyInstance): void => {
       const payload = request.body;
 
       const user = await User.findOne({
-        select: [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'firstName',
-          'lastName',
-          'email',
-          'username',
-          'profilePicturePath',
-          'password',
-          'verifiedAt',
-        ],
         where: { email: payload.email },
       });
 

@@ -21,7 +21,7 @@ export class User extends BaseEntity {
   @Column({ unique: true, length: 20 })
   username!: string;
 
-  @Column({ select: false })
+  @Column()
   password!: string;
 
   @Column({ type: 'datetime', nullable: true })
@@ -58,19 +58,19 @@ export class User extends BaseEntity {
 
   @AfterLoad()
   setComputedProperties(): void {
-    if (!this.profilePicturePath) {
-      this.profilePictureUrl = null;
-    } else if (!this.profilePicturePath.startsWith('http')) {
-      this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePicturePath}`;
-    } else {
-      this.profilePictureUrl = `${this.profilePicturePath}`;
+    this.profilePictureUrl = this.profilePicturePath;
+
+    if (
+      this.profilePicturePath &&
+      !this.profilePicturePath.startsWith('http')
+    ) {
+      this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePictureUrl}`;
     }
   }
 
   toJSON(): Partial<User> {
     const user = classToPlain(this);
 
-    delete user.id;
     delete user.password;
     delete user.urlTokens;
 

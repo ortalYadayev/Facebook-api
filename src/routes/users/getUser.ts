@@ -5,7 +5,7 @@ type ParamsType = { username: string };
 
 const getUser = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/users/:username(^[\\w]{2,20}$)',
+    url: '/users/:username',
     method: 'GET',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
