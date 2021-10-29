@@ -49,19 +49,20 @@ const register = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       const payload = request.body;
 
-      try {
-        const existingUser = await User.findOneOrFail({
-          where: [
-            {
-              username: payload.username,
-            },
-            {
-              email: payload.email,
-            },
-          ],
-        });
+      const existingUser = await User.findOne({
+        where: [
+          {
+            username: payload.username,
+          },
+          {
+            email: payload.email,
+          },
+        ],
+      });
 
+      if (existingUser) {
         let info;
+
         if (existingUser.email === payload.email) {
           info = {
             message:
@@ -76,8 +77,6 @@ const register = (app: FastifyInstance): void => {
         }
 
         return reply.code(422).send(info);
-      } catch (error) {
-        console.log('register');
       }
 
       const user = new User();
