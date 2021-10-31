@@ -1,28 +1,30 @@
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCompress from 'fastify-compress';
 import fastifyAuth from 'fastify-auth';
+import fastifyJWT from 'fastify-jwt';
+import fastifyCors from 'fastify-cors';
 import process from 'process';
 import * as dotenv from 'dotenv';
 import path from 'path';
-import fastifyJWT from 'fastify-jwt';
-import fastifyCors from 'fastify-cors';
 import {
   InjectOptions,
   Response as LightMyRequestResponse,
 } from 'light-my-request';
-import authMiddleware from './middlewares/auth';
+import authMiddleware from './middlewares/auth.middleware';
 import register from './routes/register';
 import verify from './routes/verify';
 import login from './routes/login';
 import me from './routes/me';
+import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
+import storePost from './routes/users/storePost';
+import searchUsers from './routes/users/searchUsers';
+
+// const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
-  if (process.env.NODE_ENV !== 'test') {
-    dotenv.config({ path: path.resolve(__dirname, '../.env') });
-  } else {
-    dotenv.config({ path: path.resolve(__dirname, '../.env.test') });
-  }
+  const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
+  dotenv.config({ path: path.resolve(__dirname, envFile) });
 
   const app = fastify();
 
@@ -49,6 +51,9 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   verify(app);
   login(app);
   me(app);
+  getUser(app);
+  storePost(app);
+  searchUsers(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (

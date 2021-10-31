@@ -8,9 +8,11 @@ class UserFactory extends BaseFactory<User> {
 
   protected definition(): NonFunctionProperties<User> {
     return {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
+      firstName: faker.name.firstName(50),
+      lastName: faker.name.lastName(50),
       email: faker.unique(faker.internet.email),
+      username: faker.unique(faker.internet.userName).substring(0, 20),
+      profilePicturePath: faker.internet.avatar(),
       password: faker.internet.password(),
       verifiedAt: faker.date.past(),
       urlTokens: [],

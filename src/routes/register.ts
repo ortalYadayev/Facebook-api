@@ -8,6 +8,7 @@ import { sendMail } from '../services/mail.service';
 const PayloadSchema = Type.Object({
   firstName: Type.String({ minLength: 2, maxLength: 50 }),
   lastName: Type.String({ minLength: 2, maxLength: 50 }),
+  username: Type.RegEx(/^[\w]{2,20}$/),
   email: Type.String({ format: 'email', maxLength: 255 }),
   password: Type.String({ minLength: 8, maxLength: 255 }),
 });
@@ -36,7 +37,7 @@ async function sendEmailVerification(user: User) {
     to: user.email,
     subject: 'verify',
     text: 'email verification',
-    html: `<p>Click <a href="${process.env.USER_APP_URL}/verify?token=${urlToken.token}">here</a> to verify your email</p>`,
+    html: `<p>Click <a href="${process.env.APP_URL}/verify?token=${urlToken.token}">here</a> to verify your email</p>`,
   });
 }
 
@@ -49,20 +50,40 @@ const register = (app: FastifyInstance): void => {
       const payload = request.body;
 
       const existingUser = await User.findOne({
-        where: { email: payload.email },
+        where: [
+          {
+            username: payload.username,
+          },
+          {
+            email: payload.email,
+          },
+        ],
       });
+
       if (existingUser) {
-        return reply.code(422).send({
-          message:
-            'This email is already being used, resend verify click here.',
-          type: 'email',
-        });
+        let info;
+
+        if (existingUser.email === payload.email) {
+          info = {
+            message:
+              'This email is already being used, resend verify click here.',
+            type: 'email',
+          };
+        } else {
+          info = {
+            message: 'This username is already being used.',
+            type: 'username',
+          };
+        }
+
+        return reply.code(422).send(info);
       }
 
       const user = new User();
       user.firstName = payload.firstName;
       user.lastName = payload.lastName;
       user.email = payload.email;
+      user.username = payload.username;
       user.password = User.hashPassword(payload.password);
       user.verifiedAt = null;
 

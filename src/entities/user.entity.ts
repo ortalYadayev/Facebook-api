@@ -1,29 +1,42 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { AfterLoad, Column, Entity, OneToMany, Index } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
+import { Post } from './post.entity';
 
 @Entity('users')
+@Index(['firstName', 'lastName'], { fulltext: true })
 export class User extends BaseEntity {
-  @Column()
+  @Column({ length: 50 })
   firstName!: string;
 
-  @Column()
+  @Column({ length: 50 })
   lastName!: string;
 
   @Column({ unique: true })
   email!: string;
 
-  @Column({ select: false })
+  @Column({ unique: true, length: 20 })
+  username!: string;
+
+  @Column()
   password!: string;
 
   @Column({ type: 'datetime', nullable: true })
   verifiedAt!: Date | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  profilePicturePath!: string | null;
+
+  profilePictureUrl!: string | null;
+
   @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
   urlTokens!: UrlToken[];
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts!: Post[];
 
   static factory(): UserFactory {
     return new UserFactory();
@@ -41,6 +54,18 @@ export class User extends BaseEntity {
     encryptedPassword: string,
   ): boolean {
     return bcrypt.compareSync(password, encryptedPassword);
+  }
+
+  @AfterLoad()
+  setComputedProperties(): void {
+    this.profilePictureUrl = this.profilePicturePath;
+
+    if (
+      this.profilePicturePath &&
+      !this.profilePicturePath.startsWith('http')
+    ) {
+      this.profilePictureUrl = `${process.env.APP_URL}/${this.profilePictureUrl}`;
+    }
   }
 
   toJSON(): Partial<User> {
