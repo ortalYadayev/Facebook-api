@@ -1,20 +1,34 @@
-import { Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, JoinTable, Unique } from 'typeorm';
 import FriendFactory from '../database/factories/friend.factory';
 import BaseEntity from './BaseEntity';
-import { FriendRequest } from './friend_request.entity';
+import { User } from './user.entity';
 
-@Entity('friend')
-@Unique(['friendOne', 'friendTwo'])
+export enum FriendEnum {
+  PENDING = 'Pending',
+  REJECTED = 'rejected',
+  APPROVED = 'approved',
+  DELETED = 'deleted',
+}
+
+@Entity('friend_request')
+@Unique(['userOne', 'userTwo'])
 export class Friend extends BaseEntity {
-  @ManyToOne(() => FriendRequest, (friendRequest) => friendRequest.friendsOne, {
-    nullable: false,
-  })
-  friendOne!: FriendRequest | undefined;
+  @Column({ type: 'simple-enum', enum: FriendEnum })
+  status!: FriendEnum;
 
-  @ManyToOne(() => FriendRequest, (friendRequest) => friendRequest.friendsTwo, {
+  @ManyToOne(() => User, (user) => user.sentFriend, {
     nullable: false,
+    cascade: true,
   })
-  friendTwo!: FriendRequest | undefined;
+  @JoinTable()
+  sender!: User;
+
+  @ManyToOne(() => User, (user) => user.receivedFriend, {
+    nullable: false,
+    cascade: true,
+  })
+  @JoinTable()
+  receiver!: User;
 
   static factory(): FriendFactory {
     return new FriendFactory();

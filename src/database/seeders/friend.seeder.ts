@@ -1,7 +1,4 @@
-import {
-  FriendRequest,
-  FriendRequestEnum,
-} from '../../entities/friend_request.entity';
+import { Friend, FriendEnum } from '../../entities/friend.entity';
 import { User } from '../../entities/user.entity';
 import { BaseSeeder } from './base_seeder';
 
@@ -19,7 +16,7 @@ function randomExcluded(min: number, max: number, excluded: number): number {
   return number;
 }
 
-export default class FriendRequestSeeder implements BaseSeeder {
+export default class FriendSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
 
@@ -28,10 +25,10 @@ export default class FriendRequestSeeder implements BaseSeeder {
 
       const userTwoIndex = randomExcluded(0, users.length - 1, userOneIndex);
 
-      await FriendRequest.factory()
-        .status(FriendRequestEnum.SENT_REQUEST)
-        .userOne(users[userOneIndex])
-        .userTwo(users[userTwoIndex])
+      await Friend.factory()
+        .status(FriendEnum.APPROVED)
+        .sender(users[userOneIndex])
+        .receiver(users[userTwoIndex])
         .create();
     }
   }

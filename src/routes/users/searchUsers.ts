@@ -17,7 +17,7 @@ async function findUsers(searchQuery: string): Promise<User[]> {
           `MATCH(firstName, lastName) AGAINST (:searchQuery IN BOOLEAN MODE)`,
         { searchQuery: `${searchQuery}*` },
       ),
-      verifiedAt: LessThan(moment().toISOString()),
+      verifiedAt: LessThan(moment().format()),
     },
   });
   return users;
@@ -48,10 +48,16 @@ const searchUsers = (app: FastifyInstance): void => {
         .trim()
         .replace(/\s+/g, '* ');
 
-      let users: User[] = await findUsers(searchQuery);
-      users = beFirst(users, me);
+      let users: User[];
+      try {
+        users = await findUsers(searchQuery);
+        users = beFirst(users, me);
 
-      return reply.code(200).send(users);
+        return reply.code(200).send(users);
+      } catch (error) {
+        console.log(error);
+        return reply.code(422).send();
+      }
     },
   });
 };

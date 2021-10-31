@@ -1,7 +1,7 @@
-import { FriendRequest } from '../../entities/friend_request.entity';
 import { NonFunctionProperties } from './types';
 import BaseFactory from './base_factory';
-import { Friend } from '../../entities/friend.entity';
+import { Friend, FriendEnum } from '../../entities/friend.entity';
+import { User } from '../../entities/user.entity';
 
 class FriendFactory extends BaseFactory<Friend> {
   protected Entity = Friend;
@@ -10,12 +10,16 @@ class FriendFactory extends BaseFactory<Friend> {
     return {};
   }
 
-  friendOne(friendOne: FriendRequest): this {
-    return this.addToState({ friendOne });
+  status(status: FriendEnum): this {
+    return this.addToState({ status });
   }
 
-  friendTwo(friendTwo: FriendRequest): this {
-    return this.addToState({ friendTwo });
+  sender(sender: User): this {
+    return this.addToState({ sender });
+  }
+
+  receiver(receiver: User): this {
+    return this.addToState({ receiver });
   }
 }
 

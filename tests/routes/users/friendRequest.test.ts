@@ -3,7 +3,7 @@ import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Friends', () => {
+describe('Friend Requests', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -22,27 +22,27 @@ describe('Friends', () => {
     await app.close();
   });
 
-  it('should send the request', async () => {
+  it('should send a friend request', async () => {
     const user = await User.factory().create();
     const username = 'ortal';
     await User.factory().create({ username });
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/users/friends/${username}`,
+      url: `/users/friendrequest/${username}`,
     });
 
     expect(response.statusCode).toBe(200);
   });
 
-  describe("shouldn't send a request", () => {
+  describe("shouldn't send a friend request", () => {
     it('send himself', async () => {
       const username = 'username';
       const user = await User.factory().create({ username });
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friends/${username}`,
+        url: `/users/friendrequest/${username}`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -55,12 +55,12 @@ describe('Friends', () => {
 
       await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friends/${username}`,
+        url: `/users/friendrequest/${username}`,
       });
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friends/${username}`,
+        url: `/users/friendrequest/${username}`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -72,10 +72,10 @@ describe('Friends', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friends/${username}`,
+        url: `/users/friendrequest/${username}`,
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(404);
     });
 
     it('incorrect user', async () => {
@@ -85,10 +85,10 @@ describe('Friends', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friends/${username}wo`,
+        url: `/users/friendrequest/${username}wo`,
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(404);
     });
   });
 });
