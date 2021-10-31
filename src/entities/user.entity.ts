@@ -5,6 +5,7 @@ import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
 import { Post } from './post.entity';
+import { FriendRequest } from './friend_request.entity';
 
 @Entity('users')
 @Index(['firstName', 'lastName'], { fulltext: true })
@@ -27,6 +28,9 @@ export class User extends BaseEntity {
   @Column({ type: 'datetime', nullable: true })
   verifiedAt!: Date | null;
 
+  @Column({ default: 0 })
+  FriendsCount: number;
+
   @Column({ type: 'varchar', nullable: true })
   profilePicturePath!: string | null;
 
@@ -37,6 +41,12 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Post, (post) => post.user)
   posts!: Post[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.userOne)
+  requestsOne!: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.userTwo)
+  requestsTwo!: FriendRequest[];
 
   static factory(): UserFactory {
     return new UserFactory();
