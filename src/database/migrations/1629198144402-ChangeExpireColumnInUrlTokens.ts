@@ -7,13 +7,13 @@ export class ChangeExpireColumnInUrlTokens1629198144402
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\` CHANGE \`expiresIn\` \`expireAt\` datetime NULL
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\` CHANGE \`expiresIn\` \`expireAt\` datetime NULL
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\` CHANGE \`expireAt\` \`expiresIn\` datetime NULL
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\` CHANGE \`expireAt\` \`expiresIn\` datetime NULL
         `);
   }
 }
