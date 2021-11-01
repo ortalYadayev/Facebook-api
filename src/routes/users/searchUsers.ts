@@ -55,7 +55,6 @@ const searchUsers = (app: FastifyInstance): void => {
 
         return reply.code(200).send(users);
       } catch (error) {
-        console.log(error);
         return reply.code(422).send();
       }
     },
