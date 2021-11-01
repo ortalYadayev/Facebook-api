@@ -21,14 +21,14 @@ export default class FriendSeeder implements BaseSeeder {
     const users = await User.find();
 
     for (let i = 0; i <= 50; i++) {
-      const userOneIndex = randomIndex(0, users.length - 1);
+      const senderIndex = randomIndex(0, users.length - 1);
 
-      const userTwoIndex = randomExcluded(0, users.length - 1, userOneIndex);
+      const receiverIndex = randomExcluded(0, users.length - 1, senderIndex);
 
       await Friend.factory()
         .status(FriendEnum.APPROVED)
-        .sender(users[userOneIndex])
-        .receiver(users[userTwoIndex])
+        .sender(users[senderIndex])
+        .receiver(users[receiverIndex])
         .create();
     }
   }

@@ -11,7 +11,7 @@ export enum FriendEnum {
 }
 
 @Entity('friend_request')
-@Unique(['userOne', 'userTwo'])
+@Unique(['sender', 'receiver'])
 export class Friend extends BaseEntity {
   @Column({ type: 'simple-enum', enum: FriendEnum })
   status!: FriendEnum;

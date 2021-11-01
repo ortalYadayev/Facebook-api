@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
+import { Friend, FriendEnum } from '../../../src/entities/friend.entity';
 import { User } from '../../../src/entities/user.entity';
 
 describe('Friend Requests', () => {
@@ -25,14 +26,60 @@ describe('Friend Requests', () => {
   it('should send a friend request', async () => {
     const user = await User.factory().create();
     const username = 'ortal';
-    await User.factory().create({ username });
+    const receiver = await User.factory().create({ username });
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/users/friendrequest/${username}`,
+      url: '/users/friendrequest',
+      query: {
+        username,
+      },
     });
 
+    const friend = (await Friend.findOne({
+      where: {
+        sender: user,
+        receiver,
+      },
+    })) as Friend;
+
     expect(response.statusCode).toBe(200);
+    expect(await Friend.count()).toBe(1);
+    expect(friend).not.toBeNull();
+    expect(friend.status).toEqual(FriendEnum.PENDING);
+  });
+
+  it('should delete a friend request', async () => {
+    const user = await User.factory().create();
+    const username = 'ortal';
+    const receiver = await User.factory().create({ username });
+
+    await app.loginAs(user).inject({
+      method: 'GET',
+      url: '/users/friendrequest',
+      query: {
+        username,
+      },
+    });
+
+    const response = await app.loginAs(user).inject({
+      method: 'GET',
+      url: '/users/friendrequest',
+      query: {
+        username,
+      },
+    });
+
+    const friend = (await Friend.findOne({
+      where: {
+        sender: user,
+        receiver,
+      },
+    })) as Friend;
+
+    expect(response.statusCode).toBe(200);
+    expect(await Friend.count()).toBe(1);
+    expect(friend.status).toEqual(FriendEnum.DELETED);
   });
 
   describe("shouldn't send a friend request", () => {
@@ -42,28 +89,14 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friendrequest/${username}`,
+        url: '/users/friendrequest',
+        query: {
+          username,
+        },
       });
 
       expect(response.statusCode).toBe(422);
-    });
-
-    it("can't send twice", async () => {
-      const user = await User.factory().create();
-      const username = 'username';
-      await User.factory().create({ username });
-
-      await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/users/friendrequest/${username}`,
-      });
-
-      const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/users/friendrequest/${username}`,
-      });
-
-      expect(response.statusCode).toBe(422);
+      expect(await Friend.count()).toBe(0);
     });
 
     it('invalid user', async () => {
@@ -72,10 +105,14 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friendrequest/${username}`,
+        url: '/users/friendrequest',
+        query: {
+          username,
+        },
       });
 
       expect(response.statusCode).toBe(404);
+      expect(await Friend.count()).toBe(0);
     });
 
     it('incorrect user', async () => {
@@ -85,10 +122,14 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: `/users/friendrequest/${username}wo`,
+        url: '/users/friendrequest',
+        query: {
+          username: `${username}wo`,
+        },
       });
 
       expect(response.statusCode).toBe(404);
+      expect(await Friend.count()).toBe(0);
     });
   });
 });
