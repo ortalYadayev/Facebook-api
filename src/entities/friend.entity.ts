@@ -4,7 +4,7 @@ import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
 
 export enum FriendEnum {
-  PENDING = 'Pending',
+  PENDING = 'pending',
   REJECTED = 'rejected',
   APPROVED = 'approved',
   DELETED = 'deleted',
