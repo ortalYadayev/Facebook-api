@@ -1,17 +1,18 @@
+import * as faker from 'faker';
+import { FriendRequest } from '../../entities/friend_request.entity';
 import { NonFunctionProperties } from './types';
 import BaseFactory from './base_factory';
-import { Friend, FriendEnum } from '../../entities/friend.entity';
+import { Friend } from '../../entities/friend.entity';
 import { User } from '../../entities/user.entity';
 
 class FriendFactory extends BaseFactory<Friend> {
   protected Entity = Friend;
 
   protected definition(): NonFunctionProperties<Friend> {
-    return {};
-  }
-
-  status(status: FriendEnum): this {
-    return this.addToState({ status });
+    return {
+      deletedBy: null,
+      deletedAt: null,
+    };
   }
 
   sender(sender: User): this {
@@ -20,6 +21,17 @@ class FriendFactory extends BaseFactory<Friend> {
 
   receiver(receiver: User): this {
     return this.addToState({ receiver });
+  }
+
+  request(request: FriendRequest): this {
+    return this.addToState({ request });
+  }
+
+  unfriend(user: User): this {
+    return this.addToState({
+      deletedBy: user,
+      deletedAt: faker.date.past(),
+    });
   }
 }
 

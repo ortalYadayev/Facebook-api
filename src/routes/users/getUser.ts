@@ -16,7 +16,17 @@ const getUser = (app: FastifyInstance): void => {
           where: {
             username,
           },
+          // relations: [
+          //   'receivedFriend',
+          //   'receivedFriend.sender',
+          //   'sentFriend',
+          //   'sentFriend.receiver',
+          // ],
         });
+
+        // console.log(userByParams);
+
+        // @TODO return relation friend
 
         return reply.code(200).send(userByParams);
       } catch (error) {

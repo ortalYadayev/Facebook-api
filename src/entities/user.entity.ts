@@ -1,6 +1,7 @@
 import { AfterLoad, Column, Entity, OneToMany, Index } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
+import { FriendRequest } from './friend_request.entity';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
@@ -39,11 +40,20 @@ export class User extends BaseEntity {
   @OneToMany(() => Post, (post) => post.user)
   posts!: Post[];
 
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender)
+  sentFriendRequests!: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver)
+  receivedFriendRequests!: FriendRequest[];
+
   @OneToMany(() => Friend, (friend) => friend.sender)
-  sentFriend!: Friend[];
+  sentFriends!: Friend[];
 
   @OneToMany(() => Friend, (friend) => friend.receiver)
-  receivedFriend!: Friend[];
+  receivedFriends!: Friend[];
+
+  @OneToMany(() => Friend, (friend) => friend.deletedBy)
+  deletedFriends!: Friend[];
 
   static factory(): UserFactory {
     return new UserFactory();

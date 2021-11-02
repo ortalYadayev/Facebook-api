@@ -1,4 +1,5 @@
-import { Column, Entity, ManyToOne, JoinTable, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { FriendRequest } from './friend_request.entity';
 import FriendFactory from '../database/factories/friend.factory';
 import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
@@ -10,25 +11,38 @@ export enum FriendEnum {
   DELETED = 'deleted',
 }
 
-@Entity('friend_request')
-@Unique(['sender', 'receiver'])
+@Entity('friends')
 export class Friend extends BaseEntity {
-  @Column({ type: 'simple-enum', enum: FriendEnum })
-  status!: FriendEnum;
-
-  @ManyToOne(() => User, (user) => user.sentFriend, {
+  @ManyToOne(() => User, (user) => user.sentFriendRequests, {
     nullable: false,
     cascade: true,
   })
-  @JoinTable()
   sender!: User;
 
-  @ManyToOne(() => User, (user) => user.receivedFriend, {
+  @ManyToOne(() => User, (user) => user.receivedFriendRequests, {
     nullable: false,
     cascade: true,
   })
-  @JoinTable()
   receiver!: User;
+
+  @Column({ type: 'datetime', nullable: true })
+  deletedAt!: Date | null;
+
+  @ManyToOne(() => User, (user) => user.deletedFriends, {
+    nullable: true,
+    cascade: true,
+  })
+  deletedBy!: User | null;
+
+  @OneToOne(
+    () => FriendRequest,
+    (friendRequest) => friendRequest.friendApproved,
+    {
+      nullable: false,
+      cascade: true,
+    },
+  )
+  request!: FriendRequest;
 
   static factory(): FriendFactory {
     return new FriendFactory();
