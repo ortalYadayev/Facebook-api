@@ -22,6 +22,14 @@ class FriendRequestFactory extends BaseFactory<FriendRequest> {
   receiver(receiver: User): this {
     return this.addToState({ receiver });
   }
+
+  unapproved(): this {
+    return this.addToState({ approvedAt: null });
+  }
+
+  deleted(): this {
+    return this.addToState({ deletedAt: faker.date.past() });
+  }
 }
 
 export default FriendRequestFactory;
