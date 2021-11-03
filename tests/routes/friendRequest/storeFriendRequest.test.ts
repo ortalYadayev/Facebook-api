@@ -116,7 +116,7 @@ describe('Friend Requests', () => {
         },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
       expect(await FriendRequest.count()).toBe(1);
     });
 
@@ -137,7 +137,7 @@ describe('Friend Requests', () => {
         },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
       expect(await FriendRequest.count()).toBe(1);
     });
 
@@ -162,7 +162,7 @@ describe('Friend Requests', () => {
         },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
       expect(await FriendRequest.count()).toBe(1);
       expect(await Friend.count()).toBe(1);
     });

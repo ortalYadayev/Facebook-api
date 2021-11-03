@@ -53,8 +53,8 @@ const storeFriendRequest = (app: FastifyInstance): void => {
           !fr.rejectedAt &&
           !fr.deletedAt,
       );
-      console.log(friendRequests);
-      if (friendRequests.length === 0 && !friendRequests[0].approvedAt) {
+
+      if (friendRequests.length === 0) {
         const friendRequest = new FriendRequest();
 
         friendRequest.sender = user;
@@ -64,7 +64,7 @@ const storeFriendRequest = (app: FastifyInstance): void => {
         return reply.code(201).send(friendRequest);
       }
       return reply
-        .code(422)
+        .code(200)
         .send({ message: 'You sent or received a friend request' });
     },
   });
