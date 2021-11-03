@@ -89,8 +89,6 @@ const register = (app: FastifyInstance): void => {
 
       user.urlTokens = [];
       user.posts = [];
-      user.sentFriendRequests = [];
-      user.receivedFriendRequests = [];
 
       await user.save();
       await sendEmailVerification(user);

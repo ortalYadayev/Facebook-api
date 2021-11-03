@@ -53,7 +53,7 @@ export class User extends BaseEntity {
   receivedFriends!: Friend[];
 
   @OneToMany(() => Friend, (friend) => friend.deletedBy)
-  deletedFriends!: Friend[];
+  deletedFriend!: Friend[];
 
   static factory(): UserFactory {
     return new UserFactory();

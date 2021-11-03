@@ -58,7 +58,7 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-request',
+        url: '/friend-requests',
         payload: {
           id: user.id,
         },
@@ -73,7 +73,7 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-request',
+        url: '/friend-requests',
         payload: {
           id: 10,
         },
@@ -89,31 +89,28 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-request',
+        url: '/friend-requests',
         payload: {
           id: receiver.id,
         },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(404);
       expect(await FriendRequest.count()).toBe(0);
     });
 
     it('the user sent a request', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-
-      await app.loginAs(user).inject({
-        method: 'POST',
-        url: '/friend-request',
-        payload: {
-          id: receiver.id,
-        },
-      });
+      await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .unapproved()
+        .create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-request',
+        url: '/friend-requests',
         payload: {
           id: receiver.id,
         },
@@ -126,18 +123,15 @@ describe('Friend Requests', () => {
     it('a request was sent', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-
-      await app.loginAs(receiver).inject({
-        method: 'POST',
-        url: '/friend-request',
-        payload: {
-          id: user.id,
-        },
-      });
+      await FriendRequest.factory()
+        .sender(receiver)
+        .receiver(user)
+        .unapproved()
+        .create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-request',
+        url: '/friend-requests',
         payload: {
           id: receiver.id,
         },
@@ -150,7 +144,10 @@ describe('Friend Requests', () => {
     it('they are already friends', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-      const friendRequest = await FriendRequest.factory().create();
+      const friendRequest = await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .create();
       await Friend.factory()
         .sender(user)
         .receiver(receiver)
@@ -159,7 +156,7 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-request',
+        url: '/friend-requests',
         payload: {
           id: receiver.id,
         },

@@ -19,7 +19,7 @@ import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
 import searchUsers from './routes/users/searchUsers';
-import storeFriendRequest from './routes/users/storeFriendRequest';
+import storeFriendRequest from './routes/friendRequest/storeFriendRequest';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
