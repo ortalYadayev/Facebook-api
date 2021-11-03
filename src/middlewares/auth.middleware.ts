@@ -10,7 +10,6 @@ const authMiddleware = (app: FastifyInstance): void => {
 
         User.findOneOrFail({
           where: { id },
-          // relations: ['sentFriend'],
         })
           .then((response) => {
             request.user = response;
