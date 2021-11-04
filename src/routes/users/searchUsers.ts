@@ -2,6 +2,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
 import { LessThan, Raw } from 'typeorm';
+import { FriendRequest } from '../../entities/friend_request.entity';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
@@ -21,6 +22,23 @@ async function findUsers(searchQuery: string): Promise<User[]> {
     },
   });
   return users;
+}
+
+function relevantFriendRequests(
+  requests: FriendRequest[],
+  users: User[],
+): FriendRequest[] {
+  const result: FriendRequest[] = [];
+  users.filter((user) => {
+    const returnFriendRequest = requests.filter(
+      (fr) =>
+        (fr.sender.id === user.id || fr.receiver.id === user.id) &&
+        !fr.deletedAt &&
+        !fr.rejectedAt,
+    );
+    result.push(...returnFriendRequest);
+  });
+  return result;
 }
 
 function beFirst(users: User[], me: User): User[] {
@@ -44,6 +62,9 @@ const searchUsers = (app: FastifyInstance): void => {
       const payload = request.query;
       const me = request.user;
 
+      const allFriendRequests: FriendRequest[] = me.sentFriendRequests;
+      allFriendRequests.push(...me.receivedFriendRequests);
+
       const searchQuery: string = payload.searchQuery
         .trim()
         .replace(/\s+/g, '* ');
@@ -52,8 +73,29 @@ const searchUsers = (app: FastifyInstance): void => {
       try {
         users = await findUsers(searchQuery);
         users = beFirst(users, me);
+        const allRequests = relevantFriendRequests(allFriendRequests, users);
 
-        return reply.code(200).send(users);
+        const r: [{ status: string; sent: number; receiver: number }] = [
+          { status: '', sent: 0, receiver: 0 },
+        ];
+
+        allRequests.forEach((request1) => {
+          if (request1.approvedAt) {
+            r.push({
+              status: 'approved',
+              sent: request1.sender.id,
+              receiver: request1.receiver.id,
+            });
+          } else {
+            r.push({
+              status: 'pending',
+              sent: request1.sender.id,
+              receiver: request1.receiver.id,
+            });
+          }
+        });
+
+        return reply.code(200).send({ users, requests: r.splice(1) });
       } catch (error) {
         return reply.code(422).send();
       }
