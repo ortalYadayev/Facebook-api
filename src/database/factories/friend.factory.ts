@@ -9,10 +9,7 @@ class FriendFactory extends BaseFactory<Friend> {
   protected Entity = Friend;
 
   protected definition(): NonFunctionProperties<Friend> {
-    return {
-      deletedBy: null,
-      deletedAt: null,
-    };
+    return {};
   }
 
   sender(sender: User): this {
@@ -27,7 +24,7 @@ class FriendFactory extends BaseFactory<Friend> {
     return this.addToState({ request });
   }
 
-  unfriend(user: User): this {
+  deletedBy(user: User): this {
     return this.addToState({
       deletedBy: user,
       deletedAt: faker.date.past(),

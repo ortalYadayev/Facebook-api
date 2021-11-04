@@ -34,14 +34,10 @@ export class Friend extends BaseEntity {
   })
   deletedBy!: User | null;
 
-  @OneToOne(
-    () => FriendRequest,
-    (friendRequest) => friendRequest.friendApproved,
-    {
-      nullable: false,
-      cascade: true,
-    },
-  )
+  @OneToOne(() => FriendRequest, (friendRequest) => friendRequest.friend, {
+    nullable: false,
+    cascade: true,
+  })
   request!: FriendRequest;
 
   static factory(): FriendFactory {

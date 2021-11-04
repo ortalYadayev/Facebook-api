@@ -5,7 +5,7 @@ import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import { Friend } from '../../../src/entities/friend.entity';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Friend Requests Approved', () => {
+describe('Approve', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -28,14 +28,13 @@ describe('Friend Requests Approved', () => {
     const user = await User.factory().create();
     const receiver = await User.factory().create();
     const friendRequest = await FriendRequest.factory()
-      .unapproved()
       .sender(user)
       .receiver(receiver)
       .create();
 
     const response = await app.loginAs(receiver).inject({
       method: 'POST',
-      url: `/friend-requests/${friendRequest.id}/approved`,
+      url: `/friend-requests/${friendRequest.id}/approve`,
     });
 
     const friend = await Friend.findOne({
@@ -51,7 +50,6 @@ describe('Friend Requests Approved', () => {
 
     expect(response.statusCode).toBe(201);
     expect(await FriendRequest.count()).toBe(1);
-    expect(friendRequest).not.toBeNull();
     expect(friendRequest.approvedAt).not.toBeNull();
     expect(await Friend.count()).toBe(1);
     expect(friend).not.toBeNull();
@@ -80,6 +78,7 @@ describe('Friend Requests Approved', () => {
       const friendRequest = await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
+        .approved()
         .create();
       await Friend.factory()
         .sender(user)
@@ -89,7 +88,7 @@ describe('Friend Requests Approved', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/${friendRequest.id}/approved`,
+        url: `/friend-requests/${friendRequest.id}/approve`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -108,7 +107,7 @@ describe('Friend Requests Approved', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/${friendRequest.id}/approved`,
+        url: `/friend-requests/${friendRequest.id}/approve`,
       });
 
       expect(response.statusCode).toBe(422);

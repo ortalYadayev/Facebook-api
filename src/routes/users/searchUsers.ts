@@ -10,7 +10,7 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-async function findUsers(searchQuery: string): Promise<User[]> {
+async function findUsers(searchQuery: string, me: User): Promise<User[]> {
   const users = User.find({
     where: {
       firstName: Raw(
@@ -19,6 +19,9 @@ async function findUsers(searchQuery: string): Promise<User[]> {
         { searchQuery: `${searchQuery}*` },
       ),
       verifiedAt: LessThan(moment().format()),
+    },
+    order: {
+      id: 'ASC',
     },
   });
   return users;
@@ -29,7 +32,7 @@ function relevantFriendRequests(
   users: User[],
 ): FriendRequest[] {
   const result: FriendRequest[] = [];
-  users.filter((user) => {
+  users.forEach((user) => {
     const returnFriendRequest = requests.filter(
       (fr) =>
         (fr.sender.id === user.id || fr.receiver.id === user.id) &&
@@ -71,7 +74,7 @@ const searchUsers = (app: FastifyInstance): void => {
 
       let users: User[];
       try {
-        users = await findUsers(searchQuery);
+        users = await findUsers(searchQuery, me);
         users = beFirst(users, me);
         const allRequests = relevantFriendRequests(allFriendRequests, users);
 

@@ -8,11 +8,7 @@ class FriendRequestFactory extends BaseFactory<FriendRequest> {
   protected Entity = FriendRequest;
 
   protected definition(): NonFunctionProperties<FriendRequest> {
-    return {
-      rejectedAt: null,
-      deletedAt: null,
-      approvedAt: faker.date.past(),
-    };
+    return {};
   }
 
   sender(sender: User): this {
@@ -23,8 +19,8 @@ class FriendRequestFactory extends BaseFactory<FriendRequest> {
     return this.addToState({ receiver });
   }
 
-  unapproved(): this {
-    return this.addToState({ approvedAt: null });
+  approved(): this {
+    return this.addToState({ approvedAt: faker.date.past() });
   }
 
   deleted(): this {

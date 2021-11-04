@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection, getConnection, IsNull, Not } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import { Friend } from '../../../src/entities/friend.entity';
@@ -55,6 +55,7 @@ describe('Friend Requests', () => {
   describe("shouldn't send a friend request", () => {
     it('send himself', async () => {
       const user = await User.factory().create();
+      await User.factory().create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
@@ -68,8 +69,9 @@ describe('Friend Requests', () => {
       expect(await FriendRequest.count()).toBe(0);
     });
 
-    it('not exist user', async () => {
+    it('not exist a user', async () => {
       const user = await User.factory().create();
+      await User.factory().create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
@@ -102,11 +104,7 @@ describe('Friend Requests', () => {
     it('the user sent a request', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-      await FriendRequest.factory()
-        .sender(user)
-        .receiver(receiver)
-        .unapproved()
-        .create();
+      await FriendRequest.factory().sender(user).receiver(receiver).create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
@@ -123,11 +121,7 @@ describe('Friend Requests', () => {
     it('a request was sent', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-      await FriendRequest.factory()
-        .sender(receiver)
-        .receiver(user)
-        .unapproved()
-        .create();
+      await FriendRequest.factory().sender(receiver).receiver(user).create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
@@ -147,6 +141,7 @@ describe('Friend Requests', () => {
       const friendRequest = await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
+        .approved()
         .create();
       await Friend.factory()
         .sender(user)
@@ -162,9 +157,19 @@ describe('Friend Requests', () => {
         },
       });
 
+      const isApprove = await FriendRequest.findOne({
+        where: {
+          sender: user,
+          receiver,
+          rejectedAt: null,
+          approvedAt: null,
+        },
+      });
+
       expect(response.statusCode).toBe(200);
       expect(await FriendRequest.count()).toBe(1);
       expect(await Friend.count()).toBe(1);
+      expect(isApprove?.approvedAt).not.toBeNull();
     });
   });
 });

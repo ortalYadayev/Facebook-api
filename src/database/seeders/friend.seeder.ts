@@ -1,4 +1,5 @@
-import { Friend, FriendEnum } from '../../entities/friend.entity';
+import { FriendRequest } from '../../entities/friend_request.entity';
+import { Friend } from '../../entities/friend.entity';
 import { User } from '../../entities/user.entity';
 import { BaseSeeder } from './base_seeder';
 
@@ -25,10 +26,16 @@ export default class FriendSeeder implements BaseSeeder {
 
       const receiverIndex = randomExcluded(0, users.length - 1, senderIndex);
 
-      await Friend.factory()
-        .status(FriendEnum.APPROVED)
+      const request = await FriendRequest.factory()
         .sender(users[senderIndex])
         .receiver(users[receiverIndex])
+        .approved()
+        .create();
+
+      await Friend.factory()
+        .sender(users[senderIndex])
+        .receiver(users[receiverIndex])
+        .request(request)
         .create();
     }
   }

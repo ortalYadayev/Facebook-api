@@ -30,7 +30,7 @@ export class FriendRequest extends BaseEntity {
   @OneToOne(() => Friend, (friend) => friend.request, {
     nullable: true,
   })
-  friendApproved!: Friend | null;
+  friend!: Friend | null;
 
   static factory(): FriendRequestFactory {
     return new FriendRequestFactory();
