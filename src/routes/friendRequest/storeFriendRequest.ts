@@ -21,6 +21,7 @@ const storeFriendRequest = (app: FastifyInstance): void => {
       if (user.id === id) {
         return reply.code(422).send();
       }
+
       let receiver: User;
 
       try {
@@ -29,14 +30,6 @@ const storeFriendRequest = (app: FastifyInstance): void => {
             id,
             verifiedAt: Not(IsNull()),
           },
-          relations: [
-            'receivedFriendRequests',
-            'receivedFriendRequests.sender',
-            'receivedFriendRequests.receiver',
-            'sentFriendRequests',
-            'sentFriendRequests.sender',
-            'sentFriendRequests.receiver',
-          ],
         });
       } catch (error) {
         return reply.code(404).send({
@@ -44,28 +37,54 @@ const storeFriendRequest = (app: FastifyInstance): void => {
         });
       }
 
-      let friendRequests: FriendRequest[] = receiver.sentFriendRequests;
-      friendRequests.push(...receiver.receivedFriendRequests);
+      try {
+        const friendRequest = await FriendRequest.findOneOrFail({
+          where: [
+            {
+              sender: user.id,
+              receiver: id,
+              rejectedAt: IsNull(),
+              deletedAt: IsNull(),
+            },
+            {
+              sender: id,
+              receiver: user.id,
+              rejectedAt: IsNull(),
+              deletedAt: IsNull(),
+            },
+          ],
+          relations: ['sender'],
+        });
 
-      friendRequests = friendRequests.filter(
-        (fr) =>
-          (fr.sender.id === user.id || fr.receiver.id === user.id) &&
-          !fr.rejectedAt &&
-          !fr.deletedAt,
-      );
+        if (friendRequest.approvedAt) {
+          return reply.code(200).send({
+            statusFriend: {
+              status: 'approved',
+              sentBy: friendRequest.sender.id,
+            },
+          });
+        }
 
-      if (friendRequests.length === 0) {
+        return reply.code(200).send({
+          statusFriend: {
+            status: 'pending',
+            sentBy: friendRequest.sender.id,
+          },
+        });
+      } catch (error) {
         const friendRequest = new FriendRequest();
 
         friendRequest.sender = user;
         friendRequest.receiver = receiver;
 
         await friendRequest.save();
-        return reply.code(201).send(friendRequest);
+        return reply.code(201).send({
+          statusFriend: {
+            status: 'pending',
+            sentBy: friendRequest.sender.id,
+          },
+        });
       }
-      return reply
-        .code(200)
-        .send({ message: 'You sent or received a friend request' });
     },
   });
 };

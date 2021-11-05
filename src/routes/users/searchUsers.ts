@@ -30,16 +30,58 @@ async function findUsers(searchQuery: string): Promise<User[]> {
 function relevantFriendRequests(
   requests: FriendRequest[],
   users: User[],
-): FriendRequest[] {
-  const result: FriendRequest[] = [];
+  me: User,
+): [] {
+  const result: [] = [];
   users.forEach((user) => {
-    const returnFriendRequest = requests.filter(
-      (fr) =>
-        (fr.sender.id === user.id || fr.receiver.id === user.id) &&
-        !fr.deletedAt &&
-        !fr.rejectedAt,
-    );
-    result.push(...returnFriendRequest);
+    let found = false;
+
+    if (user.id === me.id) {
+      found = true;
+
+      const userAndFriendRequest = {
+        ...user,
+        isAuth: true,
+        statusFriend: {},
+      };
+      // @ts-ignore
+      result.push(userAndFriendRequest);
+    }
+
+    requests.forEach((friendRequest) => {
+      if (
+        (friendRequest.sender.id === user.id ||
+          friendRequest.receiver.id === user.id) &&
+        !friendRequest.deletedAt &&
+        !friendRequest.rejectedAt &&
+        !found
+      ) {
+        const userAndFriendRequest = {
+          ...user,
+          statusFriend: {
+            status: '',
+            sentBy: friendRequest.sender.id,
+            receivedBy: friendRequest.receiver.id,
+          },
+        };
+        if (friendRequest.approvedAt) {
+          userAndFriendRequest.statusFriend.status = 'approved';
+        } else {
+          userAndFriendRequest.statusFriend.status = 'pending';
+        }
+        // @ts-ignore
+        result.push(userAndFriendRequest);
+        found = true;
+      }
+    });
+    if (!found) {
+      const userAndFriendRequest = {
+        ...user,
+        statusFriend: {},
+      };
+      // @ts-ignore
+      result.push(userAndFriendRequest);
+    }
   });
   return result;
 }
@@ -76,29 +118,13 @@ const searchUsers = (app: FastifyInstance): void => {
       try {
         users = await findUsers(searchQuery);
         users = beFirst(users, me);
-        const allRequests = relevantFriendRequests(allFriendRequests, users);
+        const usersAndStatusFriends = relevantFriendRequests(
+          allFriendRequests,
+          users,
+          me,
+        );
 
-        const r: [{ status: string; sent: number; receiver: number }] = [
-          { status: '', sent: 0, receiver: 0 },
-        ];
-
-        allRequests.forEach((request1) => {
-          if (request1.approvedAt) {
-            r.push({
-              status: 'approved',
-              sent: request1.sender.id,
-              receiver: request1.receiver.id,
-            });
-          } else {
-            r.push({
-              status: 'pending',
-              sent: request1.sender.id,
-              receiver: request1.receiver.id,
-            });
-          }
-        });
-
-        return reply.code(200).send({ users, requests: r.splice(1) });
+        return reply.code(200).send(usersAndStatusFriends);
       } catch (error) {
         return reply.code(422).send();
       }

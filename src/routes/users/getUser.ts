@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import { IsNull } from 'typeorm';
 import { FriendRequest } from '../../entities/friend_request.entity';
 import { User } from '../../entities/user.entity';
 
@@ -27,20 +28,21 @@ const getUser = (app: FastifyInstance): void => {
       }
 
       let friendRequest: FriendRequest;
+
       try {
         friendRequest = await FriendRequest.findOneOrFail({
           where: [
             {
               sender: user.id,
               receiver: userByParams.id,
-              rejectedAt: null,
-              deletedAt: null,
+              rejectedAt: IsNull(),
+              deletedAt: IsNull(),
             },
             {
               sender: userByParams.id,
               receiver: user.id,
-              rejectedAt: null,
-              deletedAt: null,
+              rejectedAt: IsNull(),
+              deletedAt: IsNull(),
             },
           ],
           relations: ['sender'],
@@ -51,6 +53,7 @@ const getUser = (app: FastifyInstance): void => {
           statusFriend: {},
         });
       }
+
       let status: string;
       let sentBy: number;
 
