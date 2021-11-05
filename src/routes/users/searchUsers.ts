@@ -10,7 +10,7 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-async function findUsers(searchQuery: string, me: User): Promise<User[]> {
+async function findUsers(searchQuery: string): Promise<User[]> {
   const users = User.find({
     where: {
       firstName: Raw(
@@ -74,7 +74,7 @@ const searchUsers = (app: FastifyInstance): void => {
 
       let users: User[];
       try {
-        users = await findUsers(searchQuery, me);
+        users = await findUsers(searchQuery);
         users = beFirst(users, me);
         const allRequests = relevantFriendRequests(allFriendRequests, users);
 

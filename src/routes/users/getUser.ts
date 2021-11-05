@@ -19,14 +19,6 @@ const getUser = (app: FastifyInstance): void => {
           where: {
             username,
           },
-          relations: [
-            'receivedFriendRequests',
-            'receivedFriendRequests.sender',
-            'receivedFriendRequests.receiver',
-            'sentFriendRequests',
-            'sentFriendRequests.sender',
-            'sentFriendRequests.receiver',
-          ],
         });
       } catch (error) {
         return reply.code(404).send({
@@ -34,31 +26,44 @@ const getUser = (app: FastifyInstance): void => {
         });
       }
 
-      let friendRequests: FriendRequest[] = userByParams.sentFriendRequests;
-      friendRequests.push(...userByParams.receivedFriendRequests);
-
-      friendRequests = friendRequests.filter(
-        (fr) => fr.sender.id === user.id || fr.receiver.id === user.id,
-      );
-
+      let friendRequest: FriendRequest;
+      try {
+        friendRequest = await FriendRequest.findOneOrFail({
+          where: [
+            {
+              sender: user.id,
+              receiver: userByParams.id,
+              rejectedAt: null,
+              deletedAt: null,
+            },
+            {
+              sender: userByParams.id,
+              receiver: user.id,
+              rejectedAt: null,
+              deletedAt: null,
+            },
+          ],
+          relations: ['sender'],
+        });
+      } catch (error) {
+        return reply.code(200).send({
+          user: userByParams,
+          statusFriend: {},
+        });
+      }
       let status: string;
+      let sentBy: number;
 
-      if (friendRequests.length === 0) {
-        status = '';
-      } else if (friendRequests[friendRequests.length - 1].deletedAt) {
-        status = 'deleted';
-      } else if (friendRequests[friendRequests.length - 1].approvedAt) {
+      if (friendRequest.approvedAt) {
         status = 'approved';
-      } else if (friendRequests[friendRequests.length - 1].rejectedAt) {
-        status = 'rejected';
+        sentBy = friendRequest.sender.id;
       } else {
         status = 'pending';
+        sentBy = friendRequest.sender.id;
       }
-
-      userByParams.receivedFriendRequests = [];
-      userByParams.sentFriendRequests = [];
-
-      return reply.code(200).send({ user: userByParams, status });
+      return reply
+        .code(200)
+        .send({ user: userByParams, statusFriend: { status, sentBy } });
     },
   });
 };

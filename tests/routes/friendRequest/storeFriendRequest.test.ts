@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection, IsNull, Not } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import { Friend } from '../../../src/entities/friend.entity';
