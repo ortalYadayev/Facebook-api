@@ -5,7 +5,7 @@ import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import { Friend } from '../../../src/entities/friend.entity';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Approve', () => {
+describe('Delete', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe('Approve', () => {
     await app.close();
   });
 
-  it('should approve the friend request', async () => {
+  it('should delete the friend request', async () => {
     const user = await User.factory().create();
     const receiver = await User.factory().create();
     const friendRequest = await FriendRequest.factory()
@@ -34,42 +34,50 @@ describe('Approve', () => {
 
     const response = await app.loginAs(receiver).inject({
       method: 'POST',
-      url: `/friend-requests/${friendRequest.id}/approve`,
-    });
-
-    const friend = await Friend.findOne({
-      where: {
-        sender: user,
-        receiver,
-        deletedBy: null,
-        deletedAt: null,
-      },
+      url: `/friend-requests/delete`,
+      payload: { id: user.id },
     });
 
     await friendRequest.reload();
 
     expect(response.statusCode).toBe(201);
     expect(await FriendRequest.count()).toBe(1);
-    expect(friendRequest.approvedAt).not.toBeNull();
-    expect(await Friend.count()).toBe(1);
-    expect(friend).not.toBeNull();
-    expect(friend?.request).not.toBeNull();
-    expect(friend?.request).toMatchObject(friendRequest);
+    expect(friendRequest.deletedAt).not.toBeNull();
+    expect(response.json().statusFriend).toMatchObject({});
   });
 
-  describe("shouldn't approve the friend request", () => {
+  describe("shouldn't delete the friend request", () => {
     it("doesn't exist a friend request", async () => {
-      await User.factory().create();
+      const user = await User.factory().create();
       const receiver = await User.factory().create();
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/1/approved`,
+        url: `/friend-requests/delete`,
+        payload: { id: user.id },
       });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(422);
       expect(await FriendRequest.count()).toBe(0);
-      expect(await Friend.count()).toBe(0);
+    });
+
+    it("the user who sent can't delete", async () => {
+      const user = await User.factory().create();
+      const receiver = await User.factory().create();
+      const friendRequest = await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .rejected()
+        .create();
+
+      const response = await app.loginAs(user).inject({
+        method: 'POST',
+        url: `/friend-requests/delete`,
+        payload: { id: receiver.id },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(friendRequest.deletedAt).toBeNull();
     });
 
     it('already approved', async () => {
@@ -88,31 +96,32 @@ describe('Approve', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/${friendRequest.id}/approve`,
+        url: `/friend-requests/delete`,
+        payload: { id: user.id },
       });
 
       expect(response.statusCode).toBe(422);
-      expect(await FriendRequest.count()).toBe(1);
-      expect(await Friend.count()).toBe(1);
+      expect(friendRequest.rejectedAt).toBeNull();
     });
 
-    it('the request deleted', async () => {
+    it('the request rejected', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
       const friendRequest = await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
-        .deleted()
+        .rejected()
         .create();
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/${friendRequest.id}/approve`,
+        url: `/friend-requests/delete`,
+        payload: { id: user.id },
       });
 
       expect(response.statusCode).toBe(422);
       expect(await FriendRequest.count()).toBe(1);
-      expect(await Friend.count()).toBe(0);
+      expect(friendRequest.deletedAt).toBeNull();
     });
   });
 });

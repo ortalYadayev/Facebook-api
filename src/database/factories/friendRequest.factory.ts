@@ -2,6 +2,7 @@ import * as faker from 'faker';
 import { NonFunctionProperties } from './types';
 import BaseFactory from './base_factory';
 import { FriendRequest } from '../../entities/friend_request.entity';
+import { Friend } from '../../entities/friend.entity';
 import { User } from '../../entities/user.entity';
 
 class FriendRequestFactory extends BaseFactory<FriendRequest> {
@@ -29,6 +30,10 @@ class FriendRequestFactory extends BaseFactory<FriendRequest> {
 
   rejected(): this {
     return this.addToState({ rejectedAt: faker.date.past() });
+  }
+
+  friend(friend: Friend): this {
+    return this.addToState({ friend });
   }
 }
 

@@ -20,6 +20,10 @@ import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
 import searchUsers from './routes/users/searchUsers';
 import storeFriendRequest from './routes/friendRequest/storeFriendRequest';
+import approve from './routes/friendRequest/approve';
+import reject from './routes/friendRequest/reject';
+import deleteFriend from './routes/friendRequest/deleteFriend';
+import RemoveFriend from './routes/friendRequest/removeFriend';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
@@ -54,6 +58,10 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   storePost(app);
   searchUsers(app);
   storeFriendRequest(app);
+  approve(app);
+  reject(app);
+  deleteFriend(app);
+  RemoveFriend(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (
