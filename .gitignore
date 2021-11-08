@@ -10,3 +10,4 @@ yarn-error.log
 .nvmrc
 package-lock.json
 storage
+yarn.lock

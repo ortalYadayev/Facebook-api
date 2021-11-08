@@ -78,12 +78,7 @@ const storeFriendRequest = (app: FastifyInstance): void => {
         friendRequest.receiver = receiver;
 
         await friendRequest.save();
-        return reply.code(201).send({
-          statusFriend: {
-            status: 'pending',
-            sentBy: friendRequest.sender.id,
-          },
-        });
+        return reply.code(201).send();
       }
     },
   });

@@ -1,25 +1,23 @@
-import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
-import { IsNull } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 import { Friend } from '../../entities/friend.entity';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
-const PayloadSchema = Type.Object({
-  id: Type.Number(),
-});
-type PayloadType = Static<typeof PayloadSchema>;
+type ParamsType = { id: number };
 
-const approve = (app: FastifyInstance): void => {
-  app.route<{ Body: PayloadType }>({
-    url: '/friend-requests/remove',
-    method: 'POST',
+const removeFriend = (app: FastifyInstance): void => {
+  app.route<{ Params: ParamsType }>({
+    url: '/friend-requests/:id/remove',
+    method: 'DELETE',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { id } = request.body;
       const { user } = request;
+      const { id } = request.params;
 
       let friendRequest: FriendRequest;
+      let friend: Friend;
+
       try {
         friendRequest = await FriendRequest.findOneOrFail({
           where: [
@@ -28,35 +26,19 @@ const approve = (app: FastifyInstance): void => {
               receiver: user,
               rejectedAt: IsNull(),
               deletedAt: IsNull(),
+              approvedAt: Not(IsNull()),
             },
             {
               sender: user,
-              receiver: id,
+              // receiver: id,
               rejectedAt: IsNull(),
               deletedAt: IsNull(),
+              approvedAt: Not(IsNull()),
             },
           ],
           relations: ['sender', 'receiver'],
         });
 
-        if (!friendRequest.approvedAt) {
-          return reply.code(422).send({
-            message: "You can't remove friendship",
-            statusFriend: {
-              status: 'pending',
-              sentBy: friendRequest.sender.id,
-            },
-          });
-        }
-      } catch (error) {
-        return reply.code(422).send({
-          message: "You didn't remove a friendship",
-          statusFriend: {},
-        });
-      }
-
-      let friend: Friend;
-      try {
         friend = await Friend.findOneOrFail({
           where: [
             {
@@ -74,10 +56,7 @@ const approve = (app: FastifyInstance): void => {
           ],
         });
       } catch (error) {
-        return reply.code(422).send({
-          message: "You're not friends",
-          statusFriend: {},
-        });
+        return reply.code(422).send();
       }
 
       const dateToRemove = moment().toDate();
@@ -90,11 +69,9 @@ const approve = (app: FastifyInstance): void => {
       friendRequest.friend = friend;
       await friendRequest.save();
 
-      return reply.code(201).send({
-        statusFriend: {},
-      });
+      return reply.code(200).send();
     },
   });
 };
 
-export default approve;
+export default removeFriend;

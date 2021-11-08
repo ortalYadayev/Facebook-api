@@ -2,6 +2,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
 import { IsNull } from 'typeorm';
+import { Friend } from '../../entities/friend.entity';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
 const PayloadSchema = Type.Object({
@@ -9,9 +10,9 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-const reject = (app: FastifyInstance): void => {
+const approveFriendRequest = (app: FastifyInstance): void => {
   app.route<{ Body: PayloadType }>({
-    url: '/friend-requests/reject',
+    url: '/friend-requests/approve',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
@@ -21,27 +22,31 @@ const reject = (app: FastifyInstance): void => {
       try {
         const friendRequest = await FriendRequest.findOneOrFail({
           where: {
-            sender: user,
-            receiver: id,
+            sender: id,
+            receiver: user,
             rejectedAt: IsNull(),
             deletedAt: IsNull(),
             approvedAt: IsNull(),
           },
+          relations: ['sender', 'receiver'],
         });
 
-        friendRequest.rejectedAt = moment().toDate();
+        const friend = new Friend();
+        friend.sender = friendRequest.sender;
+        friend.receiver = friendRequest.receiver;
+        friend.request = friendRequest;
+        await friend.save();
+
+        friendRequest.approvedAt = friend.createdAt;
+        friendRequest.friend = friend;
         await friendRequest.save();
 
-        return reply.code(201).send({
-          statusFriend: {},
-        });
+        return reply.code(200).send();
       } catch (error) {
-        return reply.code(422).send({
-          statusFriend: {},
-        });
+        return reply.code(422).send();
       }
     },
   });
 };
 
-export default reject;
+export default approveFriendRequest;

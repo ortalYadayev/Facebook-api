@@ -28,7 +28,7 @@ export class Friend extends BaseEntity {
   @Column({ type: 'datetime', nullable: true })
   deletedAt!: Date | null;
 
-  @ManyToOne(() => User, (user) => user.deletedFriend, {
+  @ManyToOne(() => User, (user) => user.deletedFriends, {
     nullable: true,
     cascade: true,
   })

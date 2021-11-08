@@ -40,7 +40,7 @@ describe('Remove A Friendship', () => {
         .create();
 
       const response = await app.loginAs(receiver).inject({
-        method: 'POST',
+        method: 'DELETE',
         url: `/friend-requests/remove`,
         payload: { id: user.id },
       });
@@ -55,7 +55,7 @@ describe('Remove A Friendship', () => {
 
       await friendRequest.reload();
 
-      expect(response.statusCode).toBe(201);
+      expect(response.statusCode).toBe(200);
       expect(await FriendRequest.count()).toBe(1);
       expect(friendRequest.deletedAt).not.toBeNull();
       expect(await Friend.count()).toBe(1);
@@ -78,7 +78,7 @@ describe('Remove A Friendship', () => {
         .create();
 
       const response = await app.loginAs(user).inject({
-        method: 'POST',
+        method: 'DELETE',
         url: `/friend-requests/remove`,
         payload: { id: receiver.id },
       });
@@ -93,7 +93,7 @@ describe('Remove A Friendship', () => {
 
       await friendRequest.reload();
 
-      expect(response.statusCode).toBe(201);
+      expect(response.statusCode).toBe(200);
       expect(await FriendRequest.count()).toBe(1);
       expect(friendRequest.deletedAt).not.toBeNull();
       expect(await Friend.count()).toBe(1);
@@ -108,7 +108,7 @@ describe('Remove A Friendship', () => {
       const receiver = await User.factory().create();
 
       const response = await app.loginAs(receiver).inject({
-        method: 'POST',
+        method: 'DELETE',
         url: `/friend-requests/remove`,
         payload: { id: user.id },
       });
@@ -123,7 +123,7 @@ describe('Remove A Friendship', () => {
       await FriendRequest.factory().sender(user).receiver(receiver).create();
 
       const response = await app.loginAs(receiver).inject({
-        method: 'POST',
+        method: 'DELETE',
         url: `/friend-requests/remove`,
         payload: { id: user.id },
       });
@@ -149,7 +149,7 @@ describe('Remove A Friendship', () => {
         .create();
 
       const response = await app.loginAs(receiver).inject({
-        method: 'POST',
+        method: 'DELETE',
         url: `/friend-requests/remove`,
         payload: { id: user.id },
       });

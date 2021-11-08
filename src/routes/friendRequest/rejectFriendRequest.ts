@@ -9,9 +9,9 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-const deleteRequest = (app: FastifyInstance): void => {
+const rejectFriendRequest = (app: FastifyInstance): void => {
   app.route<{ Body: PayloadType }>({
-    url: '/friend-requests/delete',
+    url: '/friend-requests/reject',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
@@ -29,19 +29,15 @@ const deleteRequest = (app: FastifyInstance): void => {
           },
         });
 
-        friendRequest.deletedAt = moment().toDate();
+        friendRequest.rejectedAt = moment().toDate();
         await friendRequest.save();
 
-        return reply.code(201).send({
-          statusFriend: {},
-        });
+        return reply.code(200).send();
       } catch (error) {
-        return reply.code(422).send({
-          statusFriend: {},
-        });
+        return reply.code(422).send();
       }
     },
   });
 };
 
-export default deleteRequest;
+export default rejectFriendRequest;

@@ -5,7 +5,7 @@ import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import { Friend } from '../../../src/entities/friend.entity';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Reject', () => {
+describe('Reject A Friend Request', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe('Reject', () => {
     await app.close();
   });
 
-  it('should reject the friend request', async () => {
+  it('should delete the friend request', async () => {
     const user = await User.factory().create();
     const receiver = await User.factory().create();
     const friendRequest = await FriendRequest.factory()
@@ -32,42 +32,23 @@ describe('Reject', () => {
       .receiver(receiver)
       .create();
 
-    const response = await app.loginAs(user).inject({
+    const response = await app.loginAs(receiver).inject({
       method: 'POST',
       url: `/friend-requests/reject`,
-      payload: { id: receiver.id },
+      payload: { id: user.id },
     });
 
     await friendRequest.reload();
 
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(200);
     expect(await FriendRequest.count()).toBe(1);
-    expect(friendRequest.rejectedAt).not.toBeNull();
-    expect(response.json().statusFriend).toMatchObject({});
+    expect(friendRequest.deletedAt).not.toBeNull();
   });
 
-  describe("shouldn't reject the friend request", () => {
+  describe("shouldn't delete the friend request", () => {
     it("doesn't exist a friend request", async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-
-      const response = await app.loginAs(user).inject({
-        method: 'POST',
-        url: `/friend-requests/reject`,
-        payload: { id: receiver.id },
-      });
-
-      expect(response.statusCode).toBe(422);
-      expect(await FriendRequest.count()).toBe(0);
-    });
-
-    it("the receiver can't reject", async () => {
-      const user = await User.factory().create();
-      const receiver = await User.factory().create();
-      const friendRequest = await FriendRequest.factory()
-        .sender(user)
-        .receiver(receiver)
-        .create();
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
@@ -76,7 +57,26 @@ describe('Reject', () => {
       });
 
       expect(response.statusCode).toBe(422);
-      expect(friendRequest.rejectedAt).toBeNull();
+      expect(await FriendRequest.count()).toBe(0);
+    });
+
+    it("the user who sent can't delete", async () => {
+      const user = await User.factory().create();
+      const receiver = await User.factory().create();
+      const friendRequest = await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .rejected()
+        .create();
+
+      const response = await app.loginAs(user).inject({
+        method: 'POST',
+        url: `/friend-requests/reject`,
+        payload: { id: receiver.id },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(friendRequest.deletedAt).toBeNull();
     });
 
     it('already approved', async () => {
@@ -93,33 +93,34 @@ describe('Reject', () => {
         .request(friendRequest)
         .create();
 
-      const response = await app.loginAs(user).inject({
+      const response = await app.loginAs(receiver).inject({
         method: 'POST',
         url: `/friend-requests/reject`,
-        payload: { id: receiver.id },
+        payload: { id: user.id },
       });
 
       expect(response.statusCode).toBe(422);
       expect(friendRequest.rejectedAt).toBeNull();
     });
 
-    it('the request deleted by the friend', async () => {
+    it('the request rejected', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
       const friendRequest = await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
-        .deleted()
+        .rejected()
         .create();
 
-      const response = await app.loginAs(user).inject({
+      const response = await app.loginAs(receiver).inject({
         method: 'POST',
         url: `/friend-requests/reject`,
-        payload: { id: receiver.id },
+        payload: { id: user.id },
       });
 
       expect(response.statusCode).toBe(422);
-      expect(friendRequest.rejectedAt).toBeNull();
+      expect(await FriendRequest.count()).toBe(1);
+      expect(friendRequest.deletedAt).toBeNull();
     });
   });
 });
