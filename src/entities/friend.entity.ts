@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { FriendRequest } from './friend_request.entity';
 import FriendFactory from '../database/factories/friend.factory';
 import BaseEntity from './BaseEntity';
@@ -38,6 +38,7 @@ export class Friend extends BaseEntity {
     nullable: false,
     cascade: true,
   })
+  @JoinColumn()
   request!: FriendRequest;
 
   static factory(): FriendFactory {

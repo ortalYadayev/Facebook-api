@@ -34,8 +34,7 @@ describe('Approve A Friend Request', () => {
 
     const response = await app.loginAs(receiver).inject({
       method: 'POST',
-      url: `/friend-requests/approve`,
-      payload: { id: user.id },
+      url: `/friend-requests/${friendRequest.id}/approve`,
     });
 
     const friend = await Friend.findOne({
@@ -55,18 +54,16 @@ describe('Approve A Friend Request', () => {
     expect(await Friend.count()).toBe(1);
     expect(friend).not.toBeNull();
     expect(friend?.request).not.toBeNull();
-    expect(response.json().statusFriend.status).toEqual('approved');
   });
 
   describe("shouldn't approve the friend request", () => {
     it("doesn't exist a friend request", async () => {
-      const user = await User.factory().create();
+      await User.factory().create();
       const receiver = await User.factory().create();
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/approve`,
-        payload: { id: user.id },
+        url: '/friend-requests/20/approve',
       });
 
       expect(response.statusCode).toBe(422);
@@ -90,8 +87,7 @@ describe('Approve A Friend Request', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/approve`,
-        payload: { id: user.id },
+        url: `/friend-requests/${friendRequest.id}/approve`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -102,7 +98,7 @@ describe('Approve A Friend Request', () => {
     it('the request deleted', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-      await FriendRequest.factory()
+      const friendRequest = await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
         .deleted()
@@ -110,8 +106,7 @@ describe('Approve A Friend Request', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'POST',
-        url: `/friend-requests/approve`,
-        payload: { id: user.id },
+        url: `/friend-requests/${friendRequest.id}/approve`,
       });
 
       expect(response.statusCode).toBe(422);

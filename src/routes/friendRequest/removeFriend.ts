@@ -20,40 +20,21 @@ const removeFriend = (app: FastifyInstance): void => {
 
       try {
         friendRequest = await FriendRequest.findOneOrFail({
-          where: [
-            {
-              sender: id,
-              receiver: user,
-              rejectedAt: IsNull(),
-              deletedAt: IsNull(),
-              approvedAt: Not(IsNull()),
-            },
-            {
-              sender: user,
-              // receiver: id,
-              rejectedAt: IsNull(),
-              deletedAt: IsNull(),
-              approvedAt: Not(IsNull()),
-            },
-          ],
-          relations: ['sender', 'receiver'],
+          where: {
+            id,
+            rejectedAt: IsNull(),
+            deletedAt: IsNull(),
+            approvedAt: Not(IsNull()),
+          },
+          relations: ['sender', 'receiver', 'friend'],
         });
 
         friend = await Friend.findOneOrFail({
-          where: [
-            {
-              sender: id,
-              receiver: user,
-              deletedAt: IsNull(),
-              deletedBy: IsNull(),
-            },
-            {
-              sender: user,
-              receiver: id,
-              deletedAt: IsNull(),
-              deletedBy: IsNull(),
-            },
-          ],
+          where: {
+            id: friendRequest.friend?.id,
+            deletedAt: IsNull(),
+            deletedBy: IsNull(),
+          },
         });
       } catch (error) {
         return reply.code(422).send();

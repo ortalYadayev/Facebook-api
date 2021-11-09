@@ -1,28 +1,23 @@
-import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
 import { IsNull } from 'typeorm';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
-const PayloadSchema = Type.Object({
-  id: Type.Number(),
-});
-type PayloadType = Static<typeof PayloadSchema>;
+type ParamsType = { id: number };
 
 const rejectFriendRequest = (app: FastifyInstance): void => {
-  app.route<{ Body: PayloadType }>({
-    url: '/friend-requests/reject',
-    method: 'POST',
+  app.route<{ Params: ParamsType }>({
+    url: '/friend-requests/:id/reject',
+    method: 'DELETE',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { id } = request.body;
-      const { user } = request;
+      const { id } = request.params;
 
       try {
         const friendRequest = await FriendRequest.findOneOrFail({
           where: {
-            sender: id,
-            receiver: user,
+            id,
+            receiver: request.user,
             rejectedAt: IsNull(),
             deletedAt: IsNull(),
             approvedAt: IsNull(),

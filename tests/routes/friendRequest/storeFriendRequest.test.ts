@@ -5,7 +5,7 @@ import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import { Friend } from '../../../src/entities/friend.entity';
 import { User } from '../../../src/entities/user.entity';
 
-describe('Friend Requests', () => {
+describe('Store Friend Requests', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -31,10 +31,7 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
       const friendRequest = await FriendRequest.findOne({
@@ -51,7 +48,6 @@ describe('Friend Requests', () => {
       expect(await FriendRequest.count()).toBe(1);
       expect(friendRequest).not.toBeNull();
       expect(await Friend.count()).toBe(0);
-      expect(response.json().statusFriend).toMatchObject({});
     });
 
     it('a request sent was deleted', async () => {
@@ -65,15 +61,11 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
       expect(response.statusCode).toBe(201);
       expect(await FriendRequest.count()).toBe(2);
-      expect(response.json().statusFriend).toMatchObject({});
     });
 
     it('a request sent was rejected', async () => {
@@ -87,15 +79,11 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
       expect(response.statusCode).toBe(201);
       expect(await FriendRequest.count()).toBe(2);
-      expect(response.json().statusFriend).toMatchObject({});
     });
   });
 
@@ -106,10 +94,7 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: user.id,
-        },
+        url: `/users/${user.id}/friend-requests`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -122,10 +107,7 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: 10,
-        },
+        url: '/users/19/friend-requests',
       });
 
       expect(response.statusCode).toBe(404);
@@ -138,33 +120,25 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
       expect(response.statusCode).toBe(404);
       expect(await FriendRequest.count()).toBe(0);
     });
 
-    it('the user sent a request', async () => {
+    it('the user already sent a request', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
       await FriendRequest.factory().sender(user).receiver(receiver).create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(422);
       expect(await FriendRequest.count()).toBe(1);
-      expect(response.json().statusFriend.status).toEqual('pending');
-      expect(response.json().statusFriend.sentBy).toEqual(user.id);
     });
 
     it('a request was sent', async () => {
@@ -174,16 +148,11 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(422);
       expect(await FriendRequest.count()).toBe(1);
-      expect(response.json().statusFriend.status).toEqual('pending');
-      expect(response.json().statusFriend.sentBy).toEqual(receiver.id);
     });
 
     it('they are already friends', async () => {
@@ -202,27 +171,12 @@ describe('Friend Requests', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/friend-requests',
-        payload: {
-          id: receiver.id,
-        },
+        url: `/users/${receiver.id}/friend-requests`,
       });
 
-      const isApprove = await FriendRequest.findOne({
-        where: {
-          sender: user,
-          receiver,
-          rejectedAt: IsNull(),
-          approvedAt: IsNull(),
-        },
-      });
-
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(422);
       expect(await FriendRequest.count()).toBe(1);
       expect(await Friend.count()).toBe(1);
-      expect(isApprove?.approvedAt).not.toBeNull();
-      expect(response.json().statusFriend.status).toEqual('approved');
-      expect(response.json().statusFriend.sentBy).toEqual(user.id);
     });
   });
 });

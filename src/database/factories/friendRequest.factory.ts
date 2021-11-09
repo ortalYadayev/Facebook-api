@@ -31,10 +31,6 @@ class FriendRequestFactory extends BaseFactory<FriendRequest> {
   rejected(): this {
     return this.addToState({ rejectedAt: faker.date.past() });
   }
-
-  friend(friend: Friend): this {
-    return this.addToState({ friend });
-  }
 }
 
 export default FriendRequestFactory;

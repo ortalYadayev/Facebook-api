@@ -1,31 +1,26 @@
-import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import { Not, IsNull } from 'typeorm';
 import { FriendRequest } from '../../entities/friend_request.entity';
 import { User } from '../../entities/user.entity';
 
-const PayloadSchema = Type.Object({
-  id: Type.Number(),
-});
-type PayloadType = Static<typeof PayloadSchema>;
+type ParamsType = { id: number };
 
 const storeFriendRequest = (app: FastifyInstance): void => {
-  app.route<{ Body: PayloadType }>({
-    url: '/friend-requests',
+  app.route<{ Params: ParamsType }>({
+    url: '/users/:id/friend-requests',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { id } = request.body;
-      const { user } = request;
+      const { id } = request.params;
 
-      if (user.id === id) {
+      if (request.user.id === parseInt(String(id))) {
         return reply.code(422).send();
       }
 
-      let receiver: User;
+      let user: User;
 
       try {
-        receiver = await User.findOneOrFail({
+        user = await User.findOneOrFail({
           where: {
             id,
             verifiedAt: Not(IsNull()),
@@ -38,47 +33,32 @@ const storeFriendRequest = (app: FastifyInstance): void => {
       }
 
       try {
-        const friendRequest = await FriendRequest.findOneOrFail({
+        await FriendRequest.findOneOrFail({
           where: [
             {
-              sender: user.id,
-              receiver: id,
+              sender: request.user,
+              receiver: user,
               rejectedAt: IsNull(),
               deletedAt: IsNull(),
             },
             {
-              sender: id,
-              receiver: user.id,
+              sender: user,
+              receiver: request.user,
               rejectedAt: IsNull(),
               deletedAt: IsNull(),
             },
           ],
-          relations: ['sender'],
         });
 
-        if (friendRequest.approvedAt) {
-          return reply.code(200).send({
-            statusFriend: {
-              status: 'approved',
-              sentBy: friendRequest.sender.id,
-            },
-          });
-        }
-
-        return reply.code(200).send({
-          statusFriend: {
-            status: 'pending',
-            sentBy: friendRequest.sender.id,
-          },
-        });
+        return reply.code(422).send();
       } catch (error) {
         const friendRequest = new FriendRequest();
 
-        friendRequest.sender = user;
-        friendRequest.receiver = receiver;
+        friendRequest.sender = request.user;
+        friendRequest.receiver = user;
 
         await friendRequest.save();
-        return reply.code(201).send();
+        return reply.code(201).send(friendRequest);
       }
     },
   });

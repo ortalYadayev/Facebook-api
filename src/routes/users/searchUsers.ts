@@ -60,8 +60,8 @@ function relevantFriendRequests(
           ...user,
           statusFriend: {
             status: '',
+            idRequest: friendRequest.id,
             sentBy: friendRequest.sender.id,
-            receivedBy: friendRequest.receiver.id,
           },
         };
         if (friendRequest.approvedAt) {

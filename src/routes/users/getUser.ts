@@ -12,11 +12,10 @@ const getUser = (app: FastifyInstance): void => {
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
       const { username } = request.params;
-      const { user } = request;
 
-      let userByParams: User;
+      let user: User;
       try {
-        userByParams = await User.findOneOrFail({
+        user = await User.findOneOrFail({
           where: {
             username,
           },
@@ -33,14 +32,14 @@ const getUser = (app: FastifyInstance): void => {
         friendRequest = await FriendRequest.findOneOrFail({
           where: [
             {
-              sender: user.id,
-              receiver: userByParams.id,
+              sender: request.user.id,
+              receiver: user.id,
               rejectedAt: IsNull(),
               deletedAt: IsNull(),
             },
             {
-              sender: userByParams.id,
-              receiver: user.id,
+              sender: user.id,
+              receiver: request.user.id,
               rejectedAt: IsNull(),
               deletedAt: IsNull(),
             },
@@ -49,24 +48,16 @@ const getUser = (app: FastifyInstance): void => {
         });
       } catch (error) {
         return reply.code(200).send({
-          user: userByParams,
-          statusFriend: {},
+          user,
         });
       }
 
-      let status: string;
-      let sentBy: number;
+      const status: string = friendRequest.approvedAt ? 'approved' : 'pending';
+      const sentBy: number = friendRequest.sender.id;
 
-      if (friendRequest.approvedAt) {
-        status = 'approved';
-        sentBy = friendRequest.sender.id;
-      } else {
-        status = 'pending';
-        sentBy = friendRequest.sender.id;
-      }
       return reply
         .code(200)
-        .send({ user: userByParams, statusFriend: { status, sentBy } });
+        .send({ user, friendRequest, statusFriend: { status, sentBy } });
     },
   });
 };

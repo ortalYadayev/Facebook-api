@@ -30,7 +30,10 @@ describe('Get user', () => {
       const receiver = await User.factory().create({
         username,
       });
-      await FriendRequest.factory().sender(user).receiver(receiver).create();
+      const friendRequest = await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .create();
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
@@ -49,7 +52,7 @@ describe('Get user', () => {
       const receiver = await User.factory().create({
         username,
       });
-      await FriendRequest.factory()
+      const friendRequest = await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
         .approved()
@@ -85,7 +88,6 @@ describe('Get user', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.json().user).toMatchObject(receiver.toJSON());
-      expect(response.json().statusFriend).toMatchObject({});
     });
 
     it('just a user - a friend request rejected', async () => {
@@ -107,7 +109,6 @@ describe('Get user', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.json().user).toMatchObject(receiver.toJSON());
-      expect(response.json().statusFriend).toMatchObject({});
     });
 
     it("just a user - doesn't exist a friend request", async () => {
@@ -124,7 +125,6 @@ describe('Get user', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.json().user).toMatchObject(receiver.toJSON());
-      expect(response.json().statusFriend).toMatchObject({});
     });
   });
 

@@ -41,8 +41,7 @@ describe('Remove A Friendship', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'DELETE',
-        url: `/friend-requests/remove`,
-        payload: { id: user.id },
+        url: `/friend-requests/${friendRequest.id}/remove`,
       });
 
       const friend = await Friend.findOne({
@@ -60,7 +59,6 @@ describe('Remove A Friendship', () => {
       expect(friendRequest.deletedAt).not.toBeNull();
       expect(await Friend.count()).toBe(1);
       expect(friend?.deletedAt).not.toBeNull();
-      expect(response.json().statusFriend).toMatchObject({});
     });
 
     it('by the friend who sent', async () => {
@@ -79,14 +77,13 @@ describe('Remove A Friendship', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: `/friend-requests/remove`,
-        payload: { id: receiver.id },
+        url: `/friend-requests/${friendRequest.id}/remove`,
       });
 
       const friend = await Friend.findOne({
         where: {
-          sender: receiver,
-          receiver: user,
+          sender: user,
+          receiver,
           deletedBy: user,
         },
       });
@@ -98,7 +95,6 @@ describe('Remove A Friendship', () => {
       expect(friendRequest.deletedAt).not.toBeNull();
       expect(await Friend.count()).toBe(1);
       expect(friend?.deletedAt).not.toBeNull();
-      expect(response.json().statusFriend).toMatchObject({});
     });
   });
 
@@ -109,8 +105,7 @@ describe('Remove A Friendship', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'DELETE',
-        url: `/friend-requests/remove`,
-        payload: { id: user.id },
+        url: '/friend-requests/2/remove',
       });
 
       expect(response.statusCode).toBe(422);
@@ -120,12 +115,14 @@ describe('Remove A Friendship', () => {
     it('the friend request is still awaiting approval', async () => {
       const user = await User.factory().create();
       const receiver = await User.factory().create();
-      await FriendRequest.factory().sender(user).receiver(receiver).create();
+      const friendRequest = await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .create();
 
       const response = await app.loginAs(receiver).inject({
         method: 'DELETE',
-        url: `/friend-requests/remove`,
-        payload: { id: user.id },
+        url: `/friend-requests/${friendRequest.id}/remove`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -150,8 +147,7 @@ describe('Remove A Friendship', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'DELETE',
-        url: `/friend-requests/remove`,
-        payload: { id: user.id },
+        url: `/friend-requests/${friendRequest.id}/remove`,
       });
 
       expect(response.statusCode).toBe(422);
