@@ -3,20 +3,20 @@ import moment from 'moment';
 import { IsNull } from 'typeorm';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
-type ParamsType = { id: number };
+type ParamsType = { idRequest: number };
 
 const rejectFriendRequest = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/friend-requests/:id/reject',
+    url: '/friend-requests/:idRequest/reject',
     method: 'DELETE',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { id } = request.params;
+      const { idRequest } = request.params;
 
       try {
         const friendRequest = await FriendRequest.findOneOrFail({
           where: {
-            id,
+            id: idRequest,
             receiver: request.user,
             rejectedAt: IsNull(),
             deletedAt: IsNull(),

@@ -34,7 +34,7 @@ describe('Delete A Friend Request', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
-      url: `/friend-requests/${friendRequest.id}/delete`,
+      url: `/friend-requests/${friendRequest.id}`,
     });
 
     await friendRequest.reload();
@@ -51,7 +51,7 @@ describe('Delete A Friend Request', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: '/friend-requests/2/delete',
+        url: '/friend-requests/2',
       });
 
       expect(response.statusCode).toBe(422);
@@ -74,7 +74,7 @@ describe('Delete A Friend Request', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: `/friend-requests/${friendRequest.id}/delete`,
+        url: `/friend-requests/${friendRequest.id}`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -91,7 +91,7 @@ describe('Delete A Friend Request', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'DELETE',
-        url: `/friend-requests/${friendRequest.id}/delete`,
+        url: `/friend-requests/${friendRequest.id}`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -109,7 +109,7 @@ describe('Delete A Friend Request', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: `/friend-requests/${friendRequest.id}/delete`,
+        url: `/friend-requests/${friendRequest.id}`,
       });
 
       expect(response.statusCode).toBe(422);
@@ -127,7 +127,7 @@ describe('Delete A Friend Request', () => {
 
       const response = await app.loginAs(receiver).inject({
         method: 'DELETE',
-        url: `/friend-requests/${friendRequest.id}/delete`,
+        url: `/friend-requests/${friendRequest.id}`,
       });
 
       expect(response.statusCode).toBe(422);
