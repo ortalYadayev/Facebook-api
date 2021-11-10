@@ -100,7 +100,7 @@ describe('Remove A Friendship', () => {
 
   describe("shouldn't remove the friend request", () => {
     it("doesn't exist a friend request", async () => {
-      const user = await User.factory().create();
+      await User.factory().create();
       const receiver = await User.factory().create();
 
       const response = await app.loginAs(receiver).inject({

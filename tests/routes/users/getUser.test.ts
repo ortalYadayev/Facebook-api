@@ -30,10 +30,7 @@ describe('Get user', () => {
       const receiver = await User.factory().create({
         username,
       });
-      const friendRequest = await FriendRequest.factory()
-        .sender(user)
-        .receiver(receiver)
-        .create();
+      await FriendRequest.factory().sender(user).receiver(receiver).create();
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
@@ -52,7 +49,7 @@ describe('Get user', () => {
       const receiver = await User.factory().create({
         username,
       });
-      const friendRequest = await FriendRequest.factory()
+      await FriendRequest.factory()
         .sender(user)
         .receiver(receiver)
         .approved()

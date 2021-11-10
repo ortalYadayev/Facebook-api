@@ -2,7 +2,6 @@ import * as faker from 'faker';
 import { NonFunctionProperties } from './types';
 import BaseFactory from './base_factory';
 import { FriendRequest } from '../../entities/friend_request.entity';
-import { Friend } from '../../entities/friend.entity';
 import { User } from '../../entities/user.entity';
 
 class FriendRequestFactory extends BaseFactory<FriendRequest> {
