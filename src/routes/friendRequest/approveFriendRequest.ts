@@ -3,20 +3,18 @@ import { IsNull } from 'typeorm';
 import { Friend } from '../../entities/friend.entity';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
-type ParamsType = { idRequest: number };
+type ParamsType = { friendRequestId: number };
 
 const approveFriendRequest = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/friend-requests/:idRequest/approve',
+    url: '/friend-requests/:friendRequestId/approve',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { idRequest } = request.params;
-
       try {
         const friendRequest = await FriendRequest.findOneOrFail({
           where: {
-            id: idRequest,
+            id: request.params.friendRequestId,
             rejectedAt: IsNull(),
             deletedAt: IsNull(),
             approvedAt: IsNull(),

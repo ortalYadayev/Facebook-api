@@ -4,24 +4,21 @@ import { IsNull, Not } from 'typeorm';
 import { Friend } from '../../entities/friend.entity';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
-type ParamsType = { idRequest: number };
+type ParamsType = { friendRequestId: number };
 
 const removeFriend = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/friend-requests/:idRequest/remove',
+    url: '/friend-requests/:friendRequestId/remove',
     method: 'DELETE',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { user } = request;
-      const { idRequest } = request.params;
-
       let friendRequest: FriendRequest;
       let friend: Friend;
 
       try {
         friendRequest = await FriendRequest.findOneOrFail({
           where: {
-            id: idRequest,
+            id: request.params.friendRequestId,
             rejectedAt: IsNull(),
             deletedAt: IsNull(),
             approvedAt: Not(IsNull()),
@@ -43,7 +40,7 @@ const removeFriend = (app: FastifyInstance): void => {
       const dateToRemove = moment().toDate();
 
       friend.deletedAt = dateToRemove;
-      friend.deletedBy = user;
+      friend.deletedBy = request.user;
       await friend.save();
 
       friendRequest.deletedAt = dateToRemove;

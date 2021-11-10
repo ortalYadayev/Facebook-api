@@ -3,17 +3,15 @@ import { Not, IsNull } from 'typeorm';
 import { FriendRequest } from '../../entities/friend_request.entity';
 import { User } from '../../entities/user.entity';
 
-type ParamsType = { idUser: number };
+type ParamsType = { userId: number };
 
 const storeFriendRequest = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/users/:idUser/friend-requests',
+    url: '/users/:userId/friend-requests',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      const { idUser } = request.params;
-
-      if (request.user.id === parseInt(String(idUser))) {
+      if (request.user.id === parseInt(String(request.params.userId))) {
         return reply.code(422).send();
       }
 
@@ -22,7 +20,7 @@ const storeFriendRequest = (app: FastifyInstance): void => {
       try {
         user = await User.findOneOrFail({
           where: {
-            id: idUser,
+            id: request.params.userId,
             verifiedAt: Not(IsNull()),
           },
         });
