@@ -15,13 +15,13 @@ export enum FriendEnum {
 export class Friend extends BaseEntity {
   @ManyToOne(() => User, (user) => user.sentFriendRequests, {
     nullable: false,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   sender!: User;
 
   @ManyToOne(() => User, (user) => user.receivedFriendRequests, {
     nullable: false,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   receiver!: User;
 
@@ -30,13 +30,13 @@ export class Friend extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.deletedFriends, {
     nullable: true,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   deletedBy!: User | null;
 
   @OneToOne(() => FriendRequest, (friendRequest) => friendRequest.friend, {
     nullable: false,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   request!: FriendRequest;

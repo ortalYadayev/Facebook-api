@@ -22,7 +22,7 @@ export class UrlToken extends BaseEntity {
   @Column({ type: 'datetime', nullable: true })
   expireAt!: Date | null;
 
-  @ManyToOne(() => User, (user) => user.urlTokens)
+  @ManyToOne(() => User, (user) => user.urlTokens, { onDelete: 'CASCADE' })
   user!: User;
 
   static generateRandomToken(): string {

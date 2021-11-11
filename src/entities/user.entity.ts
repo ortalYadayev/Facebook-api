@@ -34,25 +34,39 @@ export class User extends BaseEntity {
 
   profilePictureUrl!: string | null;
 
-  @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
+  @OneToMany(() => UrlToken, (urlToken) => urlToken.user, {
+    cascade: true,
+  })
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => Post, (post) => post.user)
+  @OneToMany(() => Post, (post) => post.user, {
+    cascade: true,
+  })
   posts!: Post[];
 
-  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender)
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender, {
+    cascade: true,
+  })
   sentFriendRequests!: FriendRequest[];
 
-  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver)
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, {
+    cascade: true,
+  })
   receivedFriendRequests!: FriendRequest[];
 
-  @OneToMany(() => Friend, (friend) => friend.sender)
+  @OneToMany(() => Friend, (friend) => friend.sender, {
+    cascade: true,
+  })
   sentFriends!: Friend[];
 
-  @OneToMany(() => Friend, (friend) => friend.receiver)
+  @OneToMany(() => Friend, (friend) => friend.receiver, {
+    cascade: true,
+  })
   receivedFriends!: Friend[];
 
-  @OneToMany(() => Friend, (friend) => friend.deletedBy)
+  @OneToMany(() => Friend, (friend) => friend.deletedBy, {
+    cascade: true,
+  })
   deletedFriends!: Friend[];
 
   static factory(): UserFactory {

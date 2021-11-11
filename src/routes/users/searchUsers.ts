@@ -86,7 +86,7 @@ function relevantFriendRequests(
   return result;
 }
 
-function beFirst(users: User[], me: User): User[] {
+function unshiftUser(users: User[], me: User): User[] {
   const index = users.findIndex((user) => user.id === me.id);
 
   if (index !== -1 && index !== 0) {
@@ -117,7 +117,7 @@ const searchUsers = (app: FastifyInstance): void => {
       let users: User[];
       try {
         users = await findUsers(searchQuery);
-        users = beFirst(users, me);
+        users = unshiftUser(users, me);
         const usersAndStatusFriends = relevantFriendRequests(
           allFriendRequests,
           users,

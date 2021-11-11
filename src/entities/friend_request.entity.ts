@@ -29,6 +29,7 @@ export class FriendRequest extends BaseEntity {
 
   @OneToOne(() => Friend, (friend) => friend.request, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   friend!: Friend | null;
 
