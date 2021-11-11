@@ -1,6 +1,6 @@
 name: GitHub Actions Node.js
 
-on: [push, pull-requests]
+on: [push, pull_request]
 
 jobs:
   eslint:
