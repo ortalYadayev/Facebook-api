@@ -12,4 +12,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: run lint
-      - run: yarn lint
+        run: yarn lint
