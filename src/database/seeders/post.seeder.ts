@@ -10,7 +10,7 @@ export default class PostSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
 
-    for (let i = 0; i <= 100; i++) {
+    for (let i = 0; i < 100; i++) {
       const fromUserKey = randomIndex(1, users.length - 1);
 
       await Post.factory().user(users[fromUserKey]).create();

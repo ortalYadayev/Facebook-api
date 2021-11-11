@@ -11,6 +11,7 @@ export class Post extends BaseEntity {
   @ManyToOne(() => User, (user) => user.posts, {
     nullable: false,
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   user!: User | undefined;
 
