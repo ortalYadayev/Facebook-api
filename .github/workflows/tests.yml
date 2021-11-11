@@ -1,17 +1,19 @@
-name: Prettier
+name: Test
 
 on: [push, pull_request]
 
 jobs:
-  prettier:
-    name: Prettier
+  tests:
+    name: Tests
     runs-on: ubuntu-latest
+    env:
+      name: env.test
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Run lint
+      - name: Run tests
         run: |
           yarn
-          yarn format
+          yarn tests

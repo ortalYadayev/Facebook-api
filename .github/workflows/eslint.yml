@@ -1,10 +1,10 @@
-name: Eslint Github Actions
+name: Eslint
 
 on: [push, pull_request]
 
 jobs:
   eslint:
-    name: eslint
+    name: Eslint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
