@@ -8,9 +8,10 @@ jobs:
   tests:
     name: tests
     env:
-      name: env.test
+      name: env.test*
     steps:
       - name: run tests
+      - run: yarn install
       - run: yarn test
 
       - name: run tests coverage
@@ -20,10 +21,12 @@ jobs:
     name: eslint
     steps:
       - name: run lint
+      - run: yarn install
       - run: yarn lint
 
   prettier:
     name: prettier
     steps:
       - name: run format
+      - run: yarn install
       - run: yarn format
