@@ -1,0 +1,29 @@
+name: GitHub Actions Node.js
+
+on: [push]
+
+jobs:
+  runs-on: ubuntu-latest
+
+  tests:
+    name: tests
+    env:
+      name: env.test
+    steps:
+      - name: run tests
+      - run: yarn test
+
+      - name: run tests coverage
+      - run: yarn test:coverage
+
+  eslint:
+    name: eslint
+    steps:
+      - name: run lint
+      - run: yarn lint
+
+  prettier:
+    name: prettier
+    steps:
+      - name: run format
+      - run: yarn format

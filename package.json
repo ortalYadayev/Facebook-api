@@ -64,8 +64,10 @@
     "migration:run": "ts-node node_modules/.bin/typeorm migration:run",
     "migration:revert": "ts-node node_modules/.bin/typeorm migration:revert",
     "seed": "ts-node src/commands/seed.ts",
-    "format": "prettier --config .prettierrc '**/*.(ts|js|json|md)' --write",
-    "lint": "eslint . --ext=ts --fix",
+    "format": "prettier --config .prettierrc '**/*.(ts|js|json|md)'",
+    "format:fix": "prettier --config .prettierrc '**/*.(ts|js|json|md)' --write",
+    "lint": "eslint . --ext=ts",
+    "lint:fix": "eslint . --ext=ts --fix",
     "generate-jwt-secret": "ts-node src/commands/generateJwtSecret.ts",
     "prepare": "husky install"
   }
