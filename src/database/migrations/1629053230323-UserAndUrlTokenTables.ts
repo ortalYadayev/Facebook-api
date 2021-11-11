@@ -5,7 +5,7 @@ export class UserAndUrlTokenTables1629053230323 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            CREATE TABLE \`facebook_clone\`.\`users\` (
+            CREATE TABLE \`${process.env.DB_NAME}\`.\`users\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
                 \`createdAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 \`updatedAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -19,7 +19,7 @@ export class UserAndUrlTokenTables1629053230323 implements MigrationInterface {
             ) ENGINE = InnoDB
         `);
     await queryRunner.query(`
-            CREATE TABLE \`facebook_clone\`.\`url_tokens\` (
+            CREATE TABLE \`${process.env.DB_NAME}\`.\`url_tokens\` (
                 \`id\` int NOT NULL AUTO_INCREMENT,
                 \`createdAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 \`updatedAt\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -32,26 +32,26 @@ export class UserAndUrlTokenTables1629053230323 implements MigrationInterface {
             ) ENGINE = InnoDB
         `);
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\`
-            ADD CONSTRAINT \`FK_2d85a0e769ad0d87b4d1e78ebf0\` FOREIGN KEY (\`userId\`) REFERENCES \`facebook_clone\`.\`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\`
+            ADD CONSTRAINT \`FK_2d85a0e769ad0d87b4d1e78ebf0\` FOREIGN KEY (\`userId\`) REFERENCES \`${process.env.DB_NAME}\`.\`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\` DROP FOREIGN KEY \`FK_2d85a0e769ad0d87b4d1e78ebf0\`
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\` DROP FOREIGN KEY \`FK_2d85a0e769ad0d87b4d1e78ebf0\`
         `);
     await queryRunner.query(`
-            DROP INDEX \`IDX_a2822d37fa5c0456c6f1a82ff8\` ON \`facebook_clone\`.\`url_tokens\`
+            DROP INDEX \`IDX_a2822d37fa5c0456c6f1a82ff8\` ON \`${process.env.DB_NAME}\`.\`url_tokens\`
         `);
     await queryRunner.query(`
-            DROP TABLE \`facebook_clone\`.\`url_tokens\`
+            DROP TABLE \`${process.env.DB_NAME}\`.\`url_tokens\`
         `);
     await queryRunner.query(`
-            DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\` ON \`facebook_clone\`.\`users\`
+            DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\` ON \`${process.env.DB_NAME}\`.\`users\`
         `);
     await queryRunner.query(`
-            DROP TABLE \`facebook_clone\`.\`users\`
+            DROP TABLE \`${process.env.DB_NAME}\`.\`users\`
         `);
   }
 }

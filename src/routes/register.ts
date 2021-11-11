@@ -88,6 +88,7 @@ const register = (app: FastifyInstance): void => {
       user.verifiedAt = null;
 
       user.urlTokens = [];
+      user.posts = [];
 
       await user.save();
       await sendEmailVerification(user);

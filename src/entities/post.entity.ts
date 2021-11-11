@@ -8,7 +8,10 @@ export class Post extends BaseEntity {
   @Column()
   content!: string;
 
-  @ManyToOne(() => User, (user) => user.posts, { nullable: false })
+  @ManyToOne(() => User, (user) => user.posts, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   user!: User | undefined;
 
   static factory(): PostFactory {

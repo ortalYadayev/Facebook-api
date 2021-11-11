@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { createConnection, getConnection } from 'typeorm';
+import { FriendRequest } from '../../../src/entities/friend_request.entity';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { User } from '../../../src/entities/user.entity';
 
@@ -22,19 +23,106 @@ describe('Get user', () => {
     await app.close();
   });
 
-  it('should return a user', async () => {
-    const username = 'username';
-    const user = await User.factory().create({
-      username,
+  describe('should return', () => {
+    it('a user and his status "pending"', async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      const receiver = await User.factory().create({
+        username,
+      });
+      await FriendRequest.factory().sender(user).receiver(receiver).create();
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: `/users/${username}`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().statusFriend.status).toEqual('pending');
+      expect(response.json().statusFriend.sentBy).toEqual(user.id);
     });
 
-    const response = await app.loginAs(user).inject({
-      method: 'GET',
-      url: `/users/${username}`,
+    it('a user and his status "approved"', async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      const receiver = await User.factory().create({
+        username,
+      });
+      await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .approved()
+        .create();
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: `/users/${username}`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().statusFriend.status).toEqual('approved');
+      expect(response.json().statusFriend.sentBy).toEqual(user.id);
     });
 
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchObject(user.toJSON());
+    it('just a user - a friend request deleted', async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      const receiver = await User.factory().create({
+        username,
+      });
+      await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .deleted()
+        .create();
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: `/users/${username}`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().user).toMatchObject(receiver.toJSON());
+    });
+
+    it('just a user - a friend request rejected', async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      const receiver = await User.factory().create({
+        username,
+      });
+      await FriendRequest.factory()
+        .sender(user)
+        .receiver(receiver)
+        .rejected()
+        .create();
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: `/users/${username}`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().user).toMatchObject(receiver.toJSON());
+    });
+
+    it("just a user - doesn't exist a friend request", async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      const receiver = await User.factory().create({
+        username,
+      });
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: `/users/${username}`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().user).toMatchObject(receiver.toJSON());
+    });
   });
 
   describe('should not return a user', () => {

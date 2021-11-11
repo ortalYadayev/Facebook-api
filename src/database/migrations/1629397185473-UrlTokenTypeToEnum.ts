@@ -5,20 +5,20 @@ export class UrlTokenTypeToEnum1629397185473 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\` DROP COLUMN \`type\`
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\` DROP COLUMN \`type\`
         `);
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\`
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\`
             ADD \`type\` enum ('email_verification') NOT NULL
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\` DROP COLUMN \`type\`
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\` DROP COLUMN \`type\`
         `);
     await queryRunner.query(`
-            ALTER TABLE \`facebook_clone\`.\`url_tokens\`
+            ALTER TABLE \`${process.env.DB_NAME}\`.\`url_tokens\`
             ADD \`type\` varchar(255) NOT NULL
         `);
   }

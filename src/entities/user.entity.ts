@@ -1,10 +1,12 @@
 import { AfterLoad, Column, Entity, OneToMany, Index } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
+import { FriendRequest } from './friend_request.entity';
 import BaseEntity from './BaseEntity';
 import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
 import { Post } from './post.entity';
+import { Friend } from './friend.entity';
 
 @Entity('users')
 @Index(['firstName', 'lastName'], { fulltext: true })
@@ -32,11 +34,40 @@ export class User extends BaseEntity {
 
   profilePictureUrl!: string | null;
 
-  @OneToMany(() => UrlToken, (urlToken) => urlToken.user)
+  @OneToMany(() => UrlToken, (urlToken) => urlToken.user, {
+    cascade: true,
+  })
   urlTokens!: UrlToken[];
 
-  @OneToMany(() => Post, (post) => post.user)
+  @OneToMany(() => Post, (post) => post.user, {
+    cascade: true,
+  })
   posts!: Post[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender, {
+    cascade: true,
+  })
+  sentFriendRequests!: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, {
+    cascade: true,
+  })
+  receivedFriendRequests!: FriendRequest[];
+
+  @OneToMany(() => Friend, (friend) => friend.sender, {
+    cascade: true,
+  })
+  sentFriends!: Friend[];
+
+  @OneToMany(() => Friend, (friend) => friend.receiver, {
+    cascade: true,
+  })
+  receivedFriends!: Friend[];
+
+  @OneToMany(() => Friend, (friend) => friend.deletedBy, {
+    cascade: true,
+  })
+  deletedFriends!: Friend[];
 
   static factory(): UserFactory {
     return new UserFactory();

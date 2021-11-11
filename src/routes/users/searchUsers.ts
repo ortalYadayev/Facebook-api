@@ -2,6 +2,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
 import { LessThan, Raw } from 'typeorm';
+import { FriendRequest } from '../../entities/friend_request.entity';
 import { User } from '../../entities/user.entity';
 
 const PayloadSchema = Type.Object({
@@ -17,13 +18,75 @@ async function findUsers(searchQuery: string): Promise<User[]> {
           `MATCH(firstName, lastName) AGAINST (:searchQuery IN BOOLEAN MODE)`,
         { searchQuery: `${searchQuery}*` },
       ),
-      verifiedAt: LessThan(moment().toISOString()),
+      verifiedAt: LessThan(moment().format()),
+    },
+    order: {
+      id: 'ASC',
     },
   });
   return users;
 }
 
-function beFirst(users: User[], me: User): User[] {
+function relevantFriendRequests(
+  requests: FriendRequest[],
+  users: User[],
+  me: User,
+): [] {
+  const result: [] = [];
+  users.forEach((user) => {
+    let found = false;
+
+    if (user.id === me.id) {
+      found = true;
+
+      const userAndFriendRequest = {
+        ...user,
+        isAuth: true,
+        statusFriend: {},
+      };
+      // @ts-ignore
+      result.push(userAndFriendRequest);
+    }
+
+    requests.forEach((friendRequest) => {
+      if (
+        (friendRequest.sender.id === user.id ||
+          friendRequest.receiver.id === user.id) &&
+        !friendRequest.deletedAt &&
+        !friendRequest.rejectedAt &&
+        !found
+      ) {
+        const userAndFriendRequest = {
+          ...user,
+          statusFriend: {
+            status: '',
+            idRequest: friendRequest.id,
+            sentBy: friendRequest.sender.id,
+          },
+        };
+        if (friendRequest.approvedAt) {
+          userAndFriendRequest.statusFriend.status = 'approved';
+        } else {
+          userAndFriendRequest.statusFriend.status = 'pending';
+        }
+        // @ts-ignore
+        result.push(userAndFriendRequest);
+        found = true;
+      }
+    });
+    if (!found) {
+      const userAndFriendRequest = {
+        ...user,
+        statusFriend: {},
+      };
+      // @ts-ignore
+      result.push(userAndFriendRequest);
+    }
+  });
+  return result;
+}
+
+function unshiftUser(users: User[], me: User): User[] {
   const index = users.findIndex((user) => user.id === me.id);
 
   if (index !== -1 && index !== 0) {
@@ -44,14 +107,27 @@ const searchUsers = (app: FastifyInstance): void => {
       const payload = request.query;
       const me = request.user;
 
+      const allFriendRequests: FriendRequest[] = me.sentFriendRequests;
+      allFriendRequests.push(...me.receivedFriendRequests);
+
       const searchQuery: string = payload.searchQuery
         .trim()
         .replace(/\s+/g, '* ');
 
-      let users: User[] = await findUsers(searchQuery);
-      users = beFirst(users, me);
+      let users: User[];
+      try {
+        users = await findUsers(searchQuery);
+        users = unshiftUser(users, me);
+        const usersAndStatusFriends = relevantFriendRequests(
+          allFriendRequests,
+          users,
+          me,
+        );
 
-      return reply.code(200).send(users);
+        return reply.code(200).send(usersAndStatusFriends);
+      } catch (error) {
+        return reply.code(422).send();
+      }
     },
   });
 };
