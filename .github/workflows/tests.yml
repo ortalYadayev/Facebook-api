@@ -30,8 +30,8 @@ jobs:
         run: yarn
       - name: Connect to Mysql
         run: |
-          sudo service mysql start
+#          sudo service mysql start
 #          mysql -u ortalyad
-#          yarn migration:run
+          yarn migration:run
       - name: Run test
         run: yarn test
