@@ -8,10 +8,10 @@ jobs:
     services:
       mysql:
         image: mysql:latest
-#        env:
-#          MYSQL_DATABASE: facebook_clone
-#          MYSQL_HOST: locahost
-#          MYSQL_USER: ortalyad
+        env:
+          MYSQL_DATABASE: facebook_clone
+          MYSQL_HOST: locahost
+          MYSQL_USER: ortalyad
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Connect to Mysql
-        run: |
+        run:
 #          sudo service mysql start
 #          mysql -u ortalyad -p
           yarn migration:run
