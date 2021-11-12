@@ -7,20 +7,25 @@ jobs:
     runs-on: ubuntu-latest
     env:
       name: env.test
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
       - uses: actions/setup-node@v1
       - uses: mirromutth/mysql-action@v1.1
-        with:
-          node-version: 16
-          host host: localhost
-          host port: 3306
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mysql version: '8.0'
-          mysql database: 'facebook_tests'
-          mysql user: 'ortalyad'
       - name: Install dependencies
         run: yarn
+      - name: build
+        run: |
+          sudo service mysql start
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot  < etc/original.sql
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -e "SHOW DATABASES"
+          #This command adds the proper mysql port to the config file
+          node scripts/ci ${{ job.services.mysql.ports['3306'] }}
       - name: Run test
         run: yarn test
