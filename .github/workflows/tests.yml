@@ -9,21 +9,25 @@ jobs:
       name: env.test
     services:
       mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_DB_HOST=localhost
-          MYSQL_DB_USERNAME=ortalyad
-          MYSQL_DB_NAME=facebook_tests
+        image: mysql:latest
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
       - uses: mirromutth/mysql-action@v1.1
       - name: Install dependencies
         run: yarn
-      - name: build
+      - name: setup test database
+        env:
+          TEST_DB_HOST=localhost
+          TEST_DB_USERNAME=ortalyad
+          TEST_DB_NAME=facebook_tests
         run: |
           sudo service mysql start
           yarn migration:run
