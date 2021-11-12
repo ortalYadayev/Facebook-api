@@ -11,8 +11,6 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_DATABASE: facebook_clone
-          MYSQL_HOST: locahost
           MYSQL_USER: ortalyad
           ports:
             - 3306
