@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+        with:
+          node-version: 16
       - uses: mirromutth/mysql-action@v1.1
       - name: Install dependencies
         run: yarn
