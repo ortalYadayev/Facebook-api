@@ -22,8 +22,6 @@ jobs:
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '8.0'
-          mysql database: 'facebook_tests'
-          mysql user: 'ortalyad'
       - name: Install dependencies
         run: yarn
       - name: Connect to Mysql
