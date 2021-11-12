@@ -10,6 +10,10 @@ jobs:
     services:
       mysql:
         image: mysql:5.7
+        env:
+          MYSQL_DB_HOST=localhost
+          MYSQL_DB_USERNAME=ortalyad
+          MYSQL_DB_NAME=facebook_tests
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -22,9 +26,6 @@ jobs:
       - name: build
         run: |
           sudo service mysql start
-          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot  < etc/original.sql
-          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -e "SHOW DATABASES"
-          #This command adds the proper mysql port to the config file
-          node scripts/ci ${{ job.services.mysql.ports['3306'] }}
+          yarn migration:run
       - name: Run test
         run: yarn test
