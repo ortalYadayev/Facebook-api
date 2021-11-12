@@ -9,11 +9,13 @@ jobs:
 #      name: env.test
     services:
       mysql:
-        image: mysql:latest
+        image: mysql
         env:
           MYSQL_DATABASE: facebook_clone
           MYSQL_HOST: locahost
           MYSQL_USER: ortalyad
+        ports:
+          - 3306:3306
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
