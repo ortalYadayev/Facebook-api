@@ -14,11 +14,6 @@ jobs:
           MYSQL_DATABASE: facebook_clone
           MYSQL_HOST: locahost
           MYSQL_USER: ortalyad
-          options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
