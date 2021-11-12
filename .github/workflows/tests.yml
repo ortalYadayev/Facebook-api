@@ -28,6 +28,6 @@ jobs:
         run: |
           sudo service mysql start
           mysql -u ortalyad -p
-          yarn migration:run
+#          yarn migration:run
       - name: Run test
         run: yarn test
