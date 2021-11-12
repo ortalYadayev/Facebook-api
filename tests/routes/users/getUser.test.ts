@@ -137,8 +137,6 @@ describe('Get user', () => {
         url: `/users/${username}`,
       });
 
-      console.log(response.json().user);
-
       expect(response.statusCode).toBe(200);
       expect(response.json().user).toMatchObject(receiver.toJSON());
       expect(response.json().user.profilePictureUrl).toEqual(
