@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { createConnection, getConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
+import { Post } from '../../../src/entities/post.entity';
 import { User } from '../../../src/entities/user.entity';
 
 describe('Store Post', () => {
@@ -24,6 +25,21 @@ describe('Store Post', () => {
 
   it('should add a post', async () => {
     const user = await User.factory().create();
+
+    const response = await app.loginAs(user).inject({
+      method: 'POST',
+      url: `/posts`,
+      payload: {
+        content: 'content',
+      },
+    });
+
+    expect(response.statusCode).toBe(201);
+  });
+
+  it('existing posts and should add the post', async () => {
+    const user = await User.factory().create();
+    await Post.factory().user(user).create();
 
     const response = await app.loginAs(user).inject({
       method: 'POST',

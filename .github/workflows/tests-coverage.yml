@@ -1,6 +1,6 @@
 name: Test Coverage
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   tests-coverage:
@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Run tests
-        run: |
-          yarn
-          yarn test:coverage
+      - name: Install dependencies
+        run: yarn
+      - name: Run test
+        run: yarn test:coverage

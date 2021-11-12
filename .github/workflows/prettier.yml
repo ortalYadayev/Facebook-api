@@ -1,6 +1,6 @@
 name: Prettier
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   prettier:
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Run lint
-        run: |
-          yarn
-          yarn format
+      - name: Install dependencies
+        run: yarn
+      - name: Run prettier
+        run: yarn format

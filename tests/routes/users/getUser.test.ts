@@ -123,6 +123,28 @@ describe('Get user', () => {
       expect(response.statusCode).toBe(200);
       expect(response.json().user).toMatchObject(receiver.toJSON());
     });
+
+    it("just a user doesn't exist a profile image", async () => {
+      const user = await User.factory().create();
+      const username = 'username';
+      const picture = 'ortal.png';
+      const receiver = await User.factory().ProfilePicture(picture).create({
+        username,
+      });
+
+      const response = await app.loginAs(user).inject({
+        method: 'GET',
+        url: `/users/${username}`,
+      });
+
+      console.log(response.json().user);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.profilePictureUrl).toEqual(
+        `${process.env.APP_URL}/${picture}`,
+      );
+    });
   });
 
   describe('should not return a user', () => {

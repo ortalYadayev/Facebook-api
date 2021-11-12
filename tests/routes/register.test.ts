@@ -103,6 +103,50 @@ describe('Register', () => {
       expect(nodemailerMock.getSentMail().length).toBe(0);
     });
 
+    it('existing verified username', async () => {
+      const username = 'ortal';
+      await User.factory().create({ username });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email: 'ortal@gmail.com',
+          password: 'password',
+          username,
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(1);
+      expect(nodemailerMock.getSentMail().length).toBe(0);
+    });
+
+    it('existing username - unverified', async () => {
+      const username = 'ortal';
+      await User.factory().unverified().create({
+        username,
+      });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email: 'ortal@gmail.com',
+          password: 'password',
+          username,
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(1);
+      expect(nodemailerMock.getSentMail().length).toBe(0);
+    });
+
     it('invalid email', async () => {
       const response = await app.inject({
         method: 'post',
