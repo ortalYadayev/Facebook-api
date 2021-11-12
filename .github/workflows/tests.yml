@@ -12,7 +12,7 @@ jobs:
         image: mysql:latest
         ports:
           - 3306
-        options:
+        options: >-
           --health-cmd="mysqladmin ping
           --health-interval=10s
           --health-timeout=5s
@@ -26,10 +26,6 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: setup test database
-        env:
-          TEST_DB_HOST=localhost
-          TEST_DB_USERNAME=ortalyad
-          TEST_DB_NAME=facebook_tests
         run: |
           sudo service mysql start
           yarn migration:run
