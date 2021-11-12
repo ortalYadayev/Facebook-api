@@ -10,6 +10,8 @@ jobs:
     services:
       mysql:
         image: mysql:latest
+        env:
+          TEST_DB_USERNAME=ortalyad
         ports:
           - 3306
     steps:
@@ -20,8 +22,6 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Connect to Mysql
-        env:
-          TEST_DB_USERNAME=ortalyad
         run: |
           sudo service mysql start
           yarn migration:run
