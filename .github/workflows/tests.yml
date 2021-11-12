@@ -9,7 +9,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_DATABASE: facebook_clone
+          MYSQL_DATABASE: facebook_tests
           MYSQL_HOST: locahost
           MYSQL_USER: ortalyad
     steps:
@@ -20,7 +20,7 @@ jobs:
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '8.0'
-          mysql database: 'facebook_clone'
+          mysql database: 'facebook_tests'
           mysql user: 'ortalyad'
       - name: Install dependencies
         run: yarn
