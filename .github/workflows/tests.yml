@@ -22,7 +22,7 @@ jobs:
         uses: mirromutth/mysql-action@master
         with:
           mysql database: facebook_tests
-          mysql user: "ortalyad"
+#          mysql user: "ortalyad"
 #          mysql password: ""
 #          mysql root password:
       - name: Install dependencies
