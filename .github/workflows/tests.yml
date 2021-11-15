@@ -21,7 +21,5 @@ jobs:
         run: |
           sudo service mysql stop
           yarn
-#      - name: Yarn migrations
-#        run: yarn migration:run
       - name: Run test
         run: yarn test
