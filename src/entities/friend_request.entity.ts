@@ -17,7 +17,6 @@ export class FriendRequest extends BaseEntity {
     nullable: false,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
-
   })
   receiver!: User;
 
