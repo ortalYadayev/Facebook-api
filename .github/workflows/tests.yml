@@ -5,13 +5,13 @@ on: [push]
 jobs:
   tests:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_DATABASE: facebook_tests
-          MYSQL_HOST: locahost
-          MYSQL_USER: 'ortalyad'
+#    services:
+#      mysql:
+#        image: mysql:latest
+#        env:
+#          MYSQL_DATABASE: facebook_tests
+#          MYSQL_HOST: locahost
+#          MYSQL_USER: 'ortalyad'
     steps:
       - uses: actions/checkout@v2
 #        run: sudo service mysql stop
@@ -19,6 +19,12 @@ jobs:
         with:
           node-version: 16
       - name: Set up MySQL latest
+        uses: mirromutth/mysql-action@master
+        with:
+          mysql database: facebook_tests
+#          mysql user: "ortalyad"
+#          mysql password: ""
+          mysql root password: ""
       - name: Install dependencies
         run: yarn
       - name: Yarn migrations
