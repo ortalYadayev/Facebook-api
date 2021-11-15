@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Set up MySQL latest
+#      - name: Set up MySQL latest
 #        uses: mirromutth/mysql-action@master
 #        with:
 #          mysql database: facebook_tests
