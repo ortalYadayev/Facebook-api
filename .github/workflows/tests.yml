@@ -18,8 +18,6 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: |
-          sudo service mysql stop
-          yarn
+        run: yarn
       - name: Run test
         run: yarn test
