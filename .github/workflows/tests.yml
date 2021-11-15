@@ -14,12 +14,13 @@ jobs:
           MYSQL_USER: 'ortalyad'
     steps:
       - uses: actions/checkout@v2
-      run: sudo service mysql stop
       - uses: actions/setup-node@v1
         with:
           node-version: 16
       - name: Install dependencies
-        run: yarn
+        run: |
+          sudo service mysql stop
+          yarn
       - name: Yarn migrations
         run: yarn migration:run
       - name: Run test
