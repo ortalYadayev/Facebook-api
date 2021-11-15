@@ -14,7 +14,7 @@ jobs:
           MYSQL_USER: 'ortalyad'
     steps:
       - uses: actions/checkout@v2
-        run: sudo service mysql stop
+#        run: sudo service mysql stop
       - uses: actions/setup-node@v1
         with:
           node-version: 16
