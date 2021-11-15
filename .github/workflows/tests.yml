@@ -24,7 +24,7 @@ jobs:
           mysql user: "ortalyad"
           mysql password: ""
           mysql root password:
-        run: sudo service mysql stop
+#      - run: sudo service mysql stop
       - name: Install dependencies
         run: yarn
       - name: Yarn migrations
