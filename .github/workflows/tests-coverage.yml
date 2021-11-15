@@ -5,8 +5,12 @@ on: [push]
 jobs:
   tests-coverage:
     runs-on: ubuntu-latest
-    env:
-      name: env.test
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: facebook_tests
+          MYSQL_HOST: locahost
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
