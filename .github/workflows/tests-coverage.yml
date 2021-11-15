@@ -8,9 +8,7 @@ jobs:
     env:
       name: env.test
     steps:
-      - name: Check out Git repository
       - uses: actions/checkout@v2
-      - name: Set up Node.js
       - uses: actions/setup-node@v1
         with:
           node-version: 16
