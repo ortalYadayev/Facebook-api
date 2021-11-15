@@ -13,7 +13,6 @@ jobs:
 #          MYSQL_HOST: locahost
 #          MYSQL_USER: 'ortalyad'
     steps:
-      - name: Check out Git repository
       - uses: actions/checkout@v2
       - name: Shutdown Ubuntu MySQL (SUDO)
         run: sudo service mysql stop
