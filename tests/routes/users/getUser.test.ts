@@ -128,7 +128,7 @@ describe('Get user', () => {
       const user = await User.factory().create();
       const username = 'username';
       const picture = 'ortal.png';
-      const receiver = await User.factory().ProfilePicture(picture).create({
+      const receiver = await User.factory().profilePicture(picture).create({
         username,
       });
 

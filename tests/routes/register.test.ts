@@ -103,7 +103,7 @@ describe('Register', () => {
       expect(nodemailerMock.getSentMail().length).toBe(0);
     });
 
-    it('existing verified username', async () => {
+    it("existing verified username - shouldn't resend verification email", async () => {
       const username = 'ortal';
       await User.factory().create({ username });
 
@@ -124,7 +124,7 @@ describe('Register', () => {
       expect(nodemailerMock.getSentMail().length).toBe(0);
     });
 
-    it('existing username - unverified', async () => {
+    it("existing username and unverified user  - shouldn't resend verification email", async () => {
       const username = 'ortal';
       await User.factory().unverified().create({
         username,

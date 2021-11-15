@@ -33,7 +33,7 @@ class UserFactory extends BaseFactory<User> {
     });
   }
 
-  ProfilePicture(picture: string): this {
+  profilePicture(picture: string): this {
     return this.addToState({
       profilePicturePath: picture,
     });
