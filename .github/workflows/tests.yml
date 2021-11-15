@@ -14,9 +14,7 @@ jobs:
 #          MYSQL_USER: 'ortalyad'
     steps:
       - uses: actions/checkout@v2
-      - name: Shutdown Ubuntu MySQL (SUDO)
         run: sudo service mysql stop
-      - name: Set up Node.js
       - uses: actions/setup-node@v1
         with:
           node-version: 16
