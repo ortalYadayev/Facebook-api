@@ -8,13 +8,11 @@ import { User } from './user.entity';
 export class FriendRequest extends BaseEntity {
   @ManyToOne(() => User, (user) => user.sentFriendRequests, {
     nullable: false,
-    cascade: true,
   })
   sender!: User;
 
   @ManyToOne(() => User, (user) => user.receivedFriendRequests, {
     nullable: false,
-    cascade: true,
   })
   receiver!: User;
 
