@@ -1,22 +1,25 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection } from 'typeorm';
+import { Connection, createConnection, getConnection } from 'typeorm';
 import { UrlToken } from '../../src/entities/url_token.entity';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
 
 describe('Verify', () => {
   let app: FastifyInstance;
+  let connection: Connection;
 
   beforeAll(async () => {
     app = await createFastifyInstance();
   });
 
   beforeEach(async () => {
-    await createConnection();
+    connection = await createConnection();
+    await connection.runMigrations();
   });
 
   afterEach(async () => {
-    await getConnection().close();
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   afterAll(async () => {

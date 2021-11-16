@@ -1,6 +1,7 @@
 import { ConnectionOptions } from 'typeorm';
 
 let ormconfig: ConnectionOptions = {
+  name: 'default',
   type: 'mysql',
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -22,16 +23,12 @@ let ormconfig: ConnectionOptions = {
 if (process.env.NODE_ENV === 'test') {
   ormconfig = {
     ...ormconfig,
-    // host: process.env.TEST_DB_HOST,
-    // port: Number(process.env.TEST_DB_PORT),
-    // username: process.env.TEST_DB_USERNAME,
-    // password: process.env.TEST_DB_PASSWORD,
-    // database: process.env.TEST_DB_NAME,
-    // dropSchema: true,s
-    type: 'better-sqlite3',
-    database: ':memory:',
-    dropSchema: true,
-    synchronize: true,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    // migrationsRun: true,
+    // dropSchema: true,
+    // synchronize: true,
   };
 }
 

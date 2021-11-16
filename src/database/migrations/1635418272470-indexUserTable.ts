@@ -5,13 +5,13 @@ export class indexUserTable1635418272470 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            CREATE FULLTEXT INDEX \`IDX_9b83803f5624b6f6b23db8151c\` ON \`${process.env.DB_NAME}\`.\`users\` (\`firstName\`, \`lastName\`)
+            CREATE FULLTEXT INDEX \`IDX_9b83803f5624b6f6b23db8151c\` ON \`users\` (\`firstName\`, \`lastName\`)
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            DROP INDEX \`IDX_9b83803f5624b6f6b23db8151c\` ON \`${process.env.DB_NAME}\`.\`users\`
+            DROP INDEX \`IDX_9b83803f5624b6f6b23db8151c\` ON \`users\`
         `);
   }
 }

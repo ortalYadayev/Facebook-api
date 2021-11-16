@@ -1,23 +1,27 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import { mock as nodemailerMock } from 'nodemailer';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
 
 describe('Register', () => {
   let app: FastifyInstance;
+  let connection: Connection;
 
   beforeAll(async () => {
     app = await createFastifyInstance();
   });
 
   beforeEach(async () => {
-    await createConnection();
+    connection = await createConnection();
+    await connection.runMigrations();
+
     nodemailerMock.reset();
   });
 
   afterEach(async () => {
-    await getConnection().close();
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   afterAll(async () => {
