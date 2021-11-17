@@ -39,7 +39,7 @@ describe('Login', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json().user).toMatchObject(user.toJSON());
+
     expect(app.jwt.verify(response.json().token)).toMatchObject({
       id: user.id,
     });

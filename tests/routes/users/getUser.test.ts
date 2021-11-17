@@ -41,7 +41,7 @@ describe('Get user', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.id).toEqual(receiver.toJSON().id);
       expect(response.json().statusFriend.status).toEqual('pending');
       expect(response.json().statusFriend.sentBy).toEqual(user.id);
     });
@@ -64,7 +64,7 @@ describe('Get user', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.id).toEqual(receiver.toJSON().id);
       expect(response.json().statusFriend.status).toEqual('approved');
       expect(response.json().statusFriend.sentBy).toEqual(user.id);
     });
@@ -87,7 +87,7 @@ describe('Get user', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.id).toEqual(receiver.toJSON().id);
     });
 
     it('just a user - a friend request rejected', async () => {
@@ -108,7 +108,7 @@ describe('Get user', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.id).toEqual(receiver.toJSON().id);
     });
 
     it("just a user - doesn't exist a friend request", async () => {
@@ -124,7 +124,7 @@ describe('Get user', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.id).toEqual(receiver.toJSON().id);
     });
 
     it("just a user doesn't exist a profile image", async () => {
@@ -141,7 +141,7 @@ describe('Get user', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().user).toMatchObject(receiver.toJSON());
+      expect(response.json().user.id).toEqual(receiver.toJSON().id);
       expect(response.json().user.profilePictureUrl).toEqual(
         `${process.env.APP_URL}/${picture}`,
       );

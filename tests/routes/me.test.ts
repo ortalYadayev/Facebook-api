@@ -33,6 +33,6 @@ describe('Me', () => {
       url: '/me',
     });
 
-    expect(response.json()).toMatchObject(user.toJSON());
+    expect(response.json().id).toEqual(user.toJSON().id);
   });
 });
