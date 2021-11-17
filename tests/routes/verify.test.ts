@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { Connection, createConnection, getConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import { UrlToken } from '../../src/entities/url_token.entity';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';

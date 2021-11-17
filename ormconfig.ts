@@ -26,9 +26,6 @@ if (process.env.NODE_ENV === 'test') {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    // migrationsRun: true,
-    // dropSchema: true,
-    // synchronize: true,
   };
 }
 
