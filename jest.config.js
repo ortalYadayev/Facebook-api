@@ -7,6 +7,7 @@ module.exports = {
     '!src/database/migrations/**/*.ts',
     '!src/database/seeders/**/*.ts',
     '!src/app.ts',
+    '!src/commands/**/*.ts',
   ],
   globals: {
     'ts-jest': {
