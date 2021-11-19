@@ -11,6 +11,7 @@ jobs:
         env:
           MYSQL_DATABASE: facebook_tests
           MYSQL_HOST: localhost
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -19,4 +20,6 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Execute test
-        run: yarn test -t "by first name - the user who logged in, be first in the array"
+        run: |
+          mysql --host localhost -uroot -e "SHOW DATABASES"
+          yarn test -t "by first name - the user who logged in, be first in the array"
