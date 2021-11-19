@@ -15,9 +15,11 @@ describe('Search Users', () => {
   beforeEach(async () => {
     connection = await createConnection();
     await connection.runMigrations();
+    console.log(connection);
   });
 
   afterEach(async () => {
+    console.log(connection);
     await connection.dropDatabase();
     await connection.close();
   });
