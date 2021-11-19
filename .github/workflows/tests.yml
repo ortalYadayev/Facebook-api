@@ -10,8 +10,13 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_DATABASE: facebook_tests
-          MYSQL_HOST: localhost
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: rootpass
+          MYSQL_ROOT_PASSWORD: rootpass
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -21,5 +26,5 @@ jobs:
         run: yarn
       - name: Execute test
         run: |
-          mysql --host localhost -uroot -e "SHOW DATABASES"
+          mysql --host 127.0.0.1 -uadmin -prootpass -e "SHOW DATABASES"
           yarn test -t "by first name - the user who logged in, be first in the array"
