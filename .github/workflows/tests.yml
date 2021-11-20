@@ -28,7 +28,6 @@ jobs:
         run: yarn
       - name: mysql
         run: |
-          sudo service mysql start
           mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword < etc/original.sql
           mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "SHOW DATABASES"
       - name: Execute test
