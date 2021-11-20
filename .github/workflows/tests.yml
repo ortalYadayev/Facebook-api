@@ -24,5 +24,3 @@ jobs:
         run: yarn
       - name: Execute test
         run: yarn test -t "by first name - the user who logged in, be first in the array"
-      env:
-        DB_HOST: mysql
