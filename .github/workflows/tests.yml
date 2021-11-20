@@ -12,11 +12,12 @@ jobs:
           MYSQL_DATABASE: facebook_tests
           MYSQL_HOST: 127.0.0.1
           MYSQL_USER: root
-          MYSQL_PASSWORD: root
+          #          MYSQL_PASSWORD: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
         #          MYSQL_ROOT_PASSWORD: rootpass
         ports:
           - 3306
-    #        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -24,11 +25,5 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: yarn
-      - name: Set up MySQL
-        run: |
-          console.log(${{ job.services.mysql }})
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ job.services.mysql.env.MYSQL_DATABASE }};' -u${{ job.services.mysql.env.MYSQL_USER }} -p${{ job.services.mysql.env.MYSQL_PASSWORD }}
-          mysql -e 'SHOW DATABASES;' -u${{ job.services.mysql.env.MYSQL_USER }} -p${{ job.services.mysql.env.MYSQL_PASSWORD }}
       - name: Execute test
         run: yarn test -t "by first name - the user who logged in, be first in the array"
