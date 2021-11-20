@@ -14,8 +14,6 @@ jobs:
           MYSQL_PASSWORD: mysql_password
           MYSQL_ROOT_PASSWORD: root
           options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    env:
-      DB_HOST: mysql
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -25,3 +23,5 @@ jobs:
         run: yarn
       - name: Execute test
         run: yarn test
+        env:
+          DB_HOST: mysql
