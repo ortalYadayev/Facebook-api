@@ -26,7 +26,7 @@ jobs:
         run: yarn
       - name: Set up MySQL
         run: |
-          console.log(${{ job.services.mysql.env.MYSQL_DATABASE }})
+          console.log(${{ job.services.mysql }})
           sudo /etc/init.d/mysql start
           mysql -e 'CREATE DATABASE ${{ job.services.mysql.env.MYSQL_DATABASE }};' -u${{ job.services.mysql.env.MYSQL_USER }} -p${{ job.services.mysql.env.MYSQL_PASSWORD }}
           mysql -e 'SHOW DATABASES;' -u${{ job.services.mysql.env.MYSQL_USER }} -p${{ job.services.mysql.env.MYSQL_PASSWORD }}
