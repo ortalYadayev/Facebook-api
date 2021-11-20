@@ -11,10 +11,12 @@ jobs:
         env:
           MYSQL_DATABASE: facebook_tests
           MYSQL_HOST: 127.0.0.1
-          MYSQL_USER: admin
-          MYSQL_PASSWORD: rootpass
-          MYSQL_ROOT_PASSWORD: rootpass
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          MYSQL_USER: ortalyad
+          MYSQL_PASSWORD:
+          MYSQL_ROOT_PASSWORD:
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
