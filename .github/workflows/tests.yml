@@ -30,5 +30,6 @@ jobs:
         run: |
           mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword
           mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "SHOW DATABASES"
+          console.log(process.env)
       - name: Execute test
         run: yarn test -t "by first name - the user who logged in, be first in the array"
