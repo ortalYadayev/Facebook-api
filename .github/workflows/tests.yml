@@ -10,11 +10,12 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_DATABASE: facebook_tests
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_USER: admin
-          MYSQL_PASSWORD: rootpass
-          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_USER: mysql_user
+          MYSQL_PASSWORD: mysql_password
+          MYSQL_ROOT_PASSWORD: root
           options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      DB_HOST: mysql
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -23,4 +24,4 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Execute test
-        run: yarn test -t "by first name - the user who logged in, be first in the array"
+        run: yarn test
