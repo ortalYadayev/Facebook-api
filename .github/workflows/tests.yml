@@ -27,7 +27,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }}
-          mysql -e 'SHOW DATABASES;' -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }}
+          mysql -e 'CREATE DATABASE ${{ job.services.mysql.env.MYSQL_DATABASE }};' -u${{ job.services.mysql.env.MYSQL_USER }} -p${{ job.services.mysql.env.MYSQL_PASSWORD }}
+          mysql -e 'SHOW DATABASES;' -u${{ job.services.mysql.env.MYSQL_USER }} -p${{ job.services.mysql.env.MYSQL_PASSWORD }}
       - name: Execute test
         run: yarn test -t "by first name - the user who logged in, be first in the array"
