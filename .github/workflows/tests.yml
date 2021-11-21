@@ -5,7 +5,33 @@ on: [ push ]
 jobs:
   tests:
     runs-on: ubuntu-latest
-    #    services:
+    services:
+      postgres:
+        image: postgres:10.3
+        env:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: prisma
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432/tcp
+
+        mysql:
+          image: mysql:8.0
+          env:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: tests
+            MYSQL_USER: prisma
+            MYSQL_PASSWORD: prisma
+          volumes:
+            - mysql:/var/lib/mysql
+          ports:
+            - 3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     #      mysql:
     #        image: mysql:5.7
     #        env:
@@ -19,22 +45,10 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      #      - uses: mirromutth/mysql-action@v1.1
-      #        with:
-      #          host port: 3306
-      #          character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
-      #          collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
-      #          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
-      #          mysql database: 'facebook_tests' # Optional, default value is "test". The specified database which will be create
-      #          mysql root password: ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
-      #          mysql user: 'ortalyad' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-      #          mysql password: ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
       - name: Install dependencies
-        run: |
-          console.log(${{ secrets.RootPassword }})
-          yarn
+        run: yarn
       - name: Execute test
         run: yarn test
-#        env:
-#          DB_HOST: mysql
+        env:
+          DB_HOST: mysql
 
