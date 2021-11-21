@@ -10,23 +10,14 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: tests
-          MYSQL_USER: prisma
-          MYSQL_PASSWORD: prisma
+          MYSQL_DATABASE: facebook_tests
+          MYSQL_USER: mysql_user
+          MYSQL_PASSWORD: mysql_password
         volumes:
           - mysql:/usr/local/bin/mysql
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    #      mysql:
-    #        image: mysql:5.7
-    #        env:
-    #          MYSQL_DATABASE: facebook_tests
-    #          MYSQL_USER: mysql_user
-    #          MYSQL_PASSWORD: mysql_password
-    #          MYSQL_ROOT_PASSWORD: root
-    #          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -37,7 +28,6 @@ jobs:
       - name: mysql
         run: |
           sudo /etc/init.d/mysql start
-          bash src/.buildkite/test/run.sh
         env:
           CI: true
           SKIP_GIT: true
