@@ -30,7 +30,6 @@ describe('Search Users', () => {
 
   describe('should return matching users', () => {
     it('by first name - the user who logged in, be first in the array', async () => {
-      console.log(process.env);
       const firstName = 'name';
       await User.factory().create({ firstName });
       const user = await User.factory().create({ firstName });
