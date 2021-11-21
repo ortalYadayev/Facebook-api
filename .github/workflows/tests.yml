@@ -6,31 +6,31 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:10.3
-        env:
-          POSTGRES_USER: prisma
-          POSTGRES_PASSWORD: prisma
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432/tcp
+      #      postgres:
+      #        image: postgres:10.3
+      #        env:
+      #          POSTGRES_USER: prisma
+      #          POSTGRES_PASSWORD: prisma
+      #        options: >-
+      #          --health-cmd pg_isready
+      #          --health-interval 10s
+      #          --health-timeout 5s
+      #          --health-retries 5
+      #        ports:
+      #          - 5432/tcp
 
-        mysql:
-          image: mysql:8.0
-          env:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: tests
-            MYSQL_USER: prisma
-            MYSQL_PASSWORD: prisma
-          volumes:
-            - mysql:/var/lib/mysql
-          ports:
-            - 3306
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tests
+          MYSQL_USER: prisma
+          MYSQL_PASSWORD: prisma
+        volumes:
+          - mysql:/var/lib/mysql
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     #      mysql:
     #        image: mysql:5.7
