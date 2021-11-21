@@ -34,6 +34,16 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: yarn
+      - name: mysql
+        run: |
+          sudo /etc/init.d/mysql start
+          bash src/.buildkite/test/run.sh
+        env:
+          CI: true
+          SKIP_GIT: true
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+          TEST_POSTGRES_URI: postgres://prisma:prisma@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+          TEST_MYSQL_URI: mysql://prisma:prisma@localhost:3306/tests
       - name: Execute test
         run: yarn test
         env:
