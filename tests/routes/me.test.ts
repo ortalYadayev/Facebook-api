@@ -1,21 +1,24 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
 
 describe('Me', () => {
   let app: FastifyInstance;
+  let connection: Connection;
 
   beforeAll(async () => {
     app = await createFastifyInstance();
   });
 
   beforeEach(async () => {
-    await createConnection();
+    connection = await createConnection();
+    await connection.runMigrations();
   });
 
   afterEach(async () => {
-    await getConnection().close();
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   afterAll(async () => {
@@ -30,6 +33,6 @@ describe('Me', () => {
       url: '/me',
     });
 
-    expect(response.json()).toMatchObject(user.toJSON());
+    expect(response.json().id).toEqual(user.toJSON().id);
   });
 });

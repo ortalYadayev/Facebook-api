@@ -27,7 +27,9 @@ import removeFriend from './routes/friendRequest/removeFriend';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
-  dotenv.config({ path: path.resolve(__dirname, envFile) });
+  dotenv.config({
+    path: path.resolve(__dirname, envFile),
+  });
 
   const app = fastify();
 
@@ -43,7 +45,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
     secret: process.env.JWT_SECRET || '',
   });
   app.register(fastifyCors, {
-    origin: process.env.USER_APP_URL,
+    origin: process.env.VITE_APP_URL,
     methods: '*',
     allowedHeaders: '*',
   });

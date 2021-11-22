@@ -32,6 +32,12 @@ class UserFactory extends BaseFactory<User> {
       verifiedAt: null,
     });
   }
+
+  profilePicture(picture: string): this {
+    return this.addToState({
+      profilePicturePath: picture,
+    });
+  }
 }
 
 export default UserFactory;

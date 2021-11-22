@@ -8,11 +8,15 @@ import { User } from './user.entity';
 export class FriendRequest extends BaseEntity {
   @ManyToOne(() => User, (user) => user.sentFriendRequests, {
     nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   sender!: User;
 
   @ManyToOne(() => User, (user) => user.receivedFriendRequests, {
     nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   receiver!: User;
 
@@ -27,7 +31,7 @@ export class FriendRequest extends BaseEntity {
 
   @OneToOne(() => Friend, (friend) => friend.request, {
     nullable: true,
-    onDelete: 'CASCADE',
+    cascade: true,
   })
   friend!: Friend | null;
 

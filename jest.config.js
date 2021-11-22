@@ -7,12 +7,21 @@ module.exports = {
     '!src/database/migrations/**/*.ts',
     '!src/database/seeders/**/*.ts',
     '!src/app.ts',
+    '!src/commands/**/*.ts',
   ],
   globals: {
     'ts-jest': {
       diagnostics: {
         warnOnly: true,
       },
+    },
+  },
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
 };

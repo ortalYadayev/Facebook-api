@@ -1,21 +1,27 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { User } from '../../../src/entities/user.entity';
+import { FriendRequest } from '../../../src/entities/friend_request.entity';
 
 describe('Search Users', () => {
   let app: FastifyInstance;
+  let connection: Connection;
 
   beforeAll(async () => {
     app = await createFastifyInstance();
   });
 
   beforeEach(async () => {
-    await createConnection();
+    connection = await createConnection();
+    await connection.runMigrations();
+    console.log(connection);
   });
 
   afterEach(async () => {
-    await getConnection().close();
+    console.log(connection);
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   afterAll(async () => {
@@ -23,10 +29,10 @@ describe('Search Users', () => {
   });
 
   describe('should return matching users', () => {
-    it('by first name', async () => {
-      const user = await User.factory().create();
+    it('by first name - the user who logged in, be first in the array', async () => {
       const firstName = 'name';
       await User.factory().create({ firstName });
+      const user = await User.factory().create({ firstName });
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
@@ -40,12 +46,20 @@ describe('Search Users', () => {
       expect(response.json()).toEqual(
         expect.arrayContaining([expect.objectContaining({ firstName })]),
       );
+      expect(response.json()[0].id).toEqual(user.toJSON().id);
     });
 
-    it('by last name', async () => {
+    it('by last name and their friend request', async () => {
       const user = await User.factory().create();
       const lastName = 'name';
-      await User.factory().create({ lastName });
+      const receiver1 = await User.factory().create({ lastName });
+      const receiver2 = await User.factory().create({ lastName });
+      await FriendRequest.factory().sender(receiver1).receiver(user).create();
+      await FriendRequest.factory()
+        .sender(receiver2)
+        .receiver(user)
+        .approved()
+        .create();
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
@@ -59,6 +73,7 @@ describe('Search Users', () => {
       expect(response.json()).toEqual(
         expect.arrayContaining([expect.objectContaining({ lastName })]),
       );
+      expect(response.json().statusFriend).not.toBeNull();
     });
 
     it('array of users', async () => {
@@ -72,7 +87,7 @@ describe('Search Users', () => {
         method: 'GET',
         url: '/users/search',
         query: {
-          searchQuery: `${firstName} ${lastName}`,
+          searchQuery: `  ${firstName}   ${lastName}   `,
         },
       });
 
@@ -96,7 +111,7 @@ describe('Search Users', () => {
         method: 'GET',
         url: '/users/search',
         query: {
-          searchQuery: `${name1}`,
+          searchQuery: ` ${name1}`,
         },
       });
 
@@ -151,7 +166,6 @@ describe('Search Users', () => {
 
       expect(response.statusCode).toBe(200);
       expect.arrayContaining([]);
-      // );
     });
 
     it('invalid user', async () => {

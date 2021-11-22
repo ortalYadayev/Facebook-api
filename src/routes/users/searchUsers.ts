@@ -34,55 +34,42 @@ function relevantFriendRequests(
 ): [] {
   const result: [] = [];
   users.forEach((user) => {
-    let found = false;
+    const userAndFriendRequest = {
+      ...user,
+      isAuth: false,
+      statusFriend: {},
+    };
 
     if (user.id === me.id) {
-      found = true;
-
-      const userAndFriendRequest = {
-        ...user,
-        isAuth: true,
-        statusFriend: {},
-      };
-      // @ts-ignore
-      result.push(userAndFriendRequest);
-    }
-
-    requests.forEach((friendRequest) => {
-      if (
-        (friendRequest.sender.id === user.id ||
-          friendRequest.receiver.id === user.id) &&
-        !friendRequest.deletedAt &&
-        !friendRequest.rejectedAt &&
-        !found
-      ) {
-        const userAndFriendRequest = {
-          ...user,
-          statusFriend: {
+      userAndFriendRequest.isAuth = true;
+    } else {
+      requests.forEach((friendRequest) => {
+        if (
+          // @TODO from here
+          (friendRequest.sender.id === user.id ||
+            friendRequest.receiver.id === user.id) &&
+          !friendRequest.deletedAt &&
+          !friendRequest.rejectedAt
+        ) {
+          const statusFriend = {
             status: '',
             idRequest: friendRequest.id,
             sentBy: friendRequest.sender.id,
-          },
-        };
-        if (friendRequest.approvedAt) {
-          userAndFriendRequest.statusFriend.status = 'approved';
-        } else {
-          userAndFriendRequest.statusFriend.status = 'pending';
-        }
-        // @ts-ignore
-        result.push(userAndFriendRequest);
-        found = true;
-      }
-    });
-    if (!found) {
-      const userAndFriendRequest = {
-        ...user,
-        statusFriend: {},
-      };
-      // @ts-ignore
-      result.push(userAndFriendRequest);
+          };
+
+          if (friendRequest.approvedAt) {
+            statusFriend.status = 'approved';
+          } else {
+            statusFriend.status = 'pending';
+          }
+          userAndFriendRequest.statusFriend = statusFriend;
+        } // @TODO until here
+      });
     }
+    // @ts-ignore
+    result.push(userAndFriendRequest);
   });
+
   return result;
 }
 
@@ -105,29 +92,26 @@ const searchUsers = (app: FastifyInstance): void => {
     schema: { querystring: PayloadSchema },
     handler: async (request, reply) => {
       const payload = request.query;
-      const me = request.user;
+      const { user } = request;
 
-      const allFriendRequests: FriendRequest[] = me.sentFriendRequests;
-      allFriendRequests.push(...me.receivedFriendRequests);
+      const allFriendRequests: FriendRequest[] = user.sentFriendRequests;
+      allFriendRequests.push(...user.receivedFriendRequests);
 
       const searchQuery: string = payload.searchQuery
         .trim()
         .replace(/\s+/g, '* ');
 
       let users: User[];
-      try {
-        users = await findUsers(searchQuery);
-        users = unshiftUser(users, me);
-        const usersAndStatusFriends = relevantFriendRequests(
-          allFriendRequests,
-          users,
-          me,
-        );
 
-        return reply.code(200).send(usersAndStatusFriends);
-      } catch (error) {
-        return reply.code(422).send();
-      }
+      users = await findUsers(searchQuery);
+      users = unshiftUser(users, user);
+      const usersAndStatusFriends = relevantFriendRequests(
+        allFriendRequests,
+        users,
+        user,
+      );
+
+      return reply.code(200).send(usersAndStatusFriends);
     },
   });
 };

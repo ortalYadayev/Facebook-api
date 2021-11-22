@@ -1,23 +1,27 @@
 import { FastifyInstance } from 'fastify';
-import { createConnection, getConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import { mock as nodemailerMock } from 'nodemailer';
 import createFastifyInstance from '../../src/createFastifyInstance';
 import { User } from '../../src/entities/user.entity';
 
 describe('Register', () => {
   let app: FastifyInstance;
+  let connection: Connection;
 
   beforeAll(async () => {
     app = await createFastifyInstance();
   });
 
   beforeEach(async () => {
-    await createConnection();
+    connection = await createConnection();
+    await connection.runMigrations();
+
     nodemailerMock.reset();
   });
 
   afterEach(async () => {
-    await getConnection().close();
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   afterAll(async () => {
@@ -95,6 +99,50 @@ describe('Register', () => {
           email,
           password: 'password',
           username: 'ortalyad',
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(1);
+      expect(nodemailerMock.getSentMail().length).toBe(0);
+    });
+
+    it("existing verified username - shouldn't resend verification email", async () => {
+      const username = 'ortal';
+      await User.factory().create({ username });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email: 'ortal@gmail.com',
+          password: 'password',
+          username,
+        },
+      });
+
+      expect(response.statusCode).toBe(422);
+      expect(await User.count()).toBe(1);
+      expect(nodemailerMock.getSentMail().length).toBe(0);
+    });
+
+    it("existing username and unverified user  - shouldn't resend verification email", async () => {
+      const username = 'ortal';
+      await User.factory().unverified().create({
+        username,
+      });
+
+      const response = await app.inject({
+        method: 'post',
+        url: '/register',
+        payload: {
+          firstName: 'Ortal',
+          lastName: 'Yadaev',
+          email: 'ortal@gmail.com',
+          password: 'password',
+          username,
         },
       });
 
