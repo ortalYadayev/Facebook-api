@@ -18,6 +18,7 @@ import me from './routes/me';
 import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
 import storePost from './routes/users/storePost';
+import getPosts from './routes/users/getPosts';
 import searchUsers from './routes/users/searchUsers';
 import storeFriendRequest from './routes/friendRequest/storeFriendRequest';
 import approveFriendRequest from './routes/friendRequest/approveFriendRequest';
@@ -58,6 +59,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   me(app);
   getUser(app);
   storePost(app);
+  getPosts(app);
   searchUsers(app);
   storeFriendRequest(app);
   approveFriendRequest(app);
