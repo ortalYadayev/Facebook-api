@@ -18,6 +18,8 @@ let ormconfig: ConnectionOptions = {
   },
   logger: 'advanced-console',
   logging: ['warn', 'error'],
+  dropSchema: false,
+  synchronize: false,
 };
 
 if (process.env.NODE_ENV === 'test') {

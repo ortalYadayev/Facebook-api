@@ -20,9 +20,6 @@ export class Like extends BaseEntity {
   })
   user!: User;
 
-  @Column({ type: 'datetime', nullable: true })
-  dislikeAt!: Date | null;
-
   static factory(): LikeFactory {
     return new LikeFactory();
   }

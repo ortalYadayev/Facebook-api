@@ -34,7 +34,7 @@ describe('Get Posts', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/${user.id}/posts`,
+      url: `/posts/${user.id}`,
     });
 
     expect(response.statusCode).toBe(200);
@@ -46,7 +46,7 @@ describe('Get Posts', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/${user.id}/posts`,
+      url: `/posts/${user.id}`,
     });
 
     expect(response.statusCode).toBe(200);
@@ -62,7 +62,7 @@ describe('Get Posts', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: '/10/posts',
+        url: '/posts/10',
       });
 
       expect(response.statusCode).toBe(200);

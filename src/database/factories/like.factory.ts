@@ -19,10 +19,6 @@ class LikeFactory extends BaseFactory<Like> {
   post(post: Post): this {
     return this.addToState({ post });
   }
-
-  dislike(): this {
-    return this.addToState({ dislikeAt: faker.date.past() });
-  }
 }
 
 export default LikeFactory;

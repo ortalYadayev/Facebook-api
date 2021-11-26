@@ -4,9 +4,8 @@ import createFastifyInstance from '../../../src/createFastifyInstance';
 import { Post } from '../../../src/entities/post.entity';
 import { User } from '../../../src/entities/user.entity';
 import { Like } from '../../../src/entities/like.entity';
-import { Friend } from '../../../src/entities/friend.entity';
 
-describe('Add Like', () => {
+describe('Post Unlike', () => {
   let app: FastifyInstance;
   let connection: Connection;
 
@@ -28,54 +27,60 @@ describe('Add Like', () => {
     await app.close();
   });
 
-  it('should add a like to post', async () => {
+  it('dislike to post', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
+    const like = await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
-      method: 'POST',
-      url: `/posts/${post.id}/like`,
+      method: 'DELETE',
+      url: `/posts/${post.id}/dislike`,
     });
 
-    expect(response.statusCode).toBe(201);
+    await like.reload();
+
+    expect(response.statusCode).toBe(200);
     expect(await Like.count()).toBe(1);
+    expect(like.dislikeAt).not.toBeNull();
   });
 
-  it('should add a like to post - after dislike', async () => {
+  it('dislike to post - there was dislike', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
     await Like.factory().user(user).post(post).dislike().create();
+    const like = await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
-      method: 'POST',
-      url: `/posts/${post.id}/like`,
+      method: 'DELETE',
+      url: `/posts/${post.id}/dislike`,
     });
 
-    expect(response.statusCode).toBe(201);
-    expect(await Like.count()).toBe(2);
+    await like.reload();
+
+    expect(response.statusCode).toBe(200);
+    expect(like.dislikeAt).not.toBeNull();
   });
 
-  describe("shouldn't add a like to post", () => {
+  describe("shouldn't do dislike to post", () => {
     it("post doesn't exist", async () => {
       const user = await User.factory().create();
 
       const response = await app.loginAs(user).inject({
-        method: 'POST',
-        url: '/posts/10/like',
+        method: 'DELETE',
+        url: '/posts/10/dislike',
       });
 
       expect(response.statusCode).toBe(422);
-      expect(await Like.count()).toBe(0);
     });
 
-    it('double click on like - dislike', async () => {
+    it('double click on dislike - dislike', async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
-      await Like.factory().user(user).post(post).create();
+      await Like.factory().user(user).post(post).dislike().create();
 
       const response = await app.loginAs(user).inject({
-        method: 'POST',
-        url: `/posts/${post.id}/like`,
+        method: 'DELETE',
+        url: `/posts/${post.id}/dislike`,
       });
 
       expect(response.statusCode).toBe(422);
