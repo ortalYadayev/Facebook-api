@@ -1,17 +1,17 @@
 import { FastifyInstance } from 'fastify';
 import { Post } from '../../entities/post.entity';
 
-type ParamsType = { id: number };
+type ParamsType = { userId: number };
 
 const getPosts = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/:id/posts',
+    url: '/posts/:userId',
     method: 'GET',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
       const posts = await Post.find({
         where: {
-          user: request.params.id,
+          user: request.params.userId,
         },
         relations: ['user'],
         order: {
