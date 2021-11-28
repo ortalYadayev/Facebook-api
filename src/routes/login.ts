@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { User } from '../entities/user.entity';
 
