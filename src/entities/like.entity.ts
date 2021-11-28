@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Entity, ManyToOne } from 'typeorm';
 import LikeFactory from '../database/factories/like.factory';
 import BaseEntity from './BaseEntity';
 import { User } from './user.entity';

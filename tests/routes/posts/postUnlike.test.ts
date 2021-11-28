@@ -27,38 +27,38 @@ describe('Post Unlike', () => {
     await app.close();
   });
 
-  it('dislike to post', async () => {
+  it('unlike to post', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
     const like = await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
-      url: `/posts/${post.id}/dislike`,
+      url: `/posts/${post.id}/unlike`,
     });
 
     await like.reload();
 
     expect(response.statusCode).toBe(200);
-    expect(await Like.count()).toBe(1);
-    expect(like.dislikeAt).not.toBeNull();
+    expect(await Like.count()).toBe(0);
   });
 
-  it('dislike to post - there was dislike', async () => {
+  it('unlike to post - there was unlike', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
-    await Like.factory().user(user).post(post).dislike().create();
-    const like = await Like.factory().user(user).post(post).create();
+    const firstLike = await Like.factory().user(user).post(post).create();
+    await Like.delete(firstLike.id);
+    const secondLike = await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
-      url: `/posts/${post.id}/dislike`,
+      url: `/posts/${post.id}/unlike`,
     });
 
-    await like.reload();
+    await secondLike.reload();
 
     expect(response.statusCode).toBe(200);
-    expect(like.dislikeAt).not.toBeNull();
+    expect(await Like.count()).toBe(0);
   });
 
   describe("shouldn't do dislike to post", () => {
@@ -67,24 +67,25 @@ describe('Post Unlike', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: '/posts/10/dislike',
+        url: '/posts/10/unlike',
       });
 
       expect(response.statusCode).toBe(422);
     });
 
-    it('double click on dislike - dislike', async () => {
+    it('double click on unlike', async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
-      await Like.factory().user(user).post(post).dislike().create();
+      const like = await Like.factory().user(user).post(post).create();
+      await Like.delete(like.id);
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: `/posts/${post.id}/dislike`,
+        url: `/posts/${post.id}/unlike`,
       });
 
       expect(response.statusCode).toBe(422);
-      expect(await Like.count()).toBe(1);
+      expect(await Like.count()).toBe(0);
     });
   });
 });

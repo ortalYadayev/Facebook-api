@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import { IsNull } from 'typeorm';
 import { Post } from '../../entities/post.entity';
 import { Like } from '../../entities/like.entity';
 

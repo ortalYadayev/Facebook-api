@@ -1,6 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import { IsNull } from 'typeorm';
-import moment from 'moment';
 import { Post } from '../../entities/post.entity';
 import { Like } from '../../entities/like.entity';
 
@@ -8,7 +6,7 @@ type ParamsType = { postId: number };
 
 const postUnlike = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/posts/:postId/dislike',
+    url: '/posts/:postId/unlike',
     method: 'DELETE',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
@@ -34,7 +32,7 @@ const postUnlike = (app: FastifyInstance): void => {
           },
         });
 
-        await like.remove();
+        await Like.delete(like.id);
 
         return reply.code(200).send();
       } catch (error) {

@@ -27,7 +27,7 @@ describe('Post Like', () => {
     await app.close();
   });
 
-  it('should add a like to post', async () => {
+  it('should add like to post', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
 
@@ -40,10 +40,12 @@ describe('Post Like', () => {
     expect(await Like.count()).toBe(1);
   });
 
-  it('should add a like to post - after dislike', async () => {
+  it('should add a like to post - after unlike', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
-    await Like.factory().user(user).post(post).dislike().create();
+    const like = await Like.factory().user(user).post(post).create();
+
+    await Like.delete(like.id);
 
     const response = await app.loginAs(user).inject({
       method: 'POST',
@@ -51,7 +53,7 @@ describe('Post Like', () => {
     });
 
     expect(response.statusCode).toBe(201);
-    expect(await Like.count()).toBe(2);
+    expect(await Like.count()).toBe(1);
   });
 
   describe("shouldn't add a like to post", () => {
@@ -67,7 +69,7 @@ describe('Post Like', () => {
       expect(await Like.count()).toBe(0);
     });
 
-    it('double click on like - dislike', async () => {
+    it('double click on like', async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       await Like.factory().user(user).post(post).create();

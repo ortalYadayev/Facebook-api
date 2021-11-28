@@ -1,5 +1,6 @@
 import { AfterLoad, Column, Entity, OneToMany, Index } from 'typeorm';
 import bcrypt from 'bcrypt';
+// @ts-ignore
 import { classToPlain } from 'class-transformer';
 import { FriendRequest } from './friend_request.entity';
 import BaseEntity from './BaseEntity';

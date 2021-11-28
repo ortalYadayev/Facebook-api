@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { User } from '../entities/user.entity';
 
@@ -34,10 +34,16 @@ const login = (app: FastifyInstance): void => {
       }
 
       const token = await reply.jwtSign({ id: user.id });
-
+      // const token = fastify().jwt.sign({ user });
       return reply.code(200).send({
         token,
-        user,
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username,
+          email: user.email,
+        },
       });
     },
   });
