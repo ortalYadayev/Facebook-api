@@ -52,7 +52,7 @@ function relevantFriendRequests(
         ) {
           const statusFriend = {
             status: '',
-            idRequest: friendRequest.id,
+            requestId: friendRequest.id,
             sentBy: friendRequest.sender.id,
           };
 

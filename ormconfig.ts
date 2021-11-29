@@ -18,16 +18,17 @@ let ormconfig: ConnectionOptions = {
   },
   logger: 'advanced-console',
   logging: ['warn', 'error'],
-  dropSchema: false,
-  synchronize: false,
 };
 
 if (process.env.NODE_ENV === 'test') {
   ormconfig = {
     ...ormconfig,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    name: 'test',
+    username: process.env.TEST_DB_USERNAME,
+    password: process.env.TEST_DB_PASSWORD,
+    database: process.env.TEST_DB_NAME,
+    dropSchema: false,
+    synchronize: false,
   };
 }
 

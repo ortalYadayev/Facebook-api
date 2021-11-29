@@ -12,7 +12,6 @@ describe('Post Like', () => {
   beforeAll(async () => {
     app = await createFastifyInstance();
   });
-
   beforeEach(async () => {
     connection = await createConnection();
     await connection.runMigrations();

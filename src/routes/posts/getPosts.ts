@@ -13,13 +13,25 @@ const getPosts = (app: FastifyInstance): void => {
         where: {
           user: request.params.userId,
         },
-        relations: ['user'],
+        relations: ['user', 'likes', 'likes.user'],
         order: {
           id: 'DESC',
         },
       });
 
-      return reply.code(200).send(posts);
+      const newPosts = [];
+      posts.forEach((post) => {
+        let likeAuth = false;
+        post.likes.forEach((like) => {
+          if (like.user.id === request.user.id) {
+            likeAuth = true;
+          }
+        });
+        // @ts-ignore
+        newPosts.push({ ...post, likeAuth, likesCount: post.likes.length });
+      });
+
+      reply.code(200).send(newPosts);
     },
   });
 };

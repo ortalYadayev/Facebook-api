@@ -32,7 +32,9 @@ const postLike = (app: FastifyInstance): void => {
           },
         });
 
-        return reply.code(422).send();
+        return reply.code(422).send({
+          message: 'You already liked',
+        });
       } catch (error) {
         const like = new Like();
 
@@ -41,7 +43,7 @@ const postLike = (app: FastifyInstance): void => {
 
         await like.save();
 
-        return reply.code(201).send(like);
+        return reply.code(201).send();
       }
     },
   });

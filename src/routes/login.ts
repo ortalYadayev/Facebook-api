@@ -34,16 +34,10 @@ const login = (app: FastifyInstance): void => {
       }
 
       const token = await reply.jwtSign({ id: user.id });
-      // const token = fastify().jwt.sign({ user });
+
       return reply.code(200).send({
         token,
-        user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          username: user.username,
-          email: user.email,
-        },
+        user,
       });
     },
   });
