@@ -34,11 +34,12 @@ describe('Get Posts', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/posts/${user.id}`,
+      url: `/users/${user.id}/posts`,
     });
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).not.toBeNull();
+    expect(await Post.count()).toBe(3);
   });
 
   it('should get empty array', async () => {
@@ -46,7 +47,7 @@ describe('Get Posts', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'GET',
-      url: `/posts/${user.id}`,
+      url: `/users/${user.id}/posts`,
     });
 
     expect(response.statusCode).toBe(200);
@@ -62,7 +63,7 @@ describe('Get Posts', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'GET',
-        url: '/posts/10',
+        url: '/users/10/posts',
       });
 
       expect(response.statusCode).toBe(200);

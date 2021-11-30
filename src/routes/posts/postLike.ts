@@ -1,25 +1,28 @@
 import { FastifyInstance } from 'fastify';
+import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
 import { Like } from '../../entities/like.entity';
 
-type ParamsType = { postId: number };
+const ParamsSchema = { postId: Type.Number() };
+type ParamsType = Static<typeof ParamsSchema>;
 
 const postLike = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/posts/:postId/like',
+    url: '/posts/:postId/likes',
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
       let post: Post;
+      const { postId } = request.params;
       try {
         post = await Post.findOneOrFail({
           where: {
-            id: request.params.postId,
+            id: postId,
           },
           relations: ['likes'],
         });
       } catch (error) {
-        return reply.code(422).send({
+        return reply.code(404).send({
           message: "The post doesn't exist",
         });
       }
@@ -32,9 +35,7 @@ const postLike = (app: FastifyInstance): void => {
           },
         });
 
-        return reply.code(422).send({
-          message: 'You already liked',
-        });
+        return reply.code(200).send();
       } catch (error) {
         const like = new Like();
 

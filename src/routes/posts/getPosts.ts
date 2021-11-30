@@ -1,17 +1,20 @@
 import { FastifyInstance } from 'fastify';
+import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
 
-type ParamsType = { userId: number };
+const ParamsSchema = { userId: Type.Number() };
+type ParamsType = Static<typeof ParamsSchema>;
 
 const getPosts = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/posts/:userId',
+    url: 'users/:userId/posts',
     method: 'GET',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
+      const { userId } = request.params;
       const posts = await Post.find({
         where: {
-          user: request.params.userId,
+          user: userId,
         },
         relations: ['user', 'likes', 'likes.user'],
         order: {

@@ -34,7 +34,7 @@ describe('Post Unlike', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
-      url: `/posts/${post.id}/unlike`,
+      url: `/posts/${post.id}/likes`,
     });
 
     await like.reload();
@@ -52,7 +52,7 @@ describe('Post Unlike', () => {
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
-      url: `/posts/${post.id}/unlike`,
+      url: `/posts/${post.id}/likes`,
     });
 
     await secondLike.reload();
@@ -67,13 +67,13 @@ describe('Post Unlike', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: '/posts/10/unlike',
+        url: '/posts/10/likes',
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(404);
     });
 
-    it('double click on unlike', async () => {
+    it("double click on unlike - shouldn't unlike", async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       const like = await Like.factory().user(user).post(post).create();
@@ -81,10 +81,10 @@ describe('Post Unlike', () => {
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
-        url: `/posts/${post.id}/unlike`,
+        url: `/posts/${post.id}/likes`,
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
       expect(await Like.count()).toBe(0);
     });
   });

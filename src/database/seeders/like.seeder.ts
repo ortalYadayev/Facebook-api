@@ -10,9 +10,7 @@ function randomIndex(min: number, max: number): number {
 export default class LikeSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
-    const posts = await Post.find({
-      relations: ['likes', 'likes.user'],
-    });
+    const posts = await Post.find();
 
     for (let i = 0; i < 50; i++) {
       const fromUserKey = randomIndex(0, users.length - 1);

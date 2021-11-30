@@ -18,6 +18,8 @@ let ormconfig: ConnectionOptions = {
   },
   logger: 'advanced-console',
   logging: ['warn', 'error'],
+  dropSchema: false,
+  synchronize: false,
 };
 
 if (process.env.NODE_ENV === 'test') {
@@ -27,8 +29,6 @@ if (process.env.NODE_ENV === 'test') {
     username: process.env.TEST_DB_USERNAME,
     password: process.env.TEST_DB_PASSWORD,
     database: process.env.TEST_DB_NAME,
-    dropSchema: false,
-    synchronize: false,
   };
 }
 

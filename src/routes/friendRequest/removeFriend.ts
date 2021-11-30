@@ -1,10 +1,12 @@
 import { FastifyInstance } from 'fastify';
 import moment from 'moment';
 import { IsNull, Not } from 'typeorm';
+import { Static, Type } from '@sinclair/typebox';
 import { Friend } from '../../entities/friend.entity';
 import { FriendRequest } from '../../entities/friend_request.entity';
 
-type ParamsType = { friendRequestId: number };
+const ParamsSchema = { friendRequestId: Type.Number() };
+type ParamsType = Static<typeof ParamsSchema>;
 
 const removeFriend = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
@@ -14,11 +16,12 @@ const removeFriend = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       let friendRequest: FriendRequest;
       let friend: Friend;
+      const { friendRequestId } = request.params;
 
       try {
         friendRequest = await FriendRequest.findOneOrFail({
           where: {
-            id: request.params.friendRequestId,
+            id: friendRequestId,
             rejectedAt: IsNull(),
             deletedAt: IsNull(),
             approvedAt: Not(IsNull()),
