@@ -7,7 +7,7 @@ type ParamsType = Static<typeof ParamsSchema>;
 
 const getPosts = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: 'users/:userId/posts',
+    url: '/users/:userId/posts',
     method: 'GET',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
@@ -22,19 +22,7 @@ const getPosts = (app: FastifyInstance): void => {
         },
       });
 
-      const newPosts = [];
-      posts.forEach((post) => {
-        let likeAuth = false;
-        post.likes.forEach((like) => {
-          if (like.user.id === request.user.id) {
-            likeAuth = true;
-          }
-        });
-        // @ts-ignore
-        newPosts.push({ ...post, likeAuth, likesCount: post.likes.length });
-      });
-
-      reply.code(200).send(newPosts);
+      reply.code(200).send(posts);
     },
   });
 };

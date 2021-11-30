@@ -30,14 +30,12 @@ describe('Post Unlike', () => {
   it('unlike to post', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
-    const like = await Like.factory().user(user).post(post).create();
+    await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
       url: `/posts/${post.id}/likes`,
     });
-
-    await like.reload();
 
     expect(response.statusCode).toBe(200);
     expect(await Like.count()).toBe(0);
@@ -48,14 +46,12 @@ describe('Post Unlike', () => {
     const post = await Post.factory().user(user).create();
     const firstLike = await Like.factory().user(user).post(post).create();
     await Like.delete(firstLike.id);
-    const secondLike = await Like.factory().user(user).post(post).create();
+    await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
       url: `/posts/${post.id}/likes`,
     });
-
-    await secondLike.reload();
 
     expect(response.statusCode).toBe(200);
     expect(await Like.count()).toBe(0);

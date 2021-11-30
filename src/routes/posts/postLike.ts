@@ -27,25 +27,24 @@ const postLike = (app: FastifyInstance): void => {
         });
       }
 
-      try {
-        await Like.findOneOrFail({
-          where: {
-            post,
-            user: request.user,
-          },
-        });
+      const countOfLikes = await Like.count({
+        where: {
+          post,
+          user: request.user,
+        },
+      });
 
+      if (countOfLikes) {
         return reply.code(200).send();
-      } catch (error) {
-        const like = new Like();
-
-        like.post = post;
-        like.user = request.user;
-
-        await like.save();
-
-        return reply.code(201).send();
       }
+      const like = new Like();
+
+      like.post = post;
+      like.user = request.user;
+
+      await like.save();
+
+      return reply.code(201).send();
     },
   });
 };

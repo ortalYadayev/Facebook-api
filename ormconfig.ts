@@ -25,7 +25,6 @@ let ormconfig: ConnectionOptions = {
 if (process.env.NODE_ENV === 'test') {
   ormconfig = {
     ...ormconfig,
-    name: 'test',
     username: process.env.TEST_DB_USERNAME,
     password: process.env.TEST_DB_PASSWORD,
     database: process.env.TEST_DB_NAME,
