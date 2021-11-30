@@ -68,7 +68,7 @@ describe('Post Like', () => {
       expect(await Like.count()).toBe(0);
     });
 
-    it("double click on like - shouldn't like", async () => {
+    it("there's like", async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       await Like.factory().user(user).post(post).create();

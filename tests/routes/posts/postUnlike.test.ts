@@ -57,7 +57,7 @@ describe('Post Unlike', () => {
     expect(await Like.count()).toBe(0);
   });
 
-  describe("shouldn't do dislike to post", () => {
+  describe("shouldn't do unlike to post", () => {
     it("post doesn't exist", async () => {
       const user = await User.factory().create();
 
@@ -69,7 +69,7 @@ describe('Post Unlike', () => {
       expect(response.statusCode).toBe(404);
     });
 
-    it("double click on unlike - shouldn't unlike", async () => {
+    it("there's no like to unlike", async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       const like = await Like.factory().user(user).post(post).create();
