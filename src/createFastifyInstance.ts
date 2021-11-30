@@ -17,13 +17,16 @@ import login from './routes/login';
 import me from './routes/me';
 import getUser from './routes/users/getUser';
 import { User } from './entities/user.entity';
-import storePost from './routes/users/storePost';
+import storePost from './routes/posts/storePost';
+import getPosts from './routes/posts/getPosts';
 import searchUsers from './routes/users/searchUsers';
 import storeFriendRequest from './routes/friendRequest/storeFriendRequest';
 import approveFriendRequest from './routes/friendRequest/approveFriendRequest';
 import rejectFriendRequest from './routes/friendRequest/rejectFriendRequest';
 import deleteFriendRequest from './routes/friendRequest/deleteFriendRequest';
 import removeFriend from './routes/friendRequest/removeFriend';
+import postLike from './routes/posts/postLike';
+import postUnlike from './routes/posts/postUnlike';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
@@ -58,12 +61,15 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   me(app);
   getUser(app);
   storePost(app);
+  getPosts(app);
   searchUsers(app);
   storeFriendRequest(app);
   approveFriendRequest(app);
   rejectFriendRequest(app);
   deleteFriendRequest(app);
   removeFriend(app);
+  postLike(app);
+  postUnlike(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (

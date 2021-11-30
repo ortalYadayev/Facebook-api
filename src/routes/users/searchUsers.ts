@@ -45,7 +45,6 @@ function relevantFriendRequests(
     } else {
       requests.forEach((friendRequest) => {
         if (
-          // @TODO from here
           (friendRequest.sender.id === user.id ||
             friendRequest.receiver.id === user.id) &&
           !friendRequest.deletedAt &&
@@ -53,7 +52,7 @@ function relevantFriendRequests(
         ) {
           const statusFriend = {
             status: '',
-            idRequest: friendRequest.id,
+            requestId: friendRequest.id,
             sentBy: friendRequest.sender.id,
           };
 
@@ -63,7 +62,7 @@ function relevantFriendRequests(
             statusFriend.status = 'pending';
           }
           userAndFriendRequest.statusFriend = statusFriend;
-        } // @TODO until here
+        }
       });
     }
     // @ts-ignore

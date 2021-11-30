@@ -54,11 +54,11 @@ const getUser = (app: FastifyInstance): void => {
 
       const status: string = friendRequest.approvedAt ? 'approved' : 'pending';
       const sentBy: number = friendRequest.sender.id;
-      const idRequest: number = friendRequest.id;
+      const requestId: number = friendRequest.id;
 
       return reply.code(200).send({
         user,
-        statusFriend: { status, sentBy, idRequest },
+        statusFriend: { status, sentBy, requestId },
       });
     },
   });

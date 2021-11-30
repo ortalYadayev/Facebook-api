@@ -7,10 +7,8 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-type ParamsType = { username: string };
-
 const storePost = (app: FastifyInstance): void => {
-  app.route<{ Body: PayloadType; Params: ParamsType }>({
+  app.route<{ Body: PayloadType }>({
     url: '/posts',
     method: 'POST',
     preValidation: app.authMiddleware,

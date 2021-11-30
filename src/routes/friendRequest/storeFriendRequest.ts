@@ -1,9 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { Not, IsNull } from 'typeorm';
+import { Static, Type } from '@sinclair/typebox';
 import { FriendRequest } from '../../entities/friend_request.entity';
 import { User } from '../../entities/user.entity';
 
-type ParamsType = { userId: number };
+const ParamsSchema = { userId: Type.Number() };
+type ParamsType = Static<typeof ParamsSchema>;
 
 const storeFriendRequest = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
@@ -11,7 +13,8 @@ const storeFriendRequest = (app: FastifyInstance): void => {
     method: 'POST',
     preValidation: app.authMiddleware,
     handler: async (request, reply) => {
-      if (request.user.id === parseInt(String(request.params.userId))) {
+      const { userId } = request.params;
+      if (request.user.id === parseInt(String(userId))) {
         return reply.code(422).send();
       }
 
@@ -20,7 +23,7 @@ const storeFriendRequest = (app: FastifyInstance): void => {
       try {
         user = await User.findOneOrFail({
           where: {
-            id: request.params.userId,
+            id: userId,
             verifiedAt: Not(IsNull()),
           },
         });
