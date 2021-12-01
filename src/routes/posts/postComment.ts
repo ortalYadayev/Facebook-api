@@ -4,7 +4,7 @@ import { Post } from '../../entities/post.entity';
 import { Comment } from '../../entities/comment.entity';
 
 const PayloadSchema = Type.Object({
-  content: Type.String({ minLength: 2, maxLength: 255 }),
+  content: Type.String({ minLength: 1, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
