@@ -29,9 +29,7 @@ const postComment = (app: FastifyInstance): void => {
           },
         });
       } catch (error) {
-        return reply.code(404).send({
-          message: "The post doesn't exist",
-        });
+        return reply.code(404).send();
       }
 
       const comment = new Comment();
