@@ -12,6 +12,7 @@ const approveFriendRequest = (app: FastifyInstance): void => {
     url: '/friend-requests/:friendRequestId/approve',
     method: 'POST',
     preValidation: app.authMiddleware,
+    schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { friendRequestId } = request.params;
       try {

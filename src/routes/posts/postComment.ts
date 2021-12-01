@@ -3,19 +3,20 @@ import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
 import { Comment } from '../../entities/comment.entity';
 
-const ParamsSchema = { postId: Type.Number() };
-type ParamsType = Static<typeof ParamsSchema>;
-
 const PayloadSchema = Type.Object({
-  content: Type.String({ minLength: 1, maxLength: 255 }),
+  content: Type.String({ minLength: 2, maxLength: 255 }),
 });
 type PayloadType = Static<typeof PayloadSchema>;
+
+const ParamsSchema = { postId: Type.Number() };
+type ParamsType = Static<typeof ParamsSchema>;
 
 const postComment = (app: FastifyInstance): void => {
   app.route<{ Body: PayloadType; Params: ParamsType }>({
     url: '/posts/:postId/comments',
     method: 'POST',
     preValidation: app.authMiddleware,
+    schema: { body: PayloadSchema, params: ParamsSchema },
     handler: async (request, reply) => {
       const payload = request.body;
 
@@ -26,7 +27,6 @@ const postComment = (app: FastifyInstance): void => {
           where: {
             id: postId,
           },
-          relations: ['likes'],
         });
       } catch (error) {
         return reply.code(404).send({
@@ -42,7 +42,7 @@ const postComment = (app: FastifyInstance): void => {
 
       await comment.save();
 
-      return reply.code(201).send();
+      return reply.code(201).send(comment);
     },
   });
 };

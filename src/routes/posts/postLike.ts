@@ -11,6 +11,7 @@ const postLike = (app: FastifyInstance): void => {
     url: '/posts/:postId/likes',
     method: 'POST',
     preValidation: app.authMiddleware,
+    schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       let post: Post;
       const { postId } = request.params;
@@ -19,7 +20,6 @@ const postLike = (app: FastifyInstance): void => {
           where: {
             id: postId,
           },
-          relations: ['likes'],
         });
       } catch (error) {
         return reply.code(404).send({

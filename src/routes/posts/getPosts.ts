@@ -10,13 +10,14 @@ const getPosts = (app: FastifyInstance): void => {
     url: '/users/:userId/posts',
     method: 'GET',
     preValidation: app.authMiddleware,
+    schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { userId } = request.params;
       const posts = await Post.find({
         where: {
           user: userId,
         },
-        relations: ['user', 'likes', 'likes.user'],
+        relations: ['user', 'likes', 'likes.user', 'comments', 'comments.user'],
         order: {
           id: 'DESC',
         },

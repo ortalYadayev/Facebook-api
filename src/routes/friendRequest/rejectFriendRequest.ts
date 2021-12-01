@@ -12,6 +12,7 @@ const rejectFriendRequest = (app: FastifyInstance): void => {
     url: '/friend-requests/:friendRequestId/reject',
     method: 'DELETE',
     preValidation: app.authMiddleware,
+    schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { friendRequestId } = request.params;
 

@@ -12,6 +12,7 @@ const storeFriendRequest = (app: FastifyInstance): void => {
     url: '/users/:userId/friend-requests',
     method: 'POST',
     preValidation: app.authMiddleware,
+    schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { userId } = request.params;
       if (request.user.id === parseInt(String(userId))) {
