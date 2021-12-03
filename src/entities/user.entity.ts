@@ -79,7 +79,7 @@ export class User extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.user, {
     cascade: true,
   })
-  comments!: Comment[];
+  postComments!: Comment[];
 
   static factory(): UserFactory {
     return new UserFactory();

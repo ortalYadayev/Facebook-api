@@ -38,8 +38,16 @@ describe('Post Comment', () => {
       },
     });
 
+    const comment = await Comment.findOne({
+      where: {
+        post,
+        user,
+      },
+    });
+
     expect(response.statusCode).toBe(201);
     expect(await Comment.count()).toBe(1);
+    expect(response.json().id).toEqual(comment?.id);
   });
 
   describe("shouldn't add a comment to post", () => {

@@ -44,5 +44,4 @@ const postComment = (app: FastifyInstance): void => {
     },
   });
 };
-
 export default postComment;

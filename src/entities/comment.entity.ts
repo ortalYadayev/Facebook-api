@@ -9,14 +9,14 @@ export class Comment extends BaseEntity {
   @Column()
   content!: string;
 
-  @ManyToOne(() => Post, (post) => post.likes, {
+  @ManyToOne(() => Post, (post) => post.comments, {
     nullable: false,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   post!: Post;
 
-  @ManyToOne(() => User, (user) => user.likes, {
+  @ManyToOne(() => User, (user) => user.postComments, {
     nullable: false,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
