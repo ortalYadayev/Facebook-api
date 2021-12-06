@@ -28,6 +28,8 @@ import removeFriend from './routes/friendRequest/removeFriend';
 import postLike from './routes/posts/postLike';
 import postUnlike from './routes/posts/postUnlike';
 import postComment from './routes/posts/postComment';
+import commentLike from './routes/posts/commentLike';
+import commentUnlike from './routes/posts/commentUnlike';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
@@ -72,6 +74,8 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   postLike(app);
   postUnlike(app);
   postComment(app);
+  commentLike(app);
+  commentUnlike(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (

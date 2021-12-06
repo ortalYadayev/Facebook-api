@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
 import { Post } from './post.entity';
 import CommentFactory from '../database/factories/comment.factory';
+import { Like } from './like.entity';
 
 @Entity('comments')
 export class Comment extends BaseEntity {
@@ -22,6 +23,11 @@ export class Comment extends BaseEntity {
     onUpdate: 'CASCADE',
   })
   user!: User;
+
+  @OneToMany(() => Like, (like) => like.comment, {
+    cascade: true,
+  })
+  likes!: Like[];
 
   static factory(): CommentFactory {
     return new CommentFactory();
