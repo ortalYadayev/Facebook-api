@@ -23,6 +23,11 @@ export class CommentOnComment extends BaseEntity {
   })
   user!: User;
 
+  // @OneToMany(() => CommentLike, (commentLike) => commentLike.comment, {
+  //   cascade: true,
+  // })
+  // commentLikes!: CommentLike[];
+
   static factory(): CommentOnCommentFactory {
     return new CommentOnCommentFactory();
   }

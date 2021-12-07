@@ -2,7 +2,6 @@ import { BaseSeeder } from './base_seeder';
 import { User } from '../../entities/user.entity';
 import { Post } from '../../entities/post.entity';
 import { PostLike } from '../../entities/post_like.entity';
-import { CommentLike } from '../../entities/comment_like.entity';
 
 function randomIndex(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
