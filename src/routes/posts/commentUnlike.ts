@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
-import { Like } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
 import { CommentLike } from '../../entities/comment_like.entity';
 

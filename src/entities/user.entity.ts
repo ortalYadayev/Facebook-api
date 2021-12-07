@@ -10,6 +10,7 @@ import { Friend } from './friend.entity';
 import { PostLike } from './post_like.entity';
 import { Comment } from './comment.entity';
 import { CommentLike } from './comment_like.entity';
+import { CommentOnComment } from './comment_on_comment.entity';
 
 @Entity('users')
 @Index(['firstName', 'lastName'], { fulltext: true })
@@ -86,6 +87,15 @@ export class User extends BaseEntity {
     cascade: true,
   })
   commentLikes!: CommentLike[];
+
+  @OneToMany(
+    () => CommentOnComment,
+    (commentOnComment) => commentOnComment.user,
+    {
+      cascade: true,
+    },
+  )
+  commentOnComments!: CommentOnComment[];
 
   static factory(): UserFactory {
     return new UserFactory();

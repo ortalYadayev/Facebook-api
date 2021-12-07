@@ -10,15 +10,31 @@ function randomIndex(min: number, max: number): number {
 export default class CommentLikeSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
-    const comment = await Comment.find();
+    const comments = await Comment.find();
+    const commentLikes = await CommentLike.find();
+
+    const commentLikesMap = new Map();
+
+    commentLikes.forEach((like) =>
+      commentLikesMap.set(like.comment.id, like.user.id),
+    );
 
     for (let i = 0; i < 50; i++) {
       const fromUserKey = randomIndex(0, users.length - 1);
-      const commentKey = randomIndex(0, comment.length - 1);
+      let commentKey = randomIndex(0, comments.length - 1);
+
+      while (
+        commentLikesMap.get(commentKey) === fromUserKey ||
+        commentLikesMap.get(fromUserKey) === commentKey ||
+        commentKey === fromUserKey
+      ) {
+        commentKey++;
+      }
+      commentLikesMap.set(commentKey, fromUserKey);
 
       await CommentLike.factory()
         .user(users[fromUserKey])
-        .comment(comment[commentKey])
+        .comment(comments[commentKey])
         .create();
     }
   }

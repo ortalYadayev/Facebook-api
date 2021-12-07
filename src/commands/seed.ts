@@ -6,6 +6,7 @@ import UserSeeder from '../database/seeders/user.seeder';
 import PostLikeSeeder from '../database/seeders/post_like.seeder';
 import CommentSeeder from '../database/seeders/comment.seeder';
 import CommentLikeSeeder from '../database/seeders/comment_like.seeder';
+import CommentOnCommentSeeder from '../database/seeders/comment_on_comment.seeder';
 
 const seed = async (): Promise<void> => {
   const connection = await createConnection();
@@ -17,6 +18,7 @@ const seed = async (): Promise<void> => {
   await new PostLikeSeeder().execute();
   await new CommentSeeder().execute();
   await new CommentLikeSeeder().execute();
+  await new CommentOnCommentSeeder().execute();
 
   await connection.close();
 };
