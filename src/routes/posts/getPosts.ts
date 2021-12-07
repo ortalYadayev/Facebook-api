@@ -19,12 +19,12 @@ const getPosts = (app: FastifyInstance): void => {
         },
         relations: [
           'user',
-          'likes',
-          'likes.user',
+          'postLikes',
+          'postLikes.user',
           'comments',
           'comments.user',
-          'comments.likes',
-          'comments.likes.user',
+          'comments.commentLikes',
+          'comments.commentLikes.user',
         ],
         order: {
           id: 'DESC',

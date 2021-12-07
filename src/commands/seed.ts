@@ -3,9 +3,9 @@ import FriendRequestSeeder from '../database/seeders/friendRequest.seeder';
 import FriendSeeder from '../database/seeders/friend.seeder';
 import PostSeeder from '../database/seeders/post.seeder';
 import UserSeeder from '../database/seeders/user.seeder';
-import PostLikeSeeder from '../database/seeders/postLike.seeder';
+import PostLikeSeeder from '../database/seeders/post_like.seeder';
 import CommentSeeder from '../database/seeders/comment.seeder';
-import CommentLikeSeeder from '../database/seeders/commentLike.seeder';
+import CommentLikeSeeder from '../database/seeders/comment_like.seeder';
 
 const seed = async (): Promise<void> => {
   const connection = await createConnection();

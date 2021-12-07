@@ -3,7 +3,7 @@ import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
 import { Post } from './post.entity';
 import CommentFactory from '../database/factories/comment.factory';
-import { Like } from './like.entity';
+import { CommentLike } from './comment_like.entity';
 
 @Entity('comments')
 export class Comment extends BaseEntity {
@@ -24,10 +24,10 @@ export class Comment extends BaseEntity {
   })
   user!: User;
 
-  @OneToMany(() => Like, (like) => like.comment, {
+  @OneToMany(() => CommentLike, (commentLike) => commentLike.comment, {
     cascade: true,
   })
-  likes!: Like[];
+  commentLikes!: CommentLike[];
 
   static factory(): CommentFactory {
     return new CommentFactory();

@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
-import { Like } from '../../entities/like.entity';
+import { PostLike } from '../../entities/post_like.entity';
 
 const ParamsSchema = { postId: Type.Number() };
 type ParamsType = Static<typeof ParamsSchema>;
@@ -15,6 +15,7 @@ const postLike = (app: FastifyInstance): void => {
     handler: async (request, reply) => {
       let post: Post;
       const { postId } = request.params;
+
       try {
         post = await Post.findOneOrFail({
           where: {
@@ -27,7 +28,7 @@ const postLike = (app: FastifyInstance): void => {
         });
       }
 
-      const countOfLikes = await Like.count({
+      const countOfLikes = await PostLike.count({
         where: {
           post,
           user: request.user,
@@ -37,7 +38,8 @@ const postLike = (app: FastifyInstance): void => {
       if (countOfLikes) {
         return reply.code(200).send();
       }
-      const like = new Like();
+
+      const like = new PostLike();
 
       like.post = post;
       like.user = request.user;

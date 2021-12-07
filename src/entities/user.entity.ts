@@ -7,8 +7,9 @@ import { UrlToken } from './url_token.entity';
 import UserFactory from '../database/factories/user.factory';
 import { Post } from './post.entity';
 import { Friend } from './friend.entity';
-import { Like } from './like.entity';
+import { PostLike } from './post_like.entity';
 import { Comment } from './comment.entity';
+import { CommentLike } from './comment_like.entity';
 
 @Entity('users')
 @Index(['firstName', 'lastName'], { fulltext: true })
@@ -71,15 +72,20 @@ export class User extends BaseEntity {
   })
   deletedFriends!: Friend[];
 
-  @OneToMany(() => Like, (like) => like.user, {
+  @OneToMany(() => PostLike, (like) => like.user, {
     cascade: true,
   })
-  likes!: Like[];
+  postLikes!: PostLike[];
 
   @OneToMany(() => Comment, (comment) => comment.user, {
     cascade: true,
   })
   postComments!: Comment[];
+
+  @OneToMany(() => CommentLike, (commentLike) => commentLike.user, {
+    cascade: true,
+  })
+  commentLikes!: CommentLike[];
 
   static factory(): UserFactory {
     return new UserFactory();

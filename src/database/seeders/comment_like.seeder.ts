@@ -1,24 +1,24 @@
 import { BaseSeeder } from './base_seeder';
 import { User } from '../../entities/user.entity';
-import { Post } from '../../entities/post.entity';
-import { Like } from '../../entities/like.entity';
+import { Comment } from '../../entities/comment.entity';
+import { CommentLike } from '../../entities/comment_like.entity';
 
 function randomIndex(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-export default class PostLikeSeeder implements BaseSeeder {
+export default class CommentLikeSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
-    const posts = await Post.find();
+    const comment = await Comment.find();
 
     for (let i = 0; i < 50; i++) {
       const fromUserKey = randomIndex(0, users.length - 1);
-      const postKey = randomIndex(0, posts.length - 1);
+      const commentKey = randomIndex(0, comment.length - 1);
 
-      await Like.factory()
+      await CommentLike.factory()
         .user(users[fromUserKey])
-        .post(posts[postKey])
+        .comment(comment[commentKey])
         .create();
     }
   }

@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
-import { Like } from '../../entities/like.entity';
+import { Like } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
+import { CommentLike } from '../../entities/comment_like.entity';
 
 const ParamsSchema = {
   commentId: Type.Number(),
@@ -25,18 +26,20 @@ const commentUnlike = (app: FastifyInstance): void => {
           },
         });
       } catch (error) {
-        return reply.code(404).send();
+        return reply.code(404).send({
+          message: "The comment doesn't exist",
+        });
       }
 
       try {
-        const like = await Like.findOneOrFail({
+        const like = await CommentLike.findOneOrFail({
           where: {
             comment,
             user: request.user,
           },
         });
 
-        await Like.delete(like.id);
+        await CommentLike.delete(like.id);
 
         return reply.code(200).send();
       } catch (error) {
