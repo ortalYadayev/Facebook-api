@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
+import { IsNull } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
-import { CommentLike } from '../../entities/comment_like.entity';
+import { Like } from '../../entities/like.entity';
 
 const ParamsSchema = {
   commentId: Type.Number(),
@@ -30,9 +31,10 @@ const commentLike = (app: FastifyInstance): void => {
         });
       }
 
-      const countOfLikes = await CommentLike.count({
+      const countOfLikes = await Like.count({
         where: {
           comment,
+          post: IsNull(),
           user: request.user,
         },
       });
@@ -41,7 +43,7 @@ const commentLike = (app: FastifyInstance): void => {
         return reply.code(200).send();
       }
 
-      const like = new CommentLike();
+      const like = new Like();
 
       like.comment = comment;
       like.user = request.user;

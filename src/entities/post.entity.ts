@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import PostFactory from '../database/factories/post.factory';
 import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
-import { PostLike } from './post_like.entity';
+import { Like } from './like.entity';
 import { Comment } from './comment.entity';
 
 @Entity('posts')
@@ -17,10 +17,10 @@ export class Post extends BaseEntity {
   })
   user!: User | undefined;
 
-  @OneToMany(() => PostLike, (postLike) => postLike.post, {
+  @OneToMany(() => Like, (like) => like.post, {
     cascade: true,
   })
-  postLikes!: PostLike[];
+  likes!: Like[];
 
   @OneToMany(() => Comment, (comment) => comment.post, {
     cascade: true,

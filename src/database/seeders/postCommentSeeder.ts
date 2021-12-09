@@ -7,7 +7,7 @@ function randomIndex(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-export default class CommentSeeder implements BaseSeeder {
+export default class PostCommentSeeder implements BaseSeeder {
   public async execute(): Promise<void> {
     const users = await User.find();
     const posts = await Post.find();

@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
+import { IsNull } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
-import { CommentOnComment } from '../../entities/comment_on_comment.entity';
 
 const PayloadSchema = Type.Object({
   content: Type.String({ minLength: 1, maxLength: 255 }),
@@ -26,13 +26,14 @@ const commentOnComment = (app: FastifyInstance): void => {
         comment = await Comment.findOneOrFail({
           where: {
             id: commentId,
+            comment: IsNull(),
           },
         });
       } catch (error) {
         return reply.code(404).send();
       }
 
-      const commentOn = new CommentOnComment();
+      const commentOn = new Comment();
 
       commentOn.comment = comment;
       commentOn.user = request.user;

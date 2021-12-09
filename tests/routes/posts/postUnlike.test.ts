@@ -3,7 +3,7 @@ import { Connection, createConnection } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { Post } from '../../../src/entities/post.entity';
 import { User } from '../../../src/entities/user.entity';
-import { PostLike } from '../../../src/entities/post_like.entity';
+// import { Like } from '../../../src/entities/post_like.entity';
 
 describe('Post Unlike', () => {
   let app: FastifyInstance;
@@ -30,7 +30,7 @@ describe('Post Unlike', () => {
   it('unlike to post', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
-    await PostLike.factory().user(user).post(post).create();
+    // await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
@@ -38,15 +38,15 @@ describe('Post Unlike', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(await PostLike.count()).toBe(0);
+    // expect(await Like.count()).toBe(0);
   });
 
   it('unlike to post - there was unlike', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
-    const firstLike = await PostLike.factory().user(user).post(post).create();
-    await PostLike.delete(firstLike.id);
-    await PostLike.factory().user(user).post(post).create();
+    // const firstLike = await Like.factory().user(user).post(post).create();
+    // await Like.delete(firstLike.id);
+    // await Like.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
@@ -54,7 +54,7 @@ describe('Post Unlike', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(await PostLike.count()).toBe(0);
+    // expect(await Like.count()).toBe(0);
   });
 
   describe("shouldn't do unlike to post", () => {
@@ -72,8 +72,8 @@ describe('Post Unlike', () => {
     it("there's no like to unlike", async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
-      const like = await PostLike.factory().user(user).post(post).create();
-      await PostLike.delete(like.id);
+      // const like = await Like.factory().user(user).post(post).create();
+      // await Like.delete(like.id);
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
@@ -81,7 +81,7 @@ describe('Post Unlike', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(await PostLike.count()).toBe(0);
+      // expect(await Like.count()).toBe(0);
     });
   });
 });

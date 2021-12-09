@@ -3,41 +3,41 @@ import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
 import { Post } from './post.entity';
 import CommentFactory from '../database/factories/comment.factory';
-import { CommentLike } from './comment_like.entity';
-import { CommentOnComment } from './comment_on_comment.entity';
+import { Like } from './like.entity';
 
 @Entity('comments')
 export class Comment extends BaseEntity {
   @Column()
   content!: string;
 
-  @ManyToOne(() => Post, (post) => post.comments, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  post!: Post;
-
-  @ManyToOne(() => User, (user) => user.postComments, {
+  @ManyToOne(() => User, (user) => user.comments, {
     nullable: false,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   user!: User;
 
-  @OneToMany(() => CommentLike, (commentLike) => commentLike.comment, {
+  @ManyToOne(() => Post, (post) => post.comments, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  post!: Post;
+
+  @ManyToOne(() => Comment, (comment) => comment.comments, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  comment!: Comment;
+
+  @OneToMany(() => Comment, (comment) => comment.comment, {
     cascade: true,
   })
-  commentLikes!: CommentLike[];
+  comments!: Comment[];
 
-  @OneToMany(
-    () => CommentOnComment,
-    (commentOnComment) => commentOnComment.comment,
-    {
-      cascade: true,
-    },
-  )
-  commentOnComments!: CommentOnComment[];
+  @OneToMany(() => Like, (likes) => likes.comment, {
+    cascade: true,
+  })
+  likes!: Like[];
 
   static factory(): CommentFactory {
     return new CommentFactory();

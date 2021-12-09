@@ -1,7 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
+import { IsNull } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
-import { CommentLike } from '../../entities/comment_like.entity';
+import { Like } from '../../entities/like.entity';
+// import { CommentLike } from '../../entities/comment_like.entity';
 
 const ParamsSchema = {
   commentId: Type.Number(),
@@ -31,14 +33,15 @@ const commentUnlike = (app: FastifyInstance): void => {
       }
 
       try {
-        const like = await CommentLike.findOneOrFail({
+        const like = await Like.findOneOrFail({
           where: {
             comment,
+            post: IsNull(),
             user: request.user,
           },
         });
 
-        await CommentLike.delete(like.id);
+        await Like.delete(like.id);
 
         return reply.code(200).send();
       } catch (error) {

@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { Post } from '../../entities/post.entity';
-import { PostLike } from '../../entities/post_like.entity';
+import { Like } from '../../entities/like.entity';
 
 const ParamsSchema = { postId: Type.Number() };
 type ParamsType = Static<typeof ParamsSchema>;
@@ -29,14 +29,14 @@ const postUnlike = (app: FastifyInstance): void => {
       }
 
       try {
-        const like = await PostLike.findOneOrFail({
+        const like = await Like.findOneOrFail({
           where: {
             post,
             user: request.user,
           },
         });
 
-        await PostLike.delete(like.id);
+        await Like.delete(like.id);
 
         return reply.code(200).send();
       } catch (error) {
@@ -45,5 +45,4 @@ const postUnlike = (app: FastifyInstance): void => {
     },
   });
 };
-
 export default postUnlike;

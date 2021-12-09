@@ -21,6 +21,10 @@ class CommentFactory extends BaseFactory<Comment> {
   post(post: Post): this {
     return this.addToState({ post });
   }
+
+  comment(comment: Comment): this {
+    return this.addToState({ comment });
+  }
 }
 
 export default CommentFactory;
