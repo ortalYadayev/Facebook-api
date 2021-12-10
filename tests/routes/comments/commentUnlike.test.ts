@@ -4,7 +4,7 @@ import createFastifyInstance from '../../../src/createFastifyInstance';
 import { Post } from '../../../src/entities/post.entity';
 import { User } from '../../../src/entities/user.entity';
 import { Comment } from '../../../src/entities/comment.entity';
-import { CommentLike } from '../../../src/entities/comment_like.entity';
+import { Like } from '../../../src/entities/like.entity';
 
 describe('Comment Unlike', () => {
   let app: FastifyInstance;
@@ -32,7 +32,7 @@ describe('Comment Unlike', () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
     const comment = await Comment.factory().post(post).user(user).create();
-    await CommentLike.factory().user(user).comment(comment).create();
+    await Like.factory().user(user).comment(comment).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
@@ -40,19 +40,16 @@ describe('Comment Unlike', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(await CommentLike.count()).toBe(0);
+    expect(await Like.count()).toBe(0);
   });
 
   it('unlike to comment - there was unlike', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
     const comment = await Comment.factory().post(post).user(user).create();
-    const firstLike = await CommentLike.factory()
-      .user(user)
-      .comment(comment)
-      .create();
-    await CommentLike.delete(firstLike.id);
-    await CommentLike.factory().user(user).comment(comment).create();
+    const firstLike = await Like.factory().user(user).comment(comment).create();
+    await Like.delete(firstLike.id);
+    await Like.factory().user(user).comment(comment).create();
 
     const response = await app.loginAs(user).inject({
       method: 'DELETE',
@@ -60,7 +57,7 @@ describe('Comment Unlike', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(await CommentLike.count()).toBe(0);
+    expect(await Like.count()).toBe(0);
   });
 
   describe("shouldn't do unlike to comment", () => {
@@ -73,18 +70,18 @@ describe('Comment Unlike', () => {
       });
 
       expect(response.statusCode).toBe(404);
-      expect(await CommentLike.count()).toBe(0);
+      expect(await Like.count()).toBe(0);
     });
 
     it("there's no like to unlike", async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       const comment = await Comment.factory().post(post).user(user).create();
-      const commentLike = await CommentLike.factory()
+      const commentLike = await Like.factory()
         .user(user)
         .comment(comment)
         .create();
-      await CommentLike.delete(commentLike.id);
+      await Like.delete(commentLike.id);
 
       const response = await app.loginAs(user).inject({
         method: 'DELETE',
@@ -92,7 +89,7 @@ describe('Comment Unlike', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(await CommentLike.count()).toBe(0);
+      expect(await Like.count()).toBe(0);
     });
   });
 });

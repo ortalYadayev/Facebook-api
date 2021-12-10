@@ -1,11 +1,9 @@
 import { FastifyInstance } from 'fastify';
-import { Connection, createConnection } from 'typeorm';
-import { posix } from 'path';
+import { Connection, createConnection, IsNull } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { Post } from '../../../src/entities/post.entity';
 import { User } from '../../../src/entities/user.entity';
 import { Comment } from '../../../src/entities/comment.entity';
-import { CommentOnComment } from '../../../src/entities/comment_on_comment.entity';
 
 describe('Comment On Comment', () => {
   let app: FastifyInstance;
@@ -41,15 +39,16 @@ describe('Comment On Comment', () => {
       },
     });
 
-    const commentOnComment = await CommentOnComment.findOne({
+    const commentOnComment = await Comment.findOne({
       where: {
         comment,
+        post: IsNull(),
         user,
       },
     });
 
     expect(response.statusCode).toBe(201);
-    expect(await CommentOnComment.count()).toBe(1);
+    expect(await Comment.count()).toBe(2);
     expect(response.json().id).toEqual(commentOnComment?.id);
   });
 
@@ -68,7 +67,7 @@ describe('Comment On Comment', () => {
       });
 
       expect(response.statusCode).toBe(404);
-      expect(await CommentOnComment.count()).toBe(0);
+      expect(await Comment.count()).toBe(1);
     });
 
     it("the content doesn't exist", async () => {
@@ -82,7 +81,7 @@ describe('Comment On Comment', () => {
       });
 
       expect(response.statusCode).toBe(422);
-      expect(await CommentOnComment.count()).toBe(0);
+      expect(await Comment.count()).toBe(1);
     });
   });
 });

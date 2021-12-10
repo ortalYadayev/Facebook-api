@@ -3,7 +3,6 @@ import { Static, Type } from '@sinclair/typebox';
 import { IsNull } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
 import { Like } from '../../entities/like.entity';
-// import { CommentLike } from '../../entities/comment_like.entity';
 
 const ParamsSchema = {
   commentId: Type.Number(),

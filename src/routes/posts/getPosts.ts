@@ -35,8 +35,6 @@ const getPosts = (app: FastifyInstance): void => {
         },
       });
 
-      console.log(posts[0].comments[1]);
-
       reply.code(200).send(posts);
     },
   });
