@@ -26,9 +26,6 @@ const getPosts = (app: FastifyInstance): void => {
           'comments.likes',
           'comments.likes.user',
           'comments.comments',
-          'comments.comments.user',
-          'comments.comments.likes',
-          'comments.comments.likes.user',
         ],
         order: {
           id: 'DESC',

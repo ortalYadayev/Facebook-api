@@ -36,6 +36,7 @@ describe('Post Like', () => {
     });
 
     expect(response.statusCode).toBe(201);
+    expect(response.json()).not.toBeNull();
     expect(await Like.count()).toBe(1);
   });
 
@@ -52,6 +53,8 @@ describe('Post Like', () => {
     });
 
     expect(response.statusCode).toBe(201);
+    expect(response.json()).not.toBeNull();
+
     expect(await Like.count()).toBe(1);
   });
 

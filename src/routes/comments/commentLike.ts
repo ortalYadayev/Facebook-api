@@ -50,7 +50,7 @@ const commentLike = (app: FastifyInstance): void => {
 
       await like.save();
 
-      return reply.code(201).send();
+      return reply.code(201).send(like);
     },
   });
 };
