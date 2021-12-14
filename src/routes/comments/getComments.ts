@@ -37,8 +37,6 @@ const getComments = (app: FastifyInstance): void => {
         },
       });
 
-      console.log(comments);
-
       reply.code(200).send({ comments, count });
     },
   });
