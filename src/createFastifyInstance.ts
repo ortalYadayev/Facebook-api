@@ -32,6 +32,7 @@ import commentLike from './routes/comments/commentLike';
 import commentUnlike from './routes/comments/commentUnlike';
 import commentOnComment from './routes/comments/commentOnComment';
 import getComments from './routes/comments/getComments';
+import getCommentOnComment from './routes/comments/getCommentOnComment';
 
 const createFastifyInstance = async (): Promise<FastifyInstance> => {
   const envFile = process.env.NODE_ENV !== 'test' ? '../.env' : '../.env.test';
@@ -80,6 +81,7 @@ const createFastifyInstance = async (): Promise<FastifyInstance> => {
   commentUnlike(app);
   commentOnComment(app);
   getComments(app);
+  getCommentOnComment(app);
 
   if (process.env.NODE_ENV === 'test') {
     app.loginAs = (
