@@ -28,7 +28,7 @@ const getPosts = (app: FastifyInstance): void => {
           'comments.comments',
         ],
         order: {
-          id: 'DESC',
+          id: 'ASC',
         },
       });
 
