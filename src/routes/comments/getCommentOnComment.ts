@@ -35,7 +35,7 @@ function paginateResponse(
   };
 }
 
-const commentOnComment = (app: FastifyInstance): void => {
+const getCommentOnComment = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
     url: '/comments/:commentId/comments/5/page/:page/skip/:skip',
     method: 'GET',
@@ -68,4 +68,4 @@ const commentOnComment = (app: FastifyInstance): void => {
     },
   });
 };
-export default commentOnComment;
+export default getCommentOnComment;

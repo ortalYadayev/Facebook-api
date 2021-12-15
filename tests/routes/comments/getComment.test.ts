@@ -45,12 +45,9 @@ describe('Get Comments', () => {
     it('over 5 comments', async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
-      await Comment.factory().user(user).post(post).create();
-      await Comment.factory().user(user).post(post).create();
-      await Comment.factory().user(user).post(post).create();
-      await Comment.factory().user(user).post(post).create();
-      await Comment.factory().user(user).post(post).create();
-      await Comment.factory().user(user).post(post).create();
+      for (let i = 0; i < 6; i++) {
+        await Comment.factory().user(user).post(post).create();
+      }
       const post2 = await Post.factory().user(user).create();
       await Comment.factory().user(user).post(post2).create();
 

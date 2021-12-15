@@ -3,36 +3,38 @@ import { Static, Type } from '@sinclair/typebox';
 import { IsNull } from 'typeorm';
 import { Comment } from '../../entities/comment.entity';
 
-const ParamsSchema = { postId: Type.Number() };
+const ParamsSchema = {
+  postId: Type.Number(),
+};
 type ParamsType = Static<typeof ParamsSchema>;
 
-const getComments = (app: FastifyInstance): void => {
+const getLastComment = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/posts/:postId/comments',
+    url: '/posts/:postId/comments/1',
     method: 'GET',
     preValidation: app.authMiddleware,
     schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { postId } = request.params;
 
-      const [comments, count] = await Comment.findAndCount({
+      const comment = await Comment.find({
         where: {
           post: postId,
           comment: IsNull(),
         },
         relations: ['user', 'likes', 'likes.user', 'comments'],
         order: {
-          id: 'ASC',
+          id: 'DESC',
         },
+        take: 1,
       });
 
-      if (count > 5) {
-        reply.code(200).send({ count });
+      if (comment.length !== 1) {
+        reply.code(422).send();
       }
 
-      reply.code(200).send({ comments, count });
+      reply.code(200).send(comment[0]);
     },
   });
 };
-
-export default getComments;
+export default getLastComment;
