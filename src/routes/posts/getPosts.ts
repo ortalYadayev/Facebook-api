@@ -17,16 +17,7 @@ const getPosts = (app: FastifyInstance): void => {
         where: {
           user: userId,
         },
-        relations: [
-          'user',
-          'likes',
-          'likes.user',
-          'comments',
-          'comments.user',
-          'comments.likes',
-          'comments.likes.user',
-          'comments.comments',
-        ],
+        relations: ['user', 'likes', 'likes.user', 'comments'],
         order: {
           id: 'ASC',
         },
