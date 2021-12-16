@@ -1,6 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
+import { IsNull } from 'typeorm';
 import { Post } from '../../entities/post.entity';
+import { Comment } from '../../entities/comment.entity';
 
 const ParamsSchema = { userId: Type.Number() };
 type ParamsType = Static<typeof ParamsSchema>;
@@ -17,13 +19,26 @@ const getPosts = (app: FastifyInstance): void => {
         where: {
           user: userId,
         },
-        relations: ['user', 'likes', 'likes.user', 'comments'],
+        relations: ['user', 'likes', 'likes.user'],
         order: {
           id: 'ASC',
         },
       });
 
-      reply.code(200).send(posts);
+      const newPosts = [];
+      for (let i = 0; i < posts.length; i++) {
+        const commentsCount = await Comment.count({
+          where: {
+            post: posts[i],
+            comment: IsNull(),
+          },
+        });
+
+        // @ts-ignore
+        newPosts.push({ ...posts[i], commentsCount });
+      }
+
+      reply.code(200).send(newPosts);
     },
   });
 };

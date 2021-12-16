@@ -43,6 +43,7 @@ const getCommentOnComment = (app: FastifyInstance): void => {
     schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { commentId, page, skip } = request.params;
+
       const data = await Comment.findAndCount({
         where: {
           comment: commentId,

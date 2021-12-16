@@ -22,7 +22,7 @@ const getLastComment = (app: FastifyInstance): void => {
           post: postId,
           comment: IsNull(),
         },
-        relations: ['user', 'likes', 'likes.user', 'comments'],
+        relations: ['user', 'likes', 'likes.user'],
         order: {
           id: 'DESC',
         },
@@ -33,7 +33,14 @@ const getLastComment = (app: FastifyInstance): void => {
         reply.code(422).send();
       }
 
-      reply.code(200).send(comment[0]);
+      const commentsCount = await Comment.count({
+        where: {
+          comment: comment[0],
+          post: IsNull(),
+        },
+      });
+
+      reply.code(200).send({ ...comment[0], commentsCount });
     },
   });
 };
