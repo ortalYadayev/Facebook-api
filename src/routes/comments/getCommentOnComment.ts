@@ -7,18 +7,17 @@ const ParamsSchema = {
   commentId: Type.Number(),
   page: Type.Number(),
   skip: Type.Number(),
-  take: Type.Number(),
 };
 type ParamsType = Static<typeof ParamsSchema>;
 
 const getCommentOnComment = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/comments/:commentId/comments/:take/page/:page/skip/:skip',
+    url: '/comments/:commentId/comments/5/page/:page/skip/:skip',
     method: 'GET',
     preValidation: app.authMiddleware,
     schema: { params: ParamsSchema },
     handler: async (request, reply) => {
-      const { commentId, page, skip, take } = request.params;
+      const { commentId, page, skip } = request.params;
       const fromComment = (page - 1) * 5 + skip;
 
       const data = await Comment.findAndCount({
@@ -30,7 +29,7 @@ const getCommentOnComment = (app: FastifyInstance): void => {
         order: {
           id: 'DESC',
         },
-        take,
+        take: 5,
         skip: fromComment,
       });
 
