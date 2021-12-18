@@ -21,10 +21,6 @@ const getComments = (app: FastifyInstance): void => {
       const { postId, page, skip, take } = request.params;
       const fromComment = (page - 1) * 5 + skip;
 
-      if (fromComment < 0) {
-        return reply.code(200).send();
-      }
-
       const data = await Comment.findAndCount({
         where: {
           post: postId,
@@ -55,10 +51,10 @@ const getComments = (app: FastifyInstance): void => {
         });
 
         // @ts-ignore
-        newComments.push({ ...comments[i], commentsCount });
+        newComments.push({ ...comments[i], commentsCount, comments: [] });
       }
 
-      reply.code(200).send({ comments: newComments, count: total });
+      return reply.code(200).send({ comments: newComments, count: total });
     },
   });
 };

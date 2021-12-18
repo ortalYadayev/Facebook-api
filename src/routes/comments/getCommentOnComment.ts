@@ -7,65 +7,57 @@ const ParamsSchema = {
   commentId: Type.Number(),
   page: Type.Number(),
   skip: Type.Number(),
+  take: Type.Number(),
 };
 type ParamsType = Static<typeof ParamsSchema>;
 
-function paginateResponse(
-  data: [Comment[], number],
-  page: number,
-  limit: number,
-  skip: number,
-): { comments: Comment[]; nextPage: null | number } | number {
-  const [comments, total] = data;
-  const first = (page - 1) * limit + skip;
-  const lastPage = Math.ceil((total - skip) / limit);
-  const nextPage = page + 1 > lastPage ? null : page + 1;
-
-  if (page > lastPage) {
-    return 422;
-  }
-
-  if (!nextPage) {
-    limit = total;
-  }
-
-  return {
-    comments: [...comments.slice(first, first + limit)],
-    nextPage,
-  };
-}
-
 const getCommentOnComment = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/comments/:commentId/comments/5/page/:page/skip/:skip',
+    url: '/comments/:commentId/comments/:take/page/:page/skip/:skip',
     method: 'GET',
     preValidation: app.authMiddleware,
     schema: { params: ParamsSchema },
     handler: async (request, reply) => {
-      const { commentId, page, skip } = request.params;
+      const { commentId, page, skip, take } = request.params;
+      const fromComment = (page - 1) * 5 + skip;
 
       const data = await Comment.findAndCount({
         where: {
           comment: commentId,
           post: IsNull(),
         },
-        relations: ['user', 'likes', 'likes.user', 'comments'],
+        relations: ['user', 'likes', 'likes.user'],
         order: {
           id: 'DESC',
         },
+        take,
+        skip: fromComment,
       });
 
-      if (data[1] === 0) {
-        reply.code(404).send();
+      const [comments, total] = data;
+      const lastPage = Math.ceil((total - skip) / 5);
+      const nextPage = page + 1 > lastPage ? null : page + 1;
+
+      if (page > lastPage) {
+        return reply.code(200).send();
       }
 
-      const result = paginateResponse(data, page, 5, skip);
+      const newComments = [];
+      for (let i = 0; i < comments.length; i++) {
+        const commentsCount = await Comment.count({
+          where: {
+            comment: comments[i],
+            post: IsNull(),
+          },
+        });
 
-      if (result === 422) {
-        reply.code(422).send();
+        // @ts-ignore
+        newComments.push({ ...comments[i], commentsCount, comments: [] });
       }
 
-      reply.code(200).send(result);
+      return reply
+        .code(200)
+        .send({ comments: newComments, count: total, nextPage });
     },
   });
 };
