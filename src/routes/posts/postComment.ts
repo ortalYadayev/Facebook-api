@@ -22,6 +22,7 @@ const postComment = (app: FastifyInstance): void => {
 
       let post: Post;
       const { postId } = request.params;
+
       try {
         post = await Post.findOneOrFail({
           where: {

@@ -18,9 +18,13 @@ const getComments = (app: FastifyInstance): void => {
     schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       const { postId, page, skip } = request.params;
-      const fromComment = (page - 1) * 5 + skip;
+      let fromComment = (page - 1) * 5 + skip;
 
-      const data = await Comment.findAndCount({
+      if (page < 1) {
+        fromComment = skip;
+      }
+
+      const [comments, total] = await Comment.findAndCount({
         where: {
           post: postId,
           comment: IsNull(),
@@ -33,7 +37,6 @@ const getComments = (app: FastifyInstance): void => {
         skip: fromComment,
       });
 
-      const [comments, total] = data;
       const lastPage = Math.ceil((total - skip) / 5);
 
       if (page > lastPage) {
