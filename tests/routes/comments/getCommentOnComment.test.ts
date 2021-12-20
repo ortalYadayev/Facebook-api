@@ -37,8 +37,12 @@ describe('Get Comment On Comment', () => {
         .create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/1/skip/0`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 0,
+          page: 1,
+        },
       });
 
       expect(response.statusCode).toBe(200);
@@ -58,8 +62,12 @@ describe('Get Comment On Comment', () => {
       }
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/1/skip/2`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 2,
+          page: 1,
+        },
       });
 
       expect(response.statusCode).toBe(200);
@@ -80,8 +88,12 @@ describe('Get Comment On Comment', () => {
       }
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/2/skip/0`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 0,
+          page: 2,
+        },
       });
 
       expect(response.statusCode).toBe(200);
@@ -102,8 +114,12 @@ describe('Get Comment On Comment', () => {
       }
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/2/skip/2`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 2,
+          page: 2,
+        },
       });
 
       expect(response.statusCode).toBe(200);
@@ -123,11 +139,15 @@ describe('Get Comment On Comment', () => {
       await Comment.factory().user(user).comment(comment).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: '/comments/10/comments/5/page/1/skip/0',
+        method: 'POST',
+        url: '/comments/10/comments/5',
+        payload: {
+          skip: 0,
+          page: 1,
+        },
       });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(200);
       expect(await Comment.count()).toBe(2);
     });
 
@@ -138,11 +158,15 @@ describe('Get Comment On Comment', () => {
       await Comment.factory().user(user).comment(comment).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/14/skip/0`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 0,
+          page: 12,
+        },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
       expect(await Comment.count()).toBe(2);
     });
 
@@ -152,11 +176,15 @@ describe('Get Comment On Comment', () => {
       const comment = await Comment.factory().post(post).user(user).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/1/skip/0`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 0,
+          page: 1,
+        },
       });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(200);
       expect(await Comment.count()).toBe(1);
     });
 
@@ -168,11 +196,15 @@ describe('Get Comment On Comment', () => {
       await Comment.factory().user(user).comment(comment).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/comments/${comment.id}/comments/5/page/1/skip/5`,
+        method: 'POST',
+        url: `/comments/${comment.id}/comments/5`,
+        payload: {
+          skip: 5,
+          page: 1,
+        },
       });
 
-      expect(response.statusCode).toBe(422);
+      expect(response.statusCode).toBe(200);
       expect(await Comment.count()).toBe(3);
     });
   });

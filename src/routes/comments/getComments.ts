@@ -5,23 +5,29 @@ import { Comment } from '../../entities/comment.entity';
 
 const ParamsSchema = {
   postId: Type.Number(),
-  page: Type.Number(),
-  skip: Type.Number(),
 };
 type ParamsType = Static<typeof ParamsSchema>;
 
-const getComments = (app: FastifyInstance): void => {
-  app.route<{ Params: ParamsType }>({
-    url: '/posts/:postId/comments/5/page/:page/skip/:skip',
-    method: 'GET',
-    preValidation: app.authMiddleware,
-    schema: { params: ParamsSchema },
-    handler: async (request, reply) => {
-      const { postId, page, skip } = request.params;
-      let fromComment = (page - 1) * 5 + skip;
+const PayloadSchema = Type.Object({
+  page: Type.Number(),
+  skip: Type.Number(),
+});
+type PayloadType = Static<typeof PayloadSchema>;
 
-      if (page < 1) {
-        fromComment = skip;
+const getComments = (app: FastifyInstance): void => {
+  app.route<{ Body: PayloadType; Params: ParamsType }>({
+    url: '/posts/:postId/comments/5',
+    method: 'POST',
+    preValidation: app.authMiddleware,
+    schema: { body: PayloadSchema, params: ParamsSchema },
+    handler: async (request, reply) => {
+      const { postId } = request.params;
+      const payload = request.body;
+
+      let fromComment = (payload.page - 1) * 5 + payload.skip;
+
+      if (payload.page < 1) {
+        fromComment = payload.skip;
       }
 
       const [comments, total] = await Comment.findAndCount({
@@ -36,10 +42,9 @@ const getComments = (app: FastifyInstance): void => {
         take: 5,
         skip: fromComment,
       });
+      const lastPage = Math.ceil((total - payload.skip) / 5);
 
-      const lastPage = Math.ceil((total - skip) / 5);
-
-      if (page > lastPage) {
+      if (payload.page > lastPage) {
         return reply.code(200).send();
       }
 

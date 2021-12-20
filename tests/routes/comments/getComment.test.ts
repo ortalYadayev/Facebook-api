@@ -27,14 +27,18 @@ describe('Get Comments', () => {
   });
 
   describe('should get comments', () => {
-    it('until 5 comments', async () => {
+    it('until 5 comments - return a comment', async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       await Comment.factory().user(user).post(post).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/posts/${post.id}/comments`,
+        method: 'POST',
+        url: `/posts/${post.id}/comments/5`,
+        payload: {
+          skip: 0,
+          page: 1,
+        },
       });
 
       expect(response.statusCode).toBe(200);
@@ -42,7 +46,7 @@ describe('Get Comments', () => {
       expect(response.json().count).toBe(1);
     });
 
-    it('over 5 comments', async () => {
+    it('over 5 comments - return a comment', async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
       for (let i = 0; i < 6; i++) {
@@ -52,8 +56,12 @@ describe('Get Comments', () => {
       await Comment.factory().user(user).post(post2).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: `/posts/${post.id}/comments`,
+        method: 'POST',
+        url: `/posts/${post.id}/comments/5`,
+        payload: {
+          skip: 0,
+          page: 2,
+        },
       });
 
       expect(response.statusCode).toBe(200);
@@ -69,13 +77,16 @@ describe('Get Comments', () => {
       await Comment.factory().post(post).user(user).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
-        url: '/posts/10/comments',
+        method: 'POST',
+        url: '/posts/10/comments/5',
+        payload: {
+          skip: 0,
+          page: 1,
+        },
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json().comments).toEqual(expect.arrayContaining([]));
-      expect(response.json().count).toBe(0);
+      expect(await Comment.count()).toBe(1);
     });
   });
 });

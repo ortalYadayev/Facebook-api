@@ -26,15 +26,19 @@ describe('Get Posts', () => {
     await app.close();
   });
 
-  it('should get posts', async () => {
+  it('should get the first 10 posts', async () => {
     const user = await User.factory().create();
     await Post.factory().user(user).create();
     await Post.factory().user(user).create();
     await Post.factory().user(user).create();
 
     const response = await app.loginAs(user).inject({
-      method: 'GET',
+      method: 'POST',
       url: `/users/${user.id}/posts`,
+      payload: {
+        skip: 0,
+        page: 1,
+      },
     });
 
     expect(response.statusCode).toBe(200);
@@ -46,8 +50,12 @@ describe('Get Posts', () => {
     const user = await User.factory().create();
 
     const response = await app.loginAs(user).inject({
-      method: 'GET',
+      method: 'POST',
       url: `/users/${user.id}/posts`,
+      payload: {
+        skip: 0,
+        page: 1,
+      },
     });
 
     expect(response.statusCode).toBe(200);
@@ -62,8 +70,12 @@ describe('Get Posts', () => {
       await Post.factory().user(user).create();
 
       const response = await app.loginAs(user).inject({
-        method: 'GET',
+        method: 'POST',
         url: '/users/10/posts',
+        payload: {
+          skip: 0,
+          page: 1,
+        },
       });
 
       expect(response.statusCode).toBe(200);
