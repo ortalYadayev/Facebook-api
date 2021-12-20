@@ -24,11 +24,7 @@ const getComments = (app: FastifyInstance): void => {
       const { postId } = request.params;
       const payload = request.body;
 
-      let fromComment = (payload.page - 1) * 5 + payload.skip;
-
-      if (payload.page < 1) {
-        fromComment = payload.skip;
-      }
+      const fromComment = (payload.page - 1) * 5 + payload.skip;
 
       const [comments, total] = await Comment.findAndCount({
         where: {
