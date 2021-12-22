@@ -1,10 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { IsNull } from 'typeorm';
-import { Post } from '../../entities/post.entity';
 import { Comment } from '../../entities/comment.entity';
 
-const ParamsSchema = { userId: Type.Number() };
+const ParamsSchema = {
+  postId: Type.Number(),
+};
 type ParamsType = Static<typeof ParamsSchema>;
 
 const PayloadSchema = Type.Object({
@@ -13,47 +14,52 @@ const PayloadSchema = Type.Object({
 });
 type PayloadType = Static<typeof PayloadSchema>;
 
-const getPosts = (app: FastifyInstance): void => {
+const getComments = (app: FastifyInstance): void => {
   app.route<{ Body: PayloadType; Params: ParamsType }>({
-    url: '/users/:userId/posts',
+    url: '/posts/:postId/comments/5',
     method: 'POST',
     preValidation: app.authMiddleware,
     schema: { body: PayloadSchema, params: ParamsSchema },
     handler: async (request, reply) => {
-      const { userId } = request.params;
+      const { postId } = request.params;
       const payload = request.body;
+
       const fromComment = (payload.page - 1) * 5 + payload.skip;
 
-      const [posts, total] = await Post.findAndCount({
+      const [comments, total] = await Comment.findAndCount({
         where: {
-          user: userId,
+          post: postId,
+          comment: IsNull(),
         },
         relations: ['user', 'likes', 'likes.user'],
         order: {
           id: 'DESC',
         },
-        take: 10,
+        take: 5,
         skip: fromComment,
       });
+      const lastPage = Math.ceil((total - payload.skip) / 5);
 
-      Math.ceil((total - payload.skip) / 10);
+      if (payload.page > lastPage) {
+        return reply.code(200).send();
+      }
 
-      const newPosts = [];
-      for (let i = 0; i < posts.length; i++) {
+      const newComments = [];
+      for (let i = 0; i < comments.length; i++) {
         const commentsCount = await Comment.count({
           where: {
-            post: posts[i],
-            comment: IsNull(),
+            comment: comments[i],
+            post: IsNull(),
           },
         });
 
         // @ts-ignore
-        newPosts.push({ ...posts[i], commentsCount });
+        newComments.push({ ...comments[i], commentsCount, comments: [] });
       }
 
-      return reply.code(200).send(newPosts);
+      return reply.code(200).send({ comments: newComments, count: total });
     },
   });
 };
 
-export default getPosts;
+export default getComments;

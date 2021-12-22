@@ -1,11 +1,11 @@
 import { FastifyInstance } from 'fastify';
-import { Connection, createConnection } from 'typeorm';
+import { Connection, createConnection, IsNull } from 'typeorm';
 import createFastifyInstance from '../../../src/createFastifyInstance';
 import { Post } from '../../../src/entities/post.entity';
 import { User } from '../../../src/entities/user.entity';
-import { Like } from '../../../src/entities/like.entity';
+import { Comment } from '../../../src/entities/comment.entity';
 
-describe('Post Like', () => {
+describe('Comment On Comment', () => {
   let app: FastifyInstance;
   let connection: Connection;
 
@@ -26,63 +26,62 @@ describe('Post Like', () => {
     await app.close();
   });
 
-  it('should add like to post', async () => {
+  it('should add a comment to comment', async () => {
     const user = await User.factory().create();
     const post = await Post.factory().user(user).create();
+    const comment = await Comment.factory().user(user).post(post).create();
 
     const response = await app.loginAs(user).inject({
       method: 'POST',
-      url: `/posts/${post.id}/likes`,
+      url: `/comments/${comment.id}/comments`,
+      payload: {
+        content: 'comment to the comment',
+      },
+    });
+
+    const commentOnComment = await Comment.findOne({
+      where: {
+        comment,
+        post: IsNull(),
+        user,
+      },
     });
 
     expect(response.statusCode).toBe(201);
-    expect(response.json()).not.toBeNull();
-    expect(await Like.count()).toBe(1);
+    expect(await Comment.count()).toBe(2);
+    expect(response.json().id).toEqual(commentOnComment?.id);
   });
 
-  it('should add a like to post - after unlike', async () => {
-    const user = await User.factory().create();
-    const post = await Post.factory().user(user).create();
-    const like = await Like.factory().user(user).post(post).create();
-
-    await Like.delete(like.id);
-
-    const response = await app.loginAs(user).inject({
-      method: 'POST',
-      url: `/posts/${post.id}/likes`,
-    });
-
-    expect(response.statusCode).toBe(201);
-    expect(response.json()).not.toBeNull();
-
-    expect(await Like.count()).toBe(1);
-  });
-
-  describe("shouldn't add a like to post", () => {
-    it("post doesn't exist", async () => {
+  describe("shouldn't add a comment to comment", () => {
+    it("comment doesn't exist", async () => {
       const user = await User.factory().create();
+      const post = await Post.factory().user(user).create();
+      await Comment.factory().post(post).user(user).create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: '/posts/10/likes',
+        url: '/comments/20/comments',
+        payload: {
+          content: 'comment to the comment',
+        },
       });
 
       expect(response.statusCode).toBe(404);
-      expect(await Like.count()).toBe(0);
+      expect(await Comment.count()).toBe(1);
     });
 
-    it("there's like", async () => {
+    it("the content doesn't exist", async () => {
       const user = await User.factory().create();
       const post = await Post.factory().user(user).create();
-      await Like.factory().user(user).post(post).create();
+      const comment = await Comment.factory().post(post).user(user).create();
 
       const response = await app.loginAs(user).inject({
         method: 'POST',
-        url: `/posts/${post.id}/likes`,
+        url: `/comments/${comment.id}/comments`,
       });
 
-      expect(response.statusCode).toBe(200);
-      expect(await Like.count()).toBe(1);
+      expect(response.statusCode).toBe(422);
+      expect(await Comment.count()).toBe(1);
     });
   });
 });

@@ -3,6 +3,7 @@ import PostFactory from '../database/factories/post.factory';
 import BaseEntity from './BaseEntity';
 import { User } from './user.entity';
 import { Like } from './like.entity';
+import { Comment } from './comment.entity';
 
 @Entity('posts')
 export class Post extends BaseEntity {
@@ -20,6 +21,11 @@ export class Post extends BaseEntity {
     cascade: true,
   })
   likes!: Like[];
+
+  @OneToMany(() => Comment, (comment) => comment.post, {
+    cascade: true,
+  })
+  comments!: Comment[];
 
   static factory(): PostFactory {
     return new PostFactory();

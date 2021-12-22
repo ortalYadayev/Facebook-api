@@ -1,38 +1,40 @@
 import { FastifyInstance } from 'fastify';
 import { Static, Type } from '@sinclair/typebox';
 import { IsNull } from 'typeorm';
-import { Post } from '../../entities/post.entity';
+import { Comment } from '../../entities/comment.entity';
 import { Like } from '../../entities/like.entity';
 
-const ParamsSchema = { postId: Type.Number() };
+const ParamsSchema = {
+  commentId: Type.Number(),
+};
 type ParamsType = Static<typeof ParamsSchema>;
 
-const postLike = (app: FastifyInstance): void => {
+const commentLike = (app: FastifyInstance): void => {
   app.route<{ Params: ParamsType }>({
-    url: '/posts/:postId/likes',
+    url: '/comments/:commentId/likes',
     method: 'POST',
     preValidation: app.authMiddleware,
     schema: { params: ParamsSchema },
     handler: async (request, reply) => {
-      let post: Post;
-      const { postId } = request.params;
+      let comment: Comment;
+      const { commentId } = request.params;
 
       try {
-        post = await Post.findOneOrFail({
+        comment = await Comment.findOneOrFail({
           where: {
-            id: postId,
+            id: commentId,
           },
         });
       } catch (error) {
         return reply.code(404).send({
-          message: "The post doesn't exist",
+          message: "The comment doesn't exist",
         });
       }
 
       const countOfLikes = await Like.count({
         where: {
-          post,
-          comment: IsNull(),
+          comment,
+          post: IsNull(),
           user: request.user,
         },
       });
@@ -43,7 +45,7 @@ const postLike = (app: FastifyInstance): void => {
 
       const like = new Like();
 
-      like.post = post;
+      like.comment = comment;
       like.user = request.user;
 
       await like.save();
@@ -53,4 +55,4 @@ const postLike = (app: FastifyInstance): void => {
   });
 };
 
-export default postLike;
+export default commentLike;

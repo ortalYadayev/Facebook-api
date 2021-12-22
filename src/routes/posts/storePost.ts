@@ -21,6 +21,8 @@ const storePost = (app: FastifyInstance): void => {
       const post = new Post();
       post.content = payload.content;
       post.user = user;
+      post.comments = [];
+      post.likes = [];
 
       await post.save();
 

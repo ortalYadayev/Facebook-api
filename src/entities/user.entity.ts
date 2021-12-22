@@ -8,6 +8,7 @@ import UserFactory from '../database/factories/user.factory';
 import { Post } from './post.entity';
 import { Friend } from './friend.entity';
 import { Like } from './like.entity';
+import { Comment } from './comment.entity';
 
 @Entity('users')
 @Index(['firstName', 'lastName'], { fulltext: true })
@@ -74,6 +75,11 @@ export class User extends BaseEntity {
     cascade: true,
   })
   likes!: Like[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, {
+    cascade: true,
+  })
+  comments!: Comment[];
 
   static factory(): UserFactory {
     return new UserFactory();

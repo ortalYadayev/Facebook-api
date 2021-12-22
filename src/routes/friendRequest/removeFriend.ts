@@ -13,6 +13,7 @@ const removeFriend = (app: FastifyInstance): void => {
     url: '/friend-requests/:friendRequestId/remove',
     method: 'DELETE',
     preValidation: app.authMiddleware,
+    schema: { params: ParamsSchema },
     handler: async (request, reply) => {
       let friendRequest: FriendRequest;
       let friend: Friend;
