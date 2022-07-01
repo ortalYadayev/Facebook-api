@@ -1,4 +1,4 @@
-# Facebook clone API
+# Facebook Clone API
 
 ## Required software
 
